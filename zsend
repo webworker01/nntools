@@ -4,8 +4,6 @@
 #
 # by webworker01
 #
-# Requires bc - sudo apt-get install bc
-#
 # Usage: zsend <coinname> <fromaddress> <toaddress> <amounttosend>
 #
 

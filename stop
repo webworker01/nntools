@@ -1,4 +1,16 @@
 #!/bin/bash
-pkill -15 bitcoind
+source config
+
 pkill -15 komodod
 pkill -15 iguana
+
+if (( thirdpartycoins < 1 )); then
+    pkill -15 bitcoind
+else
+    for coins in "${coinsthird[@]}"; do
+        coin=($coins)
+        echo "Stopping ${coin[0]}"
+        eval $(echo coinexec=${coin[1]})
+        $coinexec stop &
+    done
+fi

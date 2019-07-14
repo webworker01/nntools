@@ -2,8 +2,6 @@
 # Local split version by webworker01
 # Original version by Decker (c) 2018 <https://github.com/DeckerSU/komodo_scripts/blob/master/split_nn_sapling.sh>
 #
-# Requires package dc - sudo apt-get install dc
-#
 # Usage: ./splitfunds <COINNAME> <numutxos> <sapling=1/0>
 # e.g.   ./splitfunds KMD 50
 # e.g.   ./splitfunds OOT 50 0

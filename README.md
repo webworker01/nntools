@@ -6,26 +6,39 @@ Dependencies
 sudo apt-get install jq bc dc
 ```
 
-
-Scripts I like to keep handy for running my node.
+Scripts
+--------
 
 Script Name | Function
 ----------- | --------
-**acsplit** | Create UTXOs as needed although Iguana handles this as long as you didn't hit the base58 lottery
-**checkforks** | Script to quickly check all assetchains for possible forks
+**asset-cli** | Send in a single coin name to run RPC commands against
+**assetchains** | Start one or all assetchains
+**assets-cli** | Run RPC command against all coins in coinlist
+**checkaddresses** | Validate address against all coins in coinlist
+**checkfork** | Script to quickly check all assetchains for possible forks
 **checkmasks** | Check your nodes connectivity to the notary node network
-**coinlist** | Handy way to keep coin list in one place for other scripts to use (thanks to a-team)
 **cronsplit** | Script to schedule auto splitting of utxos to be used in conjunction with splitfunds
-**killemall** | Hard kill komodo related processes
-**killthemsoftly** | Kill komodo processes nicely
+**dpow** | Start dpow
+**importkey** | Import privkey to all assetchains without rescan
 **kmdacfirewall** | UFW settings with commentary
-**networktweaksundo.txt** | Reference to my default Ubuntu 16.04 net config "just in case"
-**notary** | Start notary process
-**notarytest** | Start notary test process
-**rebuildkomodo** | Git pull and rebuild komodo on the current branch
+**minerfixer** | Tweak to not mine (waste CPU) when node is not eligible for easy-mining
 **splitfunds** | Use to split utxo types required for notarizations
-**start** | Start chipsd and komodod
-**startac** | Start assetchains
+**start** | Start coins daemons as defined by `thirdpartycoins` in config
 **stats** | Fancy cli stats for notary nodes
-**fail2banstatusall** | Moved to https://github.com/webworker01/freshubuntu
-**freshubuntu** | Moved to https://github.com/webworker01/freshubuntu
+**stop** | Stop coins daemons as defined by `thirdpartycoins` in config
+**zsend** | Script to simplify sending a specified amount to/from z addressess
+
+Utility Files
+---------
+File Name | Function
+----------- | --------
+**coinlist** | Handy way to keep coin list in one place for other scripts to use (thanks to a-team)
+**config.example** | Copy this to a new file called config and modify as appropriate
+**functions** | Store functions for use in other files
+**networktweaksundo.txt** | Reference to my default Ubuntu 16.04 net config "just in case"
+**paths** | Stores paths to different coin files
+**rebuild*** | Files to rebuild coin daemons that have already been cloned
+
+See Also
+----------
+https://github.com/webworker01/freshubuntu
