@@ -4,13 +4,21 @@ source config
 
 function validateaddress ()
 {
-    ISMINE=$($komodocli -ac_name=$1 validateaddress $2 | jq .ismine)
-    echo [$1] $ISMINE
+    ismine=$($komodocli $2 validateaddress $1 | jq .ismine)
+    if [[ ! -z $2 ]]; then
+        echo [$2] $ismine
+    else
+        echo [KMD] $ismine
+    fi
 }
 
-for coins in "${coinlist[@]}"; do
-    coin=($coins)
-    if [[ ! ${ignoreacs[*]} =~ ${coin[0]} ]]; then
-        validateaddress ${coin[0]} $nn_address
-    fi
-done
+validateaddress $nn_address
+
+if (( thirdpartycoins < 1 )); then
+    for coins in "${coinlist[@]}"; do
+        coin=($coins)
+        if [[ ! ${ignoreacs[*]} =~ ${coin[0]} ]]; then
+            validateaddress $nn_address -ac_name=${coin[0]}
+        fi
+    done
+fi
