@@ -1,7 +1,6 @@
 #!/bin/bash
 source coinlist
 source config
-checkaddr=$1
 
 function validateaddress ()
 {
@@ -11,5 +10,7 @@ function validateaddress ()
 
 for coins in "${coinlist[@]}"; do
     coin=($coins)
-    validateaddress ${coin[0]} $checkaddr
+    if [[ ! ${ignoreacs[*]} =~ ${coin[0]} ]]; then
+        validateaddress ${coin[0]} $nn_address
+    fi
 done

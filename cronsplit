@@ -12,18 +12,7 @@
 
 source coinlist
 source config
-
-logfile=$HOME/cronsplit.log
-
-othercoins=(
-'BTC /usr/bin/bitcoin-cli'
-'CHIPS /usr/local/bin/chips-cli'
-'GAME /usr/local/bin/gamecredits-cli'
-'EMC2 /usr/local/bin/einsteinium-cli'
-'GIN /usr/local/bin/gincoin-cli'
-)
-
-sproutcoins=('OOT' 'ZILLA')
+source paths
 
 kmdutxoqty=50
 acutxoqty=50
@@ -60,7 +49,7 @@ if [[ -z $1 ]]; then
                     echo "${coin[0]} utxos sprout: $acutxo"
                     splitter=$(./splitfunds ${coin[0]} $acutxoqty 0)
                 fi
-                echo "$dt - ${coin[0]} - $splitter" >> $logfile
+                echo "$dt - ${coin[0]} - $splitter" >> $cronsplitlogfile
             fi
         fi
     done
@@ -84,7 +73,7 @@ else
         otherutxo=$(${coin[1]} listunspent | jq --arg amt "$coinsutxoamount" '[.[] | select(.amount==($amt|tonumber))] | length')
         if (( otherutxo < otherutxoqty )); then
             splitter=$(curl --url "http://127.0.0.1:7776" --data "{\"coin\":\"${coin[0]}\",\"agent\":\"iguana\",\"method\":\"splitfunds\",\"satoshis\":\"$coinsplitamount\",\"sendflag\":1,\"duplicates\":$otherutxoqty}")
-            echo "$dt - ${coin[0]} - $splitter" >> $logfile
+            echo "$dt - ${coin[0]} - $splitter" >> $cronsplitlogfile
         fi
     done
 fi

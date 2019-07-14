@@ -1,5 +1,6 @@
 #!/bin/bash
 source config
+source paths
 
 pkill -15 komodod
 pkill -15 iguana

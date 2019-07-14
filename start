@@ -1,5 +1,5 @@
 #!/bin/bash
+source config
 bitcoind &
-cd $HOME/komodo/src
-./komodod -pubkey=$pubkey &
-./assetchains.old
+$komodod -pubkey=$nn_pubkey $addnodes &
+./assetchains

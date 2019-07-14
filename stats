@@ -6,6 +6,7 @@
 source coinlist
 source config
 source functions
+source paths
 
 color_red=$'\033[0;31m'
 color_reset=$'\033[0m'
@@ -146,7 +147,7 @@ outputstats ()
                 "$($coinexec getblockchaininfo | jq .blocks)" \
                 "$(timeSince $($coinexec getblock $($coinexec getbestblockhash) | jq .time))" \
                 "$($coinexec getnetworkinfo | jq .connections)" \
-                "$(ls -lh ~/${coin[2]}/wallet.dat | awk '{print $5}')"
+                "$(ls -lh ~/${coin[3]}/wallet.dat | awk '{print $5}')"
     done
 
     if (( thirdpartycoins < 1 )); then
