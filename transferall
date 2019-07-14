@@ -11,7 +11,7 @@ if [[ ! -z $addresstarget ]]; then
     echo "Usage: ./transferall <addresstotransferto>"
 fi
 
-komodo-cli sendtoaddress $addresstarget `komodo-cli getbalance` "" "" true
+$komodocli sendtoaddress $addresstarget `komodo-cli getbalance` "" "" true
 #chips-cli sendtoaddress $addresstarget `chips-cli getbalance` "" "" true
 
 for coins in "${coinlist[@]}"; do
@@ -19,6 +19,6 @@ for coins in "${coinlist[@]}"; do
     if [[ ! ${ignoreacs[*]} =~ ${coin[0]} ]]; then
         balance=$($komodocli -ac_name=${coin[0]} getbalance)
         echo ${coin[0]} $balance
-        komodo-cli -ac_name=${coin[0]} sendtoaddress $addresstarget $balance "" "" true
+        $komodocli -ac_name=${coin[0]} sendtoaddress $addresstarget $balance "" "" true
     fi
 done
