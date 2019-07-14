@@ -1,0 +1,15 @@
+#!/bin/bash
+komodoexec="komodo-cli"
+checkaddr=$1
+source coinlist
+
+function validateaddress ()
+{
+    ISMINE=$($komodoexec -ac_name=$1 validateaddress $2 | jq .ismine)
+    echo [$1] $ISMINE
+}
+
+for coins in "${coinlist[@]}"; do
+    coin=($coins)
+    validateaddress ${coin[0]} $checkaddr
+done

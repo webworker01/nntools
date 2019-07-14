@@ -1,0 +1,12 @@
+#
+#
+# Usage:
+# cp config.example config
+#
+# Fill in your NN_ADDRESS
+#
+#
+
+komodoexec=/usr/local/bin/komodo-cli
+NN_ADDRESS=
+

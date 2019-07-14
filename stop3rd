@@ -1,0 +1,8 @@
+#!/bin/bash
+$HOME/komodo/src/komodo-cli stop &
+$HOME/chips3/src/chips-cli stop &
+$HOME/GameCredits/src/gamecredits-cli stop &
+$HOME/einsteinium/src/einsteinium-cli stop &
+$HOME/gincoin-core/src/gincoin-cli stop &
+$HOME/VerusCoin/src/verus stop &
+

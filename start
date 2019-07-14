@@ -1,0 +1,6 @@
+#!/bin/bash
+source $HOME/komodo/src/pubkey.txt
+bitcoind &
+cd $HOME/komodo/src
+./komodod -pubkey=$pubkey &
+./assetchains.old

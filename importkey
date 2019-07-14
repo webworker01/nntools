@@ -1,0 +1,10 @@
+#!/bin/bash
+source coinlist
+komodoexec="komodo-cli"
+count=0
+
+for coins in "${coinlist[@]}"; do
+    coin=($coins)
+    echo ${coin[0]}
+    $komodoexec -ac_name=${coin[0]} importprivkey $1 "" false
+done

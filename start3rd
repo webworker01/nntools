@@ -1,0 +1,8 @@
+#!/bin/bash
+source $HOME/komodo/src/pubkey.txt
+$HOME/komodo/src/komodod -pubkey=$pubkey &
+$HOME/chips3/src/chipsd -pubkey=$pubkey &
+$HOME/GameCredits/src/gamecreditsd -pubkey=$pubkey &
+$HOME/einsteinium/src/einsteiniumd -pubkey=$pubkey &
+$HOME/gincoin-core/src/gincoind -pubkey=$pubkey &
+$HOME/VerusCoin/src/verusd -pubkey=$pubkey &
