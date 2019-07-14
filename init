@@ -70,11 +70,7 @@ echo "pubkey=$nn_pubkey" >> $HOME/komodo/src/pubkey.txt
 cd $HOME
 git clone https://github.com/jl777/SuperNET
 cd SuperNET/iguana
-if (( thirdpartycoins < 1 )); then
-    git checkout blackjok3r
-else
-    git checkout blackjok3r_3rdparty
-fi
+git checkout beta_season3
 cp $HOME/komodo/src/pubkey.txt $HOME/SuperNET/iguana/pubkey.txt
 
 if (( thirdpartycoins < 1 )); then
