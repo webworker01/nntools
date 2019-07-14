@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# by webworker01
+# @author webworker01
 #
 source coinlist
 source config

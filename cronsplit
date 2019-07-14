@@ -2,14 +2,14 @@
 #
 # Split funds cron job
 #
-# by webworker01
-#
 # Suggest setting up 2 crontabs, 1 for komodo and assetchains and the other hourly for longer potential blocktimes
 #
 # crontab -e
 # */15 * * * * /home/komodo/nntools/cronsplit
 # 1 * * * * /home/komodo/nntools/cronsplit long
-
+#
+# @author webworker01
+#
 scriptpath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 source $scriptpath/coinlist

@@ -1,7 +1,7 @@
 #!/bin/bash
 # Stats script for Komodo Notary Nodes
 #
-# by webworker01
+# @author webworker01
 #
 source coinlist
 source config

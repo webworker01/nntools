@@ -2,9 +2,9 @@
 #
 # Script to simplify sending a specified amount to/from z addressess
 #
-# by webworker01
-#
 # Usage: zsend <coinname> <fromaddress> <toaddress> <amounttosend>
+#
+# @author webworker01
 #
 source config
 

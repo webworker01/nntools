@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# by webworker01
+# @author webworker01
 #
 #Running with no parameter will give a summary
 #./checkmasks all - will output detail for each node

@@ -1,4 +1,11 @@
 #!/bin/bash
+# init for notary node required dependencies and repos
+# setup config file first to indicate 1st or 3rd party server
+# after setup you will still need to create wp_7776 and userhome.txt files
+#
+# @see https://docs.komodoplatform.com/notary/setup-Komodo-Notary-Node.html#create-wp-7776
+# @author webworker01
+#
 source config
 
 scriptpath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"

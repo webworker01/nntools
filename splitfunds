@@ -1,12 +1,17 @@
 #!/bin/bash
+#
 # Local split version by webworker01
 # Original version by Decker (c) 2018 <https://github.com/DeckerSU/komodo_scripts/blob/master/split_nn_sapling.sh>
 #
 # Usage: ./splitfunds <COINNAME> <numutxos> <sapling=1/0>
 # e.g.   ./splitfunds KMD 50
 # e.g.   ./splitfunds OOT 50 0
+#
+# @author webworker01
+# @author DeckerSU
+#
 
-scriptpath=$(dirname "$0")
+scriptpath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 source $scriptpath/config
 
