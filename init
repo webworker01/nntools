@@ -1,0 +1,204 @@
+#!/bin/bash
+source config
+
+scriptpath=$(dirname "$0")
+
+#dependencies
+sudo apt-get update && sudo apt-get upgrade -y
+sudo apt-get install build-essential pkg-config libc6-dev m4 g++-multilib autoconf libtool libncurses-dev unzip git python zlib1g-dev wget bsdmainutils automake libboost-all-dev libssl-dev libprotobuf-dev protobuf-compiler libgtest-dev libqt4-dev libqrencode-dev libdb++-dev ntp ntpdate software-properties-common libevent-dev curl libcurl4-gnutls-dev cmake clang libsodium-dev jq htop -y
+
+#nanomsg
+cd $HOME
+git clone https://github.com/nanomsg/nanomsg
+cd nanomsg
+cmake . -DNN_TESTS=OFF -DNN_ENABLE_DOC=OFF
+make -j2
+sudo make install
+sudo ldconfig
+
+#komodo
+cd $HOME
+git clone https://github.com/jl777/komodo
+cd komodo
+git checkout beta
+$scriptpath/rebuildkomodo
+
+sudo ln -sf /home/$USER/komodo/src/komodo-cli /usr/local/bin/komodo-cli
+sudo ln -sf /home/$USER/komodo/src/komodod /usr/local/bin/komodod
+
+#create komodo.conf
+randusername=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
+randpassword=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
+cd $HOME
+mkdir -p $HOME/.komodo
+cat <<EOF > $HOME/.komodo/komodo.conf
+rpcuser=user$randusername
+rpcpassword=pass$randpassword
+txindex=1
+server=1
+daemon=1
+rpcworkqueue=256
+rpcbind=127.0.0.1
+rpcallowip=127.0.0.1
+EOF
+chmod 600 $HOME/.komodo/komodo.conf
+
+echo "pubkey=$nn_pubkey" >> $HOME/komodo/src/pubkey.txt
+
+#Iguana
+cd $HOME
+git clone https://github.com/jl777/SuperNET
+cd SuperNET/iguana
+if (( thirdpartycoins < 1 )); then
+    git checkout blackjok3r
+else
+    git checkout blackjok3r_3rdparty
+fi
+cp $HOME/komodo/src/pubkey.txt $HOME/SuperNET/iguana/pubkey.txt
+
+if (( thirdpartycoins < 1 )); then
+    #bitcoin
+    cd $HOME
+    git clone https://github.com/bitcoin/bitcoin
+    cd bitcoin
+    git checkout 0.16
+    $scriptpath/rebuildbitcoin
+    sudo ln -sf /home/$USER/bitcoin/src/bitcoin-cli /usr/local/bin/bitcoin-cli
+    sudo ln -sf /home/$USER/bitcoin/src/bitcoind /usr/local/bin/bitcoind
+
+    #bitcoin.conf
+    randusername=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
+    randpassword=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
+    cd $HOME
+    mkdir -p $HOME/.bitcoin
+    cat <<EOF > $HOME/.bitcoin/bitcoin.conf
+    rpcuser=user$randusername
+    rpcpassword=pass$randpassword
+    txindex=1
+    server=1
+    daemon=1
+    rpcworkqueue=256
+    rpcbind=127.0.0.1
+    rpcallowip=127.0.0.1
+    listen=0
+    listenonion=0
+    onlynet=ipv4
+EOF
+    chmod 600 $HOME/.bitcoin/bitcoin.conf
+else
+    #CHIPS
+    cd $HOME
+    git clone https://github.com/jl777/chips3
+    cd chips3
+    git checkout dev
+    $scriptpath/rebuildchips
+
+    #chips.conf
+    randusername=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
+    randpassword=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
+    cd $HOME
+    mkdir -p $HOME/.chips
+    cat <<EOF > $HOME/.chips/chips.conf
+    rpcuser=user$randusername
+    rpcpassword=pass$randpassword
+    txindex=1
+    server=1
+    daemon=1
+    rpcworkqueue=256
+    rpcbind=127.0.0.1
+    rpcallowip=127.0.0.1
+EOF
+    chmod 600 $HOME/.chips/chips.conf
+
+    #GAME
+    cd $HOME
+    git clone https://github.com/gamecredits-project/GameCredits
+    cd GameCredits
+    git checkout master
+    $scriptpath/rebuildgame
+
+    #gamecredits.conf
+    randusername=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
+    randpassword=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
+    cd $HOME
+    mkdir -p $HOME/.gamecredits
+    cat <<EOF > $HOME/.gamecredits/gamecredits.conf
+    rpcuser=user$randusername
+    rpcpassword=pass$randpassword
+    txindex=1
+    server=1
+    daemon=1
+    rpcworkqueue=256
+    rpcbind=127.0.0.1
+    rpcallowip=127.0.0.1
+    listen=0
+    listenonion=0
+    onlynet=ipv4
+EOF
+    chmod 600 $HOME/.gamecredits/gamecredits.conf
+
+    #EMC2
+    cd ~
+    git clone https://github.com/emc2foundation/einsteinium
+    cd einsteinium
+    git checkout master
+    $scriptpath/rebuildemc2
+
+    #einsteinium.conf
+    randusername=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
+    randpassword=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
+    cd $HOME
+    mkdir -p $HOME/.einsteinium
+    cat <<EOF > $HOME/.einsteinium/einsteinium.conf
+    rpcuser=user$randusername
+    rpcpassword=pass$randpassword
+    txindex=1
+    server=1
+    daemon=1
+    rpcworkqueue=256
+    rpcbind=127.0.0.1
+    rpcallowip=127.0.0.1
+    listen=0
+    listenonion=0
+    onlynet=ipv4
+EOF
+    chmod 600 $HOME/.einsteinium/einsteinium.conf
+
+    #GIN
+    cd $HOME
+    git clone https://github.com/GIN-coin/gincoin-core
+    cd gincoin-core
+    git checkout master
+    $scriptpath/rebuildgin
+
+    #gincoin.conf
+    randusername=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
+    randpassword=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
+    cd $HOME
+    mkdir -p $HOME/.gincoincore
+    cat <<EOF > $HOME/.gincoincore/gincoin.conf
+    rpcuser=user$randusername
+    rpcpassword=pass$randpassword
+    txindex=1
+    server=1
+    daemon=1
+    litemode=1
+    rpcworkqueue=256
+    rpcbind=127.0.0.1
+    rpcallowip=127.0.0.1
+    listen=0
+    listenonion=0
+    onlynet=ipv4
+    maxconnections=16
+EOF
+    chmod 600 $HOME/.gincoincore/gincoin.conf
+
+    #VRSC
+    cd $HOME
+    git clone https://github.com/VerusCoin/VerusCoin
+    cd VerusCoin
+    git checkout master
+    ./zcutil/build.sh -j$(nproc)
+fi
+
+echo "Done! You must create wp_7776 https://docs.komodoplatform.com/notary/setup-Komodo-Notary-Node.html#create-wp-7776 and userhome.txt"
