@@ -1,4 +1,7 @@
 #!/bin/bash
+#
+# by webworker01
+#
 source config
 source paths
 

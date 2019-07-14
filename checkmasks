@@ -1,5 +1,7 @@
 #!/bin/bash
-
+#
+# by webworker01
+#
 #Running with no parameter will give a summary
 #./checkmasks all - will output detail for each node
 #./checkmasks <maskhex> - will output detail for a specific mask
