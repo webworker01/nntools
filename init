@@ -50,6 +50,11 @@ fi
 randusername=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
 randpassword=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
 cd $HOME
+
+if (( thirdpartycoins > 0 )); then
+    blocknotify="blocknotify=$HOME/nntools/minerfixer %s"
+fi
+
 mkdir -p $HOME/.komodo
 cat <<EOF > $HOME/.komodo/komodo.conf
 rpcuser=user$randusername
@@ -60,7 +65,7 @@ daemon=1
 rpcworkqueue=256
 rpcbind=127.0.0.1
 rpcallowip=127.0.0.1
-blocknotify=$HOME/nntools/minerfixer %s
+$blocknotify
 EOF
 chmod 600 $HOME/.komodo/komodo.conf
 
