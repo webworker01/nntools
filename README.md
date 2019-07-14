@@ -28,6 +28,7 @@ Script Name | Function
 **start** | Start coins daemons as defined by `thirdpartycoins` in config
 **stats** | Fancy cli stats for notary nodes
 **stop** | Stop coins daemons as defined by `thirdpartycoins` in config
+**transferall** | Transfer kmd and all assetchains to address you specify
 **zsend** | Script to simplify sending a specified amount to/from z addressess
 
 Utility Files
