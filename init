@@ -39,6 +39,7 @@ git clone https://github.com/jl777/komodo
 cd komodo
 git checkout beta
 $scriptpath/rebuildkomodo
+$HOME/komodo/zcutil/fetch-params.sh
 
 if (( nosudo > 0 )); then
     sudo ln -sf /home/$USER/komodo/src/komodo-cli /usr/local/bin/komodo-cli

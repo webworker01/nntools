@@ -1,10 +1,11 @@
 #!/bin/bash
 #
+# Running with no parameter will give a summary
+# ./checkmasks all - will output detail for each node
+# ./checkmasks <maskhex> - will output detail for a specific mask
+#
 # @author webworker01
 #
-#Running with no parameter will give a summary
-#./checkmasks all - will output detail for each node
-#./checkmasks <maskhex> - will output detail for a specific mask
 source config
 
 if [[ ! -z $1 ]]; then
