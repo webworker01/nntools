@@ -57,3 +57,6 @@ sproutcoins=('OOT' 'ZILLA')
 
 #Add additional -addnode parameters for coin daemons
 addnodes="-addnode=seed.komodostats.com "
+
+#which notaryid to use as reference node when checking masks (0 to 63)
+referencenode=1
