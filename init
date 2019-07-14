@@ -12,7 +12,7 @@ source config
 
 scriptpath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
-if [[ -z $1 ]]; then
+if [[ ! -z $1 ]]; then
     nosudo=0
 else
     nosudo=1
