@@ -1,5 +1,5 @@
 #!/bin/bash
 cd ~/komodo
-git pull --rebase
+git pull
 make clean
 ./zcutil/build.sh -j$(nproc)
