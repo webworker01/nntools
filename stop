@@ -1,3 +1,4 @@
 #!/bin/bash
+pkill -15 bitcoind
 pkill -15 komodod
 pkill -15 iguana
