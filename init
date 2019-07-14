@@ -209,4 +209,5 @@ EOF
     ./zcutil/build.sh -j$(nproc)
 fi
 
+echo
 echo "Done! You must create wp_7776 https://docs.komodoplatform.com/notary/setup-Komodo-Notary-Node.html#create-wp-7776 and userhome.txt"

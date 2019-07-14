@@ -22,6 +22,7 @@ Script Name | Function
 **cronsplit** | Script to schedule auto splitting of utxos to be used in conjunction with splitfunds
 **dpow** | Start dpow
 **importkey** | Import privkey to all assetchains without rescan
+**init** | Clones required repos and builds them
 **kmdacfirewall** | UFW settings with commentary
 **minerfixer** | Tweak to not mine (waste CPU) when node is not eligible for easy-mining
 **splitfunds** | Use to split utxo types required for notarizations
