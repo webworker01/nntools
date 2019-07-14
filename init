@@ -1,7 +1,7 @@
 #!/bin/bash
 # init for notary node required dependencies and repos
 # setup config file first to indicate 1st or 3rd party server
-# after setup you will still need to create wp_7776 and userhome.txt files
+# after setup you will still need to create wp_7776 file
 #
 # Usage: ./init <include any param value to run without sudo commands>
 #
@@ -226,4 +226,4 @@ EOF
 fi
 
 echo
-echo "Done! You must create wp_7776 https://docs.komodoplatform.com/notary/setup-Komodo-Notary-Node.html#create-wp-7776 and userhome.txt"
+echo "Done! You must create wp_7776 https://docs.komodoplatform.com/notary/setup-Komodo-Notary-Node.html#create-wp-7776"
