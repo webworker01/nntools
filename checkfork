@@ -1,6 +1,7 @@
 #!/bin/bash
 source coinlist
 source config
+source paths
 
 #how far ahead or behind before being marked as a fork
 variance=10
@@ -130,11 +131,7 @@ if (( thirdpartycoins > 0 )); then
         eval $(echo coincli=${coin[1]})
 
         blocks=$($coincli getinfo | jq .blocks)
-        if [[ "${coin[0]}" == "GAME" ]]; then
-            longest=$blocks
-        else
-            longest=$($coincli getinfo | jq .headers)
-        fi
+        longest=$($coincli getblockchaininfo | jq .headers)
         blockhash=$($coincli getbestblockhash)
         parseKomodostats "${coin[0]}" "$remotecheck"
         remoteblocks2=""
