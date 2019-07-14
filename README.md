@@ -6,6 +6,8 @@ Dependencies
 sudo apt-get install jq bc dc
 ```
 
+Copy the `config.example` file to `config` and edit as needed. No further edits in the various files should be required.
+
 Scripts
 --------
 
