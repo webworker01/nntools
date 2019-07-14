@@ -105,19 +105,19 @@ outputRow()
 }
 
 #KMD
-blocks=$(komodo-cli getinfo | jq .blocks)
-longest=$(komodo-cli getinfo | jq .longestchain)
-blockhash=$(komodo-cli getbestblockhash)
+blocks=$($komodocli getinfo | jq .blocks)
+longest=$($komodocli getinfo | jq .longestchain)
+blockhash=$($komodocli getbestblockhash)
 parseKomodostats "KMD" "$remotecheck"
 parseDexstats "KMD" "$remotecheck2"
 #parseNotarystats "KMD" "$remotecheck3"
 if (( blocks >= remoteblocks2 )); then
-    hashatheight2=$(komodo-cli getblockhash $remoteblocks2)
+    hashatheight2=$($komodocli getblockhash $remoteblocks2)
 else
     hashatheight2=
 fi
 #if (( blocks >= remoteblocks3 )); then
-#    hashatheight3=$(komodo-cli getblockhash $remoteblocks3)
+#    hashatheight3=$($komodocli getblockhash $remoteblocks3)
 #else
 #    hashatheight3=
 #fi
@@ -160,19 +160,19 @@ for coins in "${coinlist[@]}"; do
     coin=($coins)
 
     if [[ ! ${ignoreacs[*]} =~ ${coin[0]} ]]; then
-        blocks=$(komodo-cli -ac_name=${coin[0]} getinfo | jq .blocks)
-        longest=$(komodo-cli -ac_name=${coin[0]} getinfo | jq .longestchain)
-        blockhash=$(komodo-cli -ac_name=${coin[0]} getbestblockhash)
+        blocks=$($komodocli -ac_name=${coin[0]} getinfo | jq .blocks)
+        longest=$($komodocli -ac_name=${coin[0]} getinfo | jq .longestchain)
+        blockhash=$($komodocli -ac_name=${coin[0]} getbestblockhash)
         parseKomodostats "${coin[0]}" "$remotecheck"
         parseDexstats "${coin[0]}" "$remotecheck2"
         #parseNotarystats "${coin[0]}" "$remotecheck3"
         if [[ ! -z $remoteblocks2 ]] && (( blocks >= remoteblocks2 )); then
-            hashatheight2=$(komodo-cli -ac_name=${coin[0]} getblockhash $remoteblocks2)
+            hashatheight2=$($komodocli -ac_name=${coin[0]} getblockhash $remoteblocks2)
         else
             hashatheight2=
         fi
         #if [[ ! -z $remoteblocks3 ]] &&(( blocks >= remoteblocks3 )); then
-        #    hashatheight3=$(komodo-cli -ac_name=${coin[0]} getblockhash $remoteblocks3)
+        #    hashatheight3=$($komodocli -ac_name=${coin[0]} getblockhash $remoteblocks3)
         #else
         #    hashatheight3=
         #fi
