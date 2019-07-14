@@ -83,6 +83,7 @@ else
 
         otherutxo=$($coincli listunspent | jq --arg amt "$coinsutxoamount" '[.[] | select(.amount==($amt|tonumber))] | length')
         if (( otherutxo < otherutxoqty )); then
+            echo "${coin[0]} utxos: $otherutxo"
             splitter=$(curl --url "http://127.0.0.1:$iguanaport" --data "{\"coin\":\"${coin[0]}\",\"agent\":\"iguana\",\"method\":\"splitfunds\",\"satoshis\":\"$coinsplitamount\",\"sendflag\":1,\"duplicates\":$otherutxoqty}")
             echo "$dt - ${coin[0]} - $splitter" >> $cronsplitlogfile
         fi
