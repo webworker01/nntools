@@ -5,6 +5,7 @@
 #
 # Fill in your NN_ADDRESS
 #
+# by webworker01
 #
 
 #Full path to komodo-cli
@@ -16,10 +17,10 @@ komodod="$HOME/komodo/src/komodod"
 #set to 1 if this is the server for third party coins, else leave as 0
 thirdpartycoins=0
 
-#Enter your notary node address
+#Enter your notary node address (no quotes)
 nn_address=
 
-#Enter your notary node pubkey
+#Enter your notary node pubkey  (no quotes)
 nn_pubkey=
 
 #Loop stats script every this many seconds
@@ -33,26 +34,11 @@ txscanamount=777
 #You can modify this list of ACs to exclude or comment out the line to show all
 ignoreacs=('VOTE2018' 'VOTE2019' 'BEER' 'PIZZA')
 
-#declare non komodo clis - set the full path accessible as the second part of each string, the 3rd entry is the name of the data dir for the coin and assumes they are in $HOME
-coinsfirst=(
-'BTC bitcoin-cli .bitcoin'
-)
+#Location for cronsplit.log
+cronsplitlogfile=$HOME/cronsplit.log
 
-coinsthird=(
-'CHIPS $HOME/chips3/src/chips-cli .chips'
-'GAME $HOME/GameCredits/src/gamecredits-cli .gamecredits'
-'EMC2 $HOME/einsteinium/src/einsteinium-cli .einsteinium'
-'GIN $HOME/gincoin-core/src/gincoin-cli .gincoincore'
-'VRSC $HOME/VerusCoin/src/verus .komodo/VRSC'
-)
+#Define coins that are sprout
+sproutcoins=('OOT' 'ZILLA')
 
-#for git checking - path and remote branch
-declare -A repos=(
-[KMD]="$HOME/komodo origin/beta"
-[SUPERNET]="$HOME/SuperNET origin/blackjok3r"
-[CHIPS]="$HOME/chips3 origin/dev"
-[GAME]="$HOME/GameCredits origin/master"
-[EMC2]="$HOME/einsteinium origin/master"
-[GIN]="$HOME/gincoin-core origin/master"
-[VRSC]="$HOME/VerusCoin origin/master"
-)
+#Add additional -addnode parameters for coin daemons
+addnodes="-addnode=seed.komodostats.com "
