@@ -29,7 +29,7 @@ nn_pubkey=
 #Loop stats script every this many seconds
 sleepytime=600
 #Else change to false if you don't want it to loop
-#sleeptime=false
+#sleepytime=false
 
 #How many transactions back to scan for notarizations
 txscanamount=777
