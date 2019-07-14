@@ -7,8 +7,8 @@
 # Suggest setting up 2 crontabs, 1 for komodo and assetchains and the other hourly for longer potential blocktimes
 #
 # crontab -e
-# */15 * * * * /home/komodo/cronsplit
-# 1 * * * * /home/komodo/cronsplit long
+# */15 * * * * /home/komodo/nntools/cronsplit
+# 1 * * * * /home/komodo/nntools/cronsplit long
 
 source coinlist
 source config
