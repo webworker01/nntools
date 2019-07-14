@@ -1,5 +1,6 @@
 #!/bin/bash
 source coinlist
+source config
 
 sudo apt-get install ufw
 
@@ -19,7 +20,7 @@ for coins in "${coinlist[@]}"; do
     coin=($coins)
 
     if [[ ! ${ignoreacs[*]} =~ ${coin[0]} ]]; then
-        acport=$(komodo-cli -ac_name=${coin[0]} getinfo | jq .p2pport)
+        acport=$($komodocli -ac_name=${coin[0]} getinfo | jq .p2pport)
         echo $acport
         sudo ufw allow $acport comment "${coin[0]}"
     fi

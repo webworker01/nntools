@@ -1,3 +1,12 @@
+Setup
+--------
+
+Dependencies
+```
+sudo apt-get install jq bc dc
+```
+
+
 Scripts I like to keep handy for running my node.
 
 Script Name | Function

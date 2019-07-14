@@ -3,22 +3,19 @@
 #
 # by webworker01
 #
-# Requires jq v1.5+ - sudo apt-get install jq
-#
-# komodo-cli installed (e.g. symlinked to /usr/local/bin)
-#
 # Add to ~/.komodo/komodo.conf:
 #
 # blocknotify=/home/komodo/minerfixer %s
 #
+source config
 
-lastgen=$(komodo-cli listtransactions "*" 777 | jq '[.[] | select(.generated==true)] | .[-1]')
+lastgen=$($komodocli listtransactions "*" 777 | jq '[.[] | select(.generated==true)] | .[-1]')
 if [[ "$lastgen" != "null" ]]; then
     confirmations=$(echo $lastgen | jq .confirmations)
     rawconfirmations=$(echo $lastgen | jq .rawconfirmations)
     lastamount=$(echo $lastgen | jq .amount)
     lasthash=$(echo $lastgen | jq -r .blockhash)
-    lastheight=$(komodo-cli getblockheader $lasthash | jq -r .height)
+    lastheight=$($komodocli getblockheader $lasthash | jq -r .height)
 
     printf "Last Amt:$lastamount Ht:$lastheight RawConfs:$rawconfirmations Confs:$confirmations"
 
@@ -26,12 +23,12 @@ if [[ "$lastgen" != "null" ]]; then
     if (( (rawconfirmations > 2 && rawconfirmations < 65) )); then
         eligible=$(( 65 - rawconfirmations ))
         printf " \033[0;32m[energy saving mode ${eligible}]\033[0m\n"
-        komodo-cli setgenerate false
+        $komodocli setgenerate false
 
     #turn on setgenerate upon eligibility
     elif (( rawconfirmations == 65 )); then
         printf " \033[0;31m[setgenerate true]\033[0m\n"
-        komodo-cli setgenerate true 1
+        $komodocli setgenerate true 1
 
     elif (( rawconfirmations < 3 )); then
         printf " \033[0;32m[Block Found!]\033[0m\n"
@@ -43,5 +40,5 @@ if [[ "$lastgen" != "null" ]]; then
 else
     printf " \033[0;31m[could not get last mined tx]\033[0m\n"
     printf " \033[0;31m[setgenerate true]\033[0m\n"
-    komodo-cli setgenerate true 1
+    $komodocli setgenerate true 1
 fi

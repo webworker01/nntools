@@ -1,12 +1,10 @@
 #!/bin/bash
-
-#You can modify this list of ACs to exclude or comment out the line to show all
-ignoreacs=('VOTE2018' 'VOTE2019' 'BEER' 'PIZZA')
+source coinlist
+source config
 
 #how far ahead or behind before being marked as a fork
 variance=10
 
-source coinlist
 forked=false
 
 remotecheck=$(curl -Ssf https://komodostats.com/api/notary/summary.json)

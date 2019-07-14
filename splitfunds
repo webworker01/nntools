@@ -8,18 +8,8 @@
 # e.g.   ./splitfunds KMD 50
 # e.g.   ./splitfunds OOT 50 0
 
-#==Options - Only Change These==
-
-#Your local notary address that has funds to split
-#NN_ADDRESS=
-
-#Full path to komodo-cli
-#komodoexec=/usr/local/bin/komodo-cli
-
 #Use config file
 source config
-
-#==End Options==
 
 #Do not change below for any reason!
 
@@ -66,15 +56,15 @@ SPLIT_VALUE=0.0001
 SPLIT_VALUE_SATOSHI=10000
 SPLIT_TOTAL=$(jq -n "$SPLIT_VALUE*$SPLIT_COUNT")
 
-NN_PUBKEY=$($komodoexec $asset validateaddress $NN_ADDRESS | jq -r .pubkey)
-nob58=$(decodeBase58 $NN_ADDRESS)
+NN_PUBKEY=$($komodocli $asset validateaddress $nn_address | jq -r .pubkey)
+nob58=$(decodeBase58 $nn_address)
 NN_HASH160=$(echo ${nob58:2:-8})
 
 #Get lowest amount and valid utxo to split
 if [[ $coin != "VRSC" ]]; then
-    utxo=$($komodoexec $asset listunspent | jq -r --arg minsize $SPLIT_TOTAL '[.[] | select(.amount>($minsize|tonumber) and .generated==false and .rawconfirmations>0)] | sort_by(.amount)[0]')
+    utxo=$($komodocli $asset listunspent | jq -r --arg minsize $SPLIT_TOTAL '[.[] | select(.amount>($minsize|tonumber) and .generated==false and .rawconfirmations>0)] | sort_by(.amount)[0]')
 else
-    utxo=$($komodoexec $asset listunspent | jq -r --arg minsize $SPLIT_TOTAL '[.[] | select(.amount>($minsize|tonumber) and .generated==false and .confirmations>0)] | sort_by(.amount)[0]')
+    utxo=$($komodocli $asset listunspent | jq -r --arg minsize $SPLIT_TOTAL '[.[] | select(.amount>($minsize|tonumber) and .generated==false and .confirmations>0)] | sort_by(.amount)[0]')
 fi
 
 if [[ $utxo != "null" ]]; then
@@ -118,10 +108,10 @@ if [[ $utxo != "null" ]]; then
         rawtx=$rawtx"000000000000000000000000000000" # sapling end of tx
     fi
 
-    signedtx=$($komodoexec $asset signrawtransaction $rawtx | jq -r '.hex')
+    signedtx=$($komodocli $asset signrawtransaction $rawtx | jq -r '.hex')
 
     if [[ ! -z $signedtx ]]; then
-        txid=$($komodoexec $asset sendrawtransaction $signedtx)
+        txid=$($komodocli $asset sendrawtransaction $signedtx)
         echo "$coin Split $sapling $SPLIT_TOTAL TXID: $txid"
     else
         echo "$coin Split $sapling $SPLIT_TOTAL failed"

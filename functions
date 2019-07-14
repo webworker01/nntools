@@ -1,0 +1,33 @@
+#!/bin/bash
+# functions file for nntools
+#
+# by webworker01
+#
+timeSince () {
+    local currentimestamp=$(date +%s)
+    local timecompare=$1
+
+    if [ ! -z $timecompare ] && [[ $timecompare != "null" ]]
+    then
+        local t=$((currentimestamp-timecompare))
+
+        local d=$((t/60/60/24))
+        local h=$((t/60/60%24))
+        local m=$((t/60%60))
+        local s=$((t%60))
+
+        if (( d > 0 )); then
+            echo -n "${d}D"
+        fi
+        if (( d < 2 && h > 0 )); then
+            echo -n "${h}h"
+        fi
+        if (( d == 0 && h < 4 && m > 0 )); then
+            echo -n "${m}m"
+        fi
+        if (( d == 0 && h == 0 && m == 0 )); then
+            echo -n "${s}s"
+        fi
+
+    fi
+}

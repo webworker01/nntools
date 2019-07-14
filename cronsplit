@@ -10,14 +10,10 @@
 # */15 * * * * /home/komodo/cronsplit
 # 1 * * * * /home/komodo/cronsplit long
 
-komodoexec=/usr/local/bin/komodo-cli
-
-#You can modify this list of ACs to exclude or comment out the line to show all
-ignoreacs=('VOTE2018' 'BEER' 'PIZZA')
+source coinlist
+source config
 
 logfile=$HOME/cronsplit.log
-
-source coinlist
 
 othercoins=(
 'BTC /usr/bin/bitcoin-cli'
@@ -41,7 +37,7 @@ dt=$(date '+%Y-%m-%d %H:%M:%S');
 
 #no params in cli indicates just the short list of kmd specific coins
 if [[ -z $1 ]]; then
-    kmdutxos=$($komodoexec listunspent | jq --arg amt "$utxoamt" '[.[] | select(.amount==($amt|tonumber))] | length')
+    kmdutxos=$($komodocli listunspent | jq --arg amt "$utxoamt" '[.[] | select(.amount==($amt|tonumber))] | length')
 
     if (( kmdutxos < kmdutxoqty )); then
         echo "KMD utxos: $kmdutxos"
@@ -54,7 +50,7 @@ if [[ -z $1 ]]; then
         coin=($coins)
 
         if [[ ! ${ignoreacs[*]} =~ ${coin[0]} ]]; then
-            acutxo=$($komodoexec -ac_name=${coin[0]} listunspent | jq --arg amt "$utxoamt" '[.[] | select(.amount==($amt|tonumber))] | length')
+            acutxo=$($komodocli -ac_name=${coin[0]} listunspent | jq --arg amt "$utxoamt" '[.[] | select(.amount==($amt|tonumber))] | length')
 
             if (( acutxo < acutxoqty )); then
                 if [[ ! ${sproutcoins[*]} =~ ${coin[0]} ]]; then

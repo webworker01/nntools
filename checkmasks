@@ -6,7 +6,7 @@
 
 #which notaryid to use as "seednode" reference starting at 0 to 63
 seednode=1
-port=7779
+port=7776
 
 if [[ ! -z $1 ]]
 then
@@ -23,9 +23,9 @@ else
 
     seedrecvmask=$(echo $bestmaskdata | jq --arg seedid $seednode '.[$seedid|tonumber] | .recvmask' | sed 's/"//g' | awk '{$1=$1};1')
     echo "Seed recvmask: $seedrecvmask"
-    curl -s --url "http://127.0.0.1:$port" --data "{\"agent\":\"dpow\",\"method\":\"active\",\"maskhex\":\"$seedrecvmask\"}" | jq -c -r '. | del(.maskhex) | del(.tag) | .set' 
+    curl -s --url "http://127.0.0.1:$port" --data "{\"agent\":\"dpow\",\"method\":\"active\",\"maskhex\":\"$seedrecvmask\"}" | jq -c -r '. | del(.maskhex) | del(.tag) | .set'
     echo "not:"
-    curl -s --url "http://127.0.0.1:$port" --data "{\"agent\":\"dpow\",\"method\":\"active\",\"maskhex\":\"$seedrecvmask\"}" | jq -c -r '. | del(.maskhex) | del(.tag) | .not' 
+    curl -s --url "http://127.0.0.1:$port" --data "{\"agent\":\"dpow\",\"method\":\"active\",\"maskhex\":\"$seedrecvmask\"}" | jq -c -r '. | del(.maskhex) | del(.tag) | .not'
 
     myrecvmask=$(echo $bestmaskdata | jq --arg nodeid $mynotaryid '.[$nodeid|tonumber].recvmask' | sed 's/"//g' | awk '{$1=$1};1')
     echo

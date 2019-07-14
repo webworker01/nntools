@@ -1,4 +1,4 @@
-#
+#!/bin/bash
 #
 # Usage:
 # cp config.example config
@@ -7,6 +7,14 @@
 #
 #
 
-komodoexec=/usr/local/bin/komodo-cli
-NN_ADDRESS=
+#Full path to komodo-cli
+komodocli=/usr/local/bin/komodo-cli
 
+#Enter your notary node address
+NN_ADDRESS=RQgQ19Hh1dMKdkSwsBZXsURBjKh7XS5obb
+
+#You can modify this list of ACs to exclude or comment out the line to show all
+ignoreacs=('VOTE2018' 'VOTE2019' 'BEER' 'PIZZA')
+
+#set to 1 if this is the server for third party coins, else leave as 0
+thirdpartycoins=0
