@@ -10,7 +10,7 @@
 # */15 * * * * /home/komodo/nntools/cronsplit
 # 1 * * * * /home/komodo/nntools/cronsplit long
 
-scriptpath=$(dirname "$0")
+scriptpath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 source $scriptpath/coinlist
 source $scriptpath/config
