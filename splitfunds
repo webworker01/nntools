@@ -6,8 +6,9 @@
 # e.g.   ./splitfunds KMD 50
 # e.g.   ./splitfunds OOT 50 0
 
-#Use config file
-source config
+scriptpath=$(dirname "$0")
+
+source $scriptpath/config
 
 #Do not change below for any reason!
 

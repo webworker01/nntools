@@ -10,9 +10,11 @@
 # */15 * * * * /home/komodo/nntools/cronsplit
 # 1 * * * * /home/komodo/nntools/cronsplit long
 
-source coinlist
-source config
-source paths
+scriptpath=$(dirname "$0")
+
+source $scriptpath/coinlist
+source $scriptpath/config
+source $scriptpath/paths
 
 utxoamt=0.00010000
 splitamount=10000
@@ -23,8 +25,8 @@ kmdutxos=$($komodocli listunspent | jq --arg amt "$utxoamt" '[.[] | select(.amou
 if (( kmdutxos < kmdutxoqty )); then
     echo "KMD utxos: $kmdutxos"
 
-    splitter=$(./splitfunds KMD $kmdutxoqty)
-    echo "$dt - KMD - $splitter" >> $logfile
+    splitter=$($scriptpath/splitfunds KMD $kmdutxoqty)
+    echo "$dt - KMD - $splitter" >> $cronsplitlogfile
 fi
 
 #no params in cli indicates just the short list of kmd specific coins
@@ -39,10 +41,10 @@ if [[ -z $1 ]]; then
                 if (( acutxo < acutxoqty )); then
                     if [[ ! ${sproutcoins[*]} =~ ${coin[0]} ]]; then
                         echo "${coin[0]} utxos sapling: $acutxo"
-                        splitter=$(./splitfunds ${coin[0]} $acutxoqty)
+                        splitter=$($scriptpath/splitfunds ${coin[0]} $acutxoqty)
                     else
                         echo "${coin[0]} utxos sprout: $acutxo"
-                        splitter=$(./splitfunds ${coin[0]} $acutxoqty 0)
+                        splitter=$($scriptpath/splitfunds ${coin[0]} $acutxoqty 0)
                     fi
                     echo "$dt - ${coin[0]} - $splitter" >> $cronsplitlogfile
                 fi
