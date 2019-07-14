@@ -3,6 +3,8 @@
 # setup config file first to indicate 1st or 3rd party server
 # after setup you will still need to create wp_7776 and userhome.txt files
 #
+# Usage: ./init <include any param value to run without sudo commands>
+#
 # @see https://docs.komodoplatform.com/notary/setup-Komodo-Notary-Node.html#create-wp-7776
 # @author webworker01
 #
@@ -10,18 +12,26 @@ source config
 
 scriptpath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
-#dependencies
-sudo apt-get update && sudo apt-get upgrade -y
-sudo apt-get install build-essential pkg-config libc6-dev m4 g++-multilib autoconf libtool libncurses-dev unzip git python zlib1g-dev wget bsdmainutils automake libboost-all-dev libssl-dev libprotobuf-dev protobuf-compiler libgtest-dev libqt4-dev libqrencode-dev libdb++-dev ntp ntpdate software-properties-common libevent-dev curl libcurl4-gnutls-dev cmake clang libsodium-dev jq htop -y
+if [[ -z $1 ]]; then
+    nosudo=0
+else
+    nosudo=1
+fi
 
-#nanomsg
-cd $HOME
-git clone https://github.com/nanomsg/nanomsg
-cd nanomsg
-cmake . -DNN_TESTS=OFF -DNN_ENABLE_DOC=OFF
-make -j2
-sudo make install
-sudo ldconfig
+if (( nosudo > 0 )); then
+    #dependencies
+    sudo apt-get update && sudo apt-get upgrade -y
+    sudo apt-get install build-essential pkg-config libc6-dev m4 g++-multilib autoconf libtool libncurses-dev unzip git python zlib1g-dev wget bsdmainutils automake libboost-all-dev libssl-dev libprotobuf-dev protobuf-compiler libgtest-dev libqt4-dev libqrencode-dev libdb++-dev ntp ntpdate software-properties-common libevent-dev curl libcurl4-gnutls-dev cmake clang libsodium-dev jq htop -y
+
+    #nanomsg
+    cd $HOME
+    git clone https://github.com/nanomsg/nanomsg
+    cd nanomsg
+    cmake . -DNN_TESTS=OFF -DNN_ENABLE_DOC=OFF
+    make -j2
+    sudo make install
+    sudo ldconfig
+fi
 
 #komodo
 cd $HOME
@@ -30,8 +40,10 @@ cd komodo
 git checkout beta
 $scriptpath/rebuildkomodo
 
-sudo ln -sf /home/$USER/komodo/src/komodo-cli /usr/local/bin/komodo-cli
-sudo ln -sf /home/$USER/komodo/src/komodod /usr/local/bin/komodod
+if (( nosudo > 0 )); then
+    sudo ln -sf /home/$USER/komodo/src/komodo-cli /usr/local/bin/komodo-cli
+    sudo ln -sf /home/$USER/komodo/src/komodod /usr/local/bin/komodod
+fi
 
 #create komodo.conf
 randusername=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
@@ -71,8 +83,10 @@ if (( thirdpartycoins < 1 )); then
     cd bitcoin
     git checkout 0.16
     $scriptpath/rebuildbitcoin
-    sudo ln -sf /home/$USER/bitcoin/src/bitcoin-cli /usr/local/bin/bitcoin-cli
-    sudo ln -sf /home/$USER/bitcoin/src/bitcoind /usr/local/bin/bitcoind
+    if (( nosudo > 0 )); then
+        sudo ln -sf /home/$USER/bitcoin/src/bitcoin-cli /usr/local/bin/bitcoin-cli
+        sudo ln -sf /home/$USER/bitcoin/src/bitcoind /usr/local/bin/bitcoind
+    fi
 
     #bitcoin.conf
     randusername=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
