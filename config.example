@@ -17,6 +17,9 @@ komodod="$HOME/komodo/src/komodod"
 #set to 1 if this is the server for third party coins, else leave as 0
 thirdpartycoins=0
 
+#Set iguana port (current 7776 for first party, 7779 for third party)
+iguanaport=7776
+
 #Enter your notary node address (no quotes)
 nn_address=
 
@@ -30,6 +33,18 @@ sleepytime=600
 
 #How many transactions back to scan for notarizations
 txscanamount=777
+
+#Lower threshold for KMD utxos
+kmdutxoqty=50
+
+#Lower threshold for assetchain utxos
+acutxoqty=50
+
+#Lower threshold for BTC utxos
+btcutxoqty=200
+
+#Lower threshold for third party coin utxos
+otherutxoqty=50
 
 #You can modify this list of ACs to exclude or comment out the line to show all
 ignoreacs=('VOTE2018' 'VOTE2019' 'BEER' 'PIZZA')

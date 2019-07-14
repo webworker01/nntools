@@ -14,46 +14,53 @@ source coinlist
 source config
 source paths
 
-kmdutxoqty=50
-acutxoqty=50
-btcutxoqty=200
-otherutxoqty=50
-
 utxoamt=0.00010000
 splitamount=10000
 
 dt=$(date '+%Y-%m-%d %H:%M:%S');
 
+kmdutxos=$($komodocli listunspent | jq --arg amt "$utxoamt" '[.[] | select(.amount==($amt|tonumber))] | length')
+if (( kmdutxos < kmdutxoqty )); then
+    echo "KMD utxos: $kmdutxos"
+
+    splitter=$(./splitfunds KMD $kmdutxoqty)
+    echo "$dt - KMD - $splitter" >> $logfile
+fi
+
 #no params in cli indicates just the short list of kmd specific coins
 if [[ -z $1 ]]; then
-    kmdutxos=$($komodocli listunspent | jq --arg amt "$utxoamt" '[.[] | select(.amount==($amt|tonumber))] | length')
+    if (( thirdpartycoins < 1 )); then
+        for coins in "${coinlist[@]}"; do
+            coin=($coins)
 
-    if (( kmdutxos < kmdutxoqty )); then
-        echo "KMD utxos: $kmdutxos"
+            if [[ ! ${ignoreacs[*]} =~ ${coin[0]} ]]; then
+                acutxo=$($komodocli -ac_name=${coin[0]} listunspent | jq --arg amt "$utxoamt" '[.[] | select(.amount==($amt|tonumber))] | length')
 
-        splitter=$(./splitfunds KMD $kmdutxoqty)
-        echo "$dt - KMD - $splitter" >> $logfile
+                if (( acutxo < acutxoqty )); then
+                    if [[ ! ${sproutcoins[*]} =~ ${coin[0]} ]]; then
+                        echo "${coin[0]} utxos sapling: $acutxo"
+                        splitter=$(./splitfunds ${coin[0]} $acutxoqty)
+                    else
+                        echo "${coin[0]} utxos sprout: $acutxo"
+                        splitter=$(./splitfunds ${coin[0]} $acutxoqty 0)
+                    fi
+                    echo "$dt - ${coin[0]} - $splitter" >> $cronsplitlogfile
+                fi
+            fi
+        done
+    fi
+else
+    declare -a othercoins=()
+    if (( thirdpartycoins < 1 )); then
+        for i in ${!coinsfirst[@]}; do
+            othercoins[$i]="${coinsfirst[$i]}"
+        done
+    else
+        for i in ${!coinsthird[@]}; do
+            othercoins[$i]="${coinsthird[$i]}"
+        done
     fi
 
-    for coins in "${coinlist[@]}"; do
-        coin=($coins)
-
-        if [[ ! ${ignoreacs[*]} =~ ${coin[0]} ]]; then
-            acutxo=$($komodocli -ac_name=${coin[0]} listunspent | jq --arg amt "$utxoamt" '[.[] | select(.amount==($amt|tonumber))] | length')
-
-            if (( acutxo < acutxoqty )); then
-                if [[ ! ${sproutcoins[*]} =~ ${coin[0]} ]]; then
-                    echo "${coin[0]} utxos sapling: $acutxo"
-                    splitter=$(./splitfunds ${coin[0]} $acutxoqty)
-                else
-                    echo "${coin[0]} utxos sprout: $acutxo"
-                    splitter=$(./splitfunds ${coin[0]} $acutxoqty 0)
-                fi
-                echo "$dt - ${coin[0]} - $splitter" >> $cronsplitlogfile
-            fi
-        fi
-    done
-else
     #for now any param indicates to run the long running coins (e.g. btc game chips) run this every hour or something?
     for coins in "${othercoins[@]}"; do
         coin=($coins)
@@ -72,7 +79,7 @@ else
 
         otherutxo=$(${coin[1]} listunspent | jq --arg amt "$coinsutxoamount" '[.[] | select(.amount==($amt|tonumber))] | length')
         if (( otherutxo < otherutxoqty )); then
-            splitter=$(curl --url "http://127.0.0.1:7776" --data "{\"coin\":\"${coin[0]}\",\"agent\":\"iguana\",\"method\":\"splitfunds\",\"satoshis\":\"$coinsplitamount\",\"sendflag\":1,\"duplicates\":$otherutxoqty}")
+            splitter=$(curl --url "http://127.0.0.1:$iguanaport" --data "{\"coin\":\"${coin[0]}\",\"agent\":\"iguana\",\"method\":\"splitfunds\",\"satoshis\":\"$coinsplitamount\",\"sendflag\":1,\"duplicates\":$otherutxoqty}")
             echo "$dt - ${coin[0]} - $splitter" >> $cronsplitlogfile
         fi
     done
