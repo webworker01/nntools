@@ -8,23 +8,27 @@ sudo ufw disable
 sudo ufw default deny incoming
 
 sudo ufw allow 22    comment 'SSH'
-sudo ufw allow 7775 comment 'Iguana Notary'
 sudo ufw allow 7770  comment 'KMD'
-sudo ufw allow 57777 comment 'CHIPS'
-sudo ufw allow 40002 comment 'GAME'
-#sudo ufw allow 8333  comment 'BTC'
-sudo ufw allow 41878 comment 'EMC2'
-sudo ufw allow 10111 comment 'GIN'
+if (( thirdpartycoins < 1 )); then
+    #sudo ufw allow 8333  comment 'BTC'
+    sudo ufw allow 17775 comment 'Iguana Notary Main'
 
-for coins in "${coinlist[@]}"; do
-    coin=($coins)
+    for coins in "${coinlist[@]}"; do
+        coin=($coins)
 
-    if [[ ! ${ignoreacs[*]} =~ ${coin[0]} ]]; then
-        acport=$($komodocli -ac_name=${coin[0]} getinfo | jq .p2pport)
-        echo $acport
-        sudo ufw allow $acport comment "${coin[0]}"
-    fi
-done
+        if [[ ! ${ignoreacs[*]} =~ ${coin[0]} ]]; then
+            acport=$($komodocli -ac_name=${coin[0]} getinfo | jq .p2pport)
+            echo $acport
+            sudo ufw allow $acport comment "${coin[0]}"
+        fi
+    done
+else
+    sudo ufw allow 17776 comment 'Iguana Notary Third Party'
+    sudo ufw allow 57777 comment 'CHIPS'
+    sudo ufw allow 40002 comment 'GAME'
+    sudo ufw allow 41878 comment 'EMC2'
+    sudo ufw allow 10111 comment 'GIN'
+fi
 
 sudo ufw enable
 
