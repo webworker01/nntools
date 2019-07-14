@@ -25,9 +25,10 @@ if (( thirdpartycoins < 1 )); then
 else
     sudo ufw allow 17776 comment 'Iguana Notary Third Party'
     sudo ufw allow 57777 comment 'CHIPS'
-    sudo ufw allow 40002 comment 'GAME'
-    sudo ufw allow 41878 comment 'EMC2'
-    sudo ufw allow 10111 comment 'GIN'
+    #sudo ufw allow 40002 comment 'GAME'
+    #sudo ufw allow 41878 comment 'EMC2'
+    #sudo ufw allow 10111 comment 'GIN'
+    sudo ufw allow 27485 comment 'VRSC'
 fi
 
 sudo ufw enable
