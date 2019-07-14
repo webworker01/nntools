@@ -123,62 +123,51 @@ fi
 #fi
 outputRow "KMD" $blocks $longest $blockhash
 
-#CHIPS
-blocks=$(chips-cli getinfo | jq .blocks)
-longest=$(chips-cli getinfo | jq .headers)
-blockhash=$(chips-cli getbestblockhash)
-parseKomodostats "CHIPS" "$remotecheck"
-remoteblocks2=""
-remotehash2=
-hashatheight2=
-#parseNotarystats "CHIPS" "$remotecheck3"
-#if (( blocks >= remoteblocks3 )); then
-#    hashatheight3=$(chips-cli getblockhash $remoteblocks3)
-#else
-#    hashatheight3=
-#fi
-outputRow "CHIPS" $blocks $longest $blockhash
+if (( thirdpartycoins > 0 )); then
+    for coins in "${coinsthird[@]}"; do
+        coin=($coins)
 
-#GAME
-blocks=$(gamecredits-cli getinfo | jq .blocks)
-longest=$blocks
-blockhash=$(gamecredits-cli getbestblockhash)
-parseKomodostats "GAME" "$remotecheck"
-remoteblocks2=""
-remotehash2=
-hashatheight2=
-#parseNotarystats "GAME" "$remotecheck3"
-#if (( blocks >= remoteblocks3 )); then
-#    hashatheight3=$(gamecredits-cli getblockhash $remoteblocks3)
-#else
-#    hashatheight3=
-#fi
-outputRow "GAME" $blocks $longest $blockhash
+        eval $(echo coincli=${coin[1]})
 
-#Loop through coinlist coins
-for coins in "${coinlist[@]}"; do
-    coin=($coins)
-
-    if [[ ! ${ignoreacs[*]} =~ ${coin[0]} ]]; then
-        blocks=$($komodocli -ac_name=${coin[0]} getinfo | jq .blocks)
-        longest=$($komodocli -ac_name=${coin[0]} getinfo | jq .longestchain)
-        blockhash=$($komodocli -ac_name=${coin[0]} getbestblockhash)
-        parseKomodostats "${coin[0]}" "$remotecheck"
-        parseDexstats "${coin[0]}" "$remotecheck2"
-        #parseNotarystats "${coin[0]}" "$remotecheck3"
-        if [[ ! -z $remoteblocks2 ]] && (( blocks >= remoteblocks2 )); then
-            hashatheight2=$($komodocli -ac_name=${coin[0]} getblockhash $remoteblocks2)
+        blocks=$($coincli getinfo | jq .blocks)
+        if [[ "${coin[0]}" == "GAME" ]]; then
+            longest=$blocks
         else
-            hashatheight2=
+            longest=$($coincli getinfo | jq .headers)
         fi
-        #if [[ ! -z $remoteblocks3 ]] &&(( blocks >= remoteblocks3 )); then
-        #    hashatheight3=$($komodocli -ac_name=${coin[0]} getblockhash $remoteblocks3)
-        #else
-        #    hashatheight3=
-        #fi
+        blockhash=$($coincli getbestblockhash)
+        parseKomodostats "${coin[0]}" "$remotecheck"
+        remoteblocks2=""
+        remotehash2=
+        hashatheight2=
         outputRow "${coin[0]}" $blocks $longest $blockhash
-    fi
-done
+    done
+else
+    #Loop through coinlist coins
+    for coins in "${coinlist[@]}"; do
+        coin=($coins)
+
+        if [[ ! ${ignoreacs[*]} =~ ${coin[0]} ]]; then
+            blocks=$($komodocli -ac_name=${coin[0]} getinfo | jq .blocks)
+            longest=$($komodocli -ac_name=${coin[0]} getinfo | jq .longestchain)
+            blockhash=$($komodocli -ac_name=${coin[0]} getbestblockhash)
+            parseKomodostats "${coin[0]}" "$remotecheck"
+            parseDexstats "${coin[0]}" "$remotecheck2"
+            #parseNotarystats "${coin[0]}" "$remotecheck3"
+            if [[ ! -z $remoteblocks2 ]] && (( blocks >= remoteblocks2 )); then
+                hashatheight2=$($komodocli -ac_name=${coin[0]} getblockhash $remoteblocks2)
+            else
+                hashatheight2=
+            fi
+            #if [[ ! -z $remoteblocks3 ]] &&(( blocks >= remoteblocks3 )); then
+            #    hashatheight3=$($komodocli -ac_name=${coin[0]} getblockhash $remoteblocks3)
+            #else
+            #    hashatheight3=
+            #fi
+            outputRow "${coin[0]}" $blocks $longest $blockhash
+        fi
+    done
+fi
 
 if [ "$forked" = false ]; then
     printf "\033[0;32mAll coins are fine\033[0m\n"
