@@ -10,11 +10,49 @@
 #Full path to komodo-cli
 komodocli=/usr/local/bin/komodo-cli
 
+#Full path to komodod
+komodod="$HOME/komodo/src/komodod"
+
+#set to 1 if this is the server for third party coins, else leave as 0
+thirdpartycoins=0
+
 #Enter your notary node address
-NN_ADDRESS=RQgQ19Hh1dMKdkSwsBZXsURBjKh7XS5obb
+nn_address=
+
+#Enter your notary node pubkey
+nn_pubkey=
+
+#Loop stats script every this many seconds
+sleepytime=600
+#Else change to false if you don't want it to loop
+#sleeptime=false
+
+#How many transactions back to scan for notarizations
+txscanamount=777
 
 #You can modify this list of ACs to exclude or comment out the line to show all
 ignoreacs=('VOTE2018' 'VOTE2019' 'BEER' 'PIZZA')
 
-#set to 1 if this is the server for third party coins, else leave as 0
-thirdpartycoins=0
+#declare non komodo clis - set the full path accessible as the second part of each string, the 3rd entry is the name of the data dir for the coin and assumes they are in $HOME
+coinsfirst=(
+'BTC bitcoin-cli .bitcoin'
+)
+
+coinsthird=(
+'CHIPS $HOME/chips3/src/chips-cli .chips'
+'GAME $HOME/GameCredits/src/gamecredits-cli .gamecredits'
+'EMC2 $HOME/einsteinium/src/einsteinium-cli .einsteinium'
+'GIN $HOME/gincoin-core/src/gincoin-cli .gincoincore'
+'VRSC $HOME/VerusCoin/src/verus .komodo/VRSC'
+)
+
+#for git checking - path and remote branch
+declare -A repos=(
+[KMD]="$HOME/komodo origin/beta"
+[SUPERNET]="$HOME/SuperNET origin/blackjok3r"
+[CHIPS]="$HOME/chips3 origin/dev"
+[GAME]="$HOME/GameCredits origin/master"
+[EMC2]="$HOME/einsteinium origin/master"
+[GIN]="$HOME/gincoin-core origin/master"
+[VRSC]="$HOME/VerusCoin origin/master"
+)
