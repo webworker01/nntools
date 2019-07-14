@@ -40,6 +40,7 @@ daemon=1
 rpcworkqueue=256
 rpcbind=127.0.0.1
 rpcallowip=127.0.0.1
+blocknotify=$HOME/nntools/minerfixer %s
 EOF
 chmod 600 $HOME/.komodo/komodo.conf
 
