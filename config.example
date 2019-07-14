@@ -3,7 +3,7 @@
 # Usage:
 # cp config.example config
 #
-# Fill in your NN_ADDRESS
+# Fill in your nn_address and nn_pubkey and make any relevant preference or system specific changes
 #
 # by webworker01
 #
@@ -20,7 +20,7 @@ thirdpartycoins=0
 #Enter your notary node address (no quotes)
 nn_address=
 
-#Enter your notary node pubkey  (no quotes)
+#Enter your notary node pubkey (no quotes)
 nn_pubkey=
 
 #Loop stats script every this many seconds
