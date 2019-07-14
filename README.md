@@ -1,3 +1,10 @@
+What?
+--------
+
+Tools for https://komodoplatform.com Notary Nodes
+
+Assumes Ubuntu 18 installation (might work with 16)
+
 Setup
 --------
 
