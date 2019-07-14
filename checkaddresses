@@ -21,4 +21,6 @@ if (( thirdpartycoins < 1 )); then
             validateaddress $nn_address -ac_name=${coin[0]}
         fi
     done
+else
+    validateaddress $nn_address -ac_name=VRSC
 fi
