@@ -107,6 +107,7 @@ rpcallowip=127.0.0.1
 listen=0
 listenonion=0
 onlynet=ipv4
+deprecatedrpc=estimatefee
 EOF
     chmod 600 $HOME/.bitcoin/bitcoin.conf
 else
