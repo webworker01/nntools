@@ -69,7 +69,7 @@ $blocknotify
 EOF
 chmod 600 $HOME/.komodo/komodo.conf
 
-echo "pubkey=$nn_pubkey" >> $HOME/komodo/src/pubkey.txt
+echo "pubkey=$nn_pubkey" >>> $HOME/komodo/src/pubkey.txt
 
 #Iguana
 cd $HOME
