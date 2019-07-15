@@ -1,7 +1,14 @@
 #!/bin/bash
+#
+# @author webworker01
+#
 source coinlist
 source config
-count=0
+
+if [[ -z $1 ]]; then
+    echo "Usage ./importkey <keytoimport>"
+    exit 0
+fi
 
 for coins in "${coinlist[@]}"; do
     coin=($coins)

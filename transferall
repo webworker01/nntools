@@ -9,6 +9,7 @@ addresstarget=$1
 
 if [[ ! -z $addresstarget ]]; then
     echo "Usage: ./transferall <addresstotransferto>"
+    exit 0
 fi
 
 $komodocli sendtoaddress $addresstarget `komodo-cli getbalance` "" "" true
