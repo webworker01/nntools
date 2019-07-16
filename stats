@@ -53,7 +53,7 @@ btcntrzaddr=1P3rU1Nk1pmc2BiWC8dEy9bZa1ZbMp5jfg
 kmdntrzaddr=RXL3YXG2ceaB6C5hfJcN4fvmLH2C34knhA
 #Only count KMD->BTC after this timestamp (block 814000)
 #timefilter=1525032458
-#season 3 - (block 1444000)
+#season 3 - (kmd block 1444000 btc block ~ 585548 txid ff603c48f1e3958de4b170e84c85322a55bae2097c2ea2b659a3bd89617b6fb1)
 timefilter=1563202267
 #Second time filter for assetchains (SuperNET commit 07515fb)
 #timefilter2=1525513998
