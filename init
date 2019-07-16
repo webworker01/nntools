@@ -227,4 +227,4 @@ EOF
 fi
 
 echo
-echo "Done! You must create wp_7776 or wp_7776 files https://docs.komodoplatform.com/notary/setup-Komodo-Notary-Node.html#create-wp-7776"
+echo "Done! You must create wp_7776 or wp_7779 file https://docs.komodoplatform.com/notary/setup-Komodo-Notary-Node.html#create-wp-7776"

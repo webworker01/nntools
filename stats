@@ -52,9 +52,13 @@ ntrzdamt=-0.00083600
 btcntrzaddr=1P3rU1Nk1pmc2BiWC8dEy9bZa1ZbMp5jfg
 kmdntrzaddr=RXL3YXG2ceaB6C5hfJcN4fvmLH2C34knhA
 #Only count KMD->BTC after this timestamp (block 814000)
-timefilter=1525032458
+#timefilter=1525032458
+#season 3 - (block 1444000)
+timefilter=1563202267
 #Second time filter for assetchains (SuperNET commit 07515fb)
-timefilter2=1525513998
+#timefilter2=1525513998
+#season 3 - 2019-07-15 00:00 UTC (kmd block 1443129)
+timefilter2=1563148800
 
 format="%-11s %6s %7s %6s %.20s %8s %7s %5s %6s %6s"
 
