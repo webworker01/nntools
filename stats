@@ -101,10 +101,12 @@ outputstats ()
     for coins in "${othercoins[@]}"; do
         coin=($coins)
 
+        seasonfilter=$timefilter2
         case ${coin[0]} in
             BTC)
                 coinsutxoamount=$utxoamt
                 coinsntraddr=$btcntrzaddr
+                seasonfilter=$timefilter
                 ;;
             GAME)
                 coinsutxoamount=0.00100000
@@ -133,7 +135,8 @@ outputstats ()
 
         coinstxinfo=$($coinexec listtransactions "" $txscanamount)
         coinslastntrztime=$(echo $coinstxinfo | jq -r --arg address "$coinsntraddr" '[.[] | select(.address==$address)] | sort_by(.time) | last | "\(.time)"')
-        coinsntrzd=$(echo $coinstxinfo | jq --arg address "$coinsntraddr" --arg timefilter $timefilter2 '[.[] | select(.time>=($timefilter|tonumber) and .address==$address and .category=="send")] | length')
+
+        coinsntrzd=$(echo $coinstxinfo | jq --arg address "$coinsntraddr" --arg timefilter $seasonfilter '[.[] | select(.time>=($timefilter|tonumber) and .address==$address and .category=="send")] | length')
         otherutxo=$($coinexec listunspent | jq --arg amt "$coinsutxoamount" '[.[] | select(.amount==($amt|tonumber))] | length')
         totalntrzd=$(( $totalntrzd + $coinsntrzd ))
         repo=(${repos[${coin[0]}]})
