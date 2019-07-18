@@ -1,0 +1,65 @@
+#!/bin/bash
+#
+# Start/Restart notarizations:
+# `./startnotary`
+# Rebuild Iguana:
+# `./startnotary build`
+#
+# @author webworker01
+#
+source config
+source coinlist
+
+scriptpath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+
+pkill -15 iguana
+sleep 10
+
+$komodocli lockunspent true $($komodocli listlockunspent | jq -c .)
+
+cd $HOME/SuperNET/iguana
+stdbuf -oL ../agents/iguana notary | tee $nnlogfile &
+iguanapid=$(echo $!)
+echo "iguana pid $iguanapid"
+sleep 4
+
+curl --url "http://127.0.0.1:${iguanaport}" --data "{\"agent\":\"SuperNET\",\"method\":\"myipaddr\",\"ipaddr\":\"${nn_ipaddress}\"}"
+sleep 3
+
+#seeds
+curl --url "http://127.0.0.1:${iguanaport}" --data "{\"agent\":\"iguana\",\"method\":\"addnotary\",\"ipaddr\":\"95.213.238.100\"}"
+curl --url "http://127.0.0.1:${iguanaport}" --data "{\"agent\":\"iguana\",\"method\":\"addnotary\",\"ipaddr\":\"77.75.121.138\"}"
+curl --url "http://127.0.0.1:${iguanaport}" --data "{\"agent\":\"iguana\",\"method\":\"addnotary\",\"ipaddr\":\"103.6.12.105\"}"
+curl --url "http://127.0.0.1:${iguanaport}" --data "{\"agent\":\"iguana\",\"method\":\"addnotary\",\"ipaddr\":\"139.99.209.214\"}"
+
+./coins/kmd_${iguanaport}  # add KMD
+./wp_${iguanaport} # Unlock wallet
+./coins/btc_${iguanaport} # add BTC
+
+for coins in "${coinlist[@]}"; do
+    coin=($coins)
+    if [[ ! ${ignoreacs[*]} =~ ${coin[0]} ]]; then
+        ./coins/${coin[0],,}_${iguanaport}
+    fi
+done
+sleep 10
+
+curl --url "http://127.0.0.1:${iguanaport}" --data "{\"agent\":\"iguana\",\"method\":\"dpow\",\"symbol\":\"KMD\",\"pubkey\":\"${nn_pubkey}\"}"
+sleep 10
+
+$scriptpath/dpow
+
+# tail -fn0 $logfile | while read line ; do
+#     echo $line
+#     echo "$line" | grep "INIT with 64 notaries"
+#     if [ $? = 0 ]; then
+#         echo "---- INIT SUCCESS START DPOW ----"
+
+#         $scriptpath/dpow
+#         exit 0
+#     fi
+# done
+
+echo "renice $iguanapid"
+sudo renice -20 -p ${iguanapid}
+ps -al | grep iguana

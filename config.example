@@ -26,6 +26,9 @@ nn_address=
 #Enter your notary node compressed pubkey (no quotes)
 nn_pubkey=
 
+#Enter your notary node IPv4 address
+nn_ipaddress=
+
 #Loop stats script every this many seconds
 sleepytime=600
 #Else change to false if you don't want it to loop
