@@ -1,10 +1,5 @@
 #!/bin/bash
 #
-# Start/Restart notarizations:
-# `./startnotary`
-# Rebuild Iguana:
-# `./startnotary build`
-#
 # @author webworker01
 #
 source config
