@@ -63,6 +63,13 @@ sleep 10
 
 $scriptpath/dpow
 
-echo "renice $iguanapid"
-sudo renice -20 -p ${iguanapid}
-ps -al | grep iguana
+if (( thirdpartycoins < 1 )); then
+    echo "renice $iguanapid"
+    sudo renice -20 -p ${iguanapid}
+    ps -al | grep iguana
+else
+    echo "---------"
+    echo "run: sudo renice -20 -p ${iguanapid}"
+    ps -al | grep iguana
+    echo "---------"
+fi
