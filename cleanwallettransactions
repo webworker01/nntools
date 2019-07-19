@@ -1,0 +1,13 @@
+#!/bin/bash
+source coinlist
+source config
+
+komodo-cli cleanwallettransactions
+
+for coins in "${coinlist[@]}"; do
+    coin=($coins)
+    if [[ ! ${ignoreacs[*]} =~ ${coin[0]} ]]; then
+        echo ${coin[0]}
+        $komodocli -ac_name=${coin[0]} cleanwallettransactions
+    fi
+done
