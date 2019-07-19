@@ -56,5 +56,7 @@ else
         curl --url "http://127.0.0.1:${iguanaport}" --data "{\"agent\":\"iguana\",\"method\":\"dpow\",\"symbol\":\"EMC2\",\"freq\":5,\"pubkey\":\"${nn_pubkey}\"}"
         echo "DPOW: GIN"
         curl --url "http://127.0.0.1:${iguanaport}" --data "{\"agent\":\"iguana\",\"method\":\"dpow\",\"symbol\":\"GIN\",\"pubkey\":\"${nn_pubkey}\"}"
+        echo "DPOW: VRSC"
+        curl --url "http://127.0.0.1:${iguanaport}" --data "{\"agent\":\"iguana\",\"method\":\"dpow\",\"symbol\":\"VRSC\",\"freq\":10,\"pubkey\":\"${nn_pubkey}\"}"
     fi
 fi
