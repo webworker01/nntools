@@ -14,7 +14,12 @@ sleep 10
 $komodocli lockunspent true $($komodocli listlockunspent | jq -c .)
 
 cd $HOME/SuperNET/iguana
-stdbuf -oL ../agents/iguana notary &
+if (( thirdpartycoins < 1 )); then
+    iguanamode="notary"
+else
+    iguanamode="3rd_party"
+fi
+stdbuf -oL ../agents/iguana $iguanamode &
 iguanapid=$(echo $!)
 echo "iguana pid $iguanapid"
 sleep 4
