@@ -26,7 +26,7 @@ if (( kmdutxos < kmdutxoqty )); then
     echo "KMD utxos: $kmdutxos"
 
     splitter=$($scriptpath/splitfunds KMD $kmdutxoqty)
-    echo "$dt - KMD - $splitter" >> $cronsplitlogfile
+    echo "$dt [cronsplit] KMD - $splitter" >> $nntoolslogfile
 fi
 
 #no params in cli indicates just the short list of kmd specific coins
@@ -46,7 +46,7 @@ if [[ -z $1 ]]; then
                         echo "${coin[0]} utxos sprout: $acutxo"
                         splitter=$($scriptpath/splitfunds ${coin[0]} $acutxoqty 0)
                     fi
-                    echo "$dt - ${coin[0]} - $splitter" >> $cronsplitlogfile
+                    echo "$dt [cronsplit] ${coin[0]} - $splitter" >> $nntoolslogfile
                 fi
             fi
         done
@@ -85,7 +85,7 @@ else
         if (( otherutxo < otherutxoqty )); then
             echo "${coin[0]} utxos: $otherutxo"
             splitter=$(curl --url "http://127.0.0.1:$iguanaport" --data "{\"coin\":\"${coin[0]}\",\"agent\":\"iguana\",\"method\":\"splitfunds\",\"satoshis\":\"$coinsplitamount\",\"sendflag\":1,\"duplicates\":$otherutxoqty}")
-            echo "$dt - ${coin[0]} - $splitter" >> $cronsplitlogfile
+            echo "$dt [cronsplit] ${coin[0]} - $splitter" >> $nntoolslogfile
         fi
     done
 fi

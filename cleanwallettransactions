@@ -6,14 +6,18 @@ scriptpath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 source $scriptpath/coinlist
 source $scriptpath/config
 
-$komodocli cleanwallettransactions
+dt=$(date '+%Y-%m-%d %H:%M:%S');
+
+cleaner=$($komodocli cleanwallettransactions)
+echo "$dt [cleanwallettransactions] KMD - $cleaner" >> $nntoolslogfile
 
 if (( thirdpartycoins < 1 )); then
     for coins in "${coinlist[@]}"; do
         coin=($coins)
         if [[ ! ${ignoreacs[*]} =~ ${coin[0]} ]]; then
             echo ${coin[0]}
-            $komodocli -ac_name=${coin[0]} cleanwallettransactions
+            cleaner=$($komodocli -ac_name=${coin[0]} cleanwallettransactions)
+            echo "$dt [cleanwallettransactions] KMD - ${coin[0]}" >> $nntoolslogfile
         fi
     done
 fi

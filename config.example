@@ -52,8 +52,8 @@ otherutxoqty=50
 #You can modify this list of ACs to exclude or comment out the line to show all
 ignoreacs=('VOTE2018' 'VOTE2019' 'BEER' 'PIZZA')
 
-#Location for cronsplit.log
-cronsplitlogfile=$HOME/cronsplit.log
+#Location for nntools.log
+nntoolslogfile=$HOME/nntools.log
 
 #Define coins that are sprout
 sproutcoins=('OOT' 'ZILLA')
