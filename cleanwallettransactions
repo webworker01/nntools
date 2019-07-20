@@ -17,7 +17,7 @@ if (( thirdpartycoins < 1 )); then
         if [[ ! ${ignoreacs[*]} =~ ${coin[0]} ]]; then
             echo ${coin[0]}
             cleaner=$($komodocli -ac_name=${coin[0]} cleanwallettransactions)
-            echo "$dt [cleanwallettransactions] KMD - ${coin[0]}" >> $nntoolslogfile
+            echo "$dt [cleanwallettransactions] ${coin[0]} - $cleaner" >> $nntoolslogfile
         fi
     done
 fi
