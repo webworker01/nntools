@@ -62,4 +62,4 @@ sproutcoins=('OOT' 'ZILLA')
 addnodes="-addnode=seed.komodostats.com -addnode=seed.webworker.sh"
 
 #which notaryid to use as reference node when checking masks (0 to 63)
-referencenode=1
+referencenode=7
