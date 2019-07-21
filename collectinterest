@@ -81,7 +81,7 @@ if (( minedcount > 3 )) || (( minedcount > 0 && combine > 0 )); then
     consolidatethese=$(jq -r '[.[] | {"txid":.txid, "vout":.vout}]' <<< $consolidateutxo)
     consolidateamount=$(jq -r '[.[].amount] | add' <<< $consolidateutxo)
 
-    echo "$dt [collectinterest] current interest $interest" >> $nntoolslogfile
+    echo "$dt [collectinterest] current interest $interest - consolidateamount $consolidateamount" >> $nntoolslogfile
 
     #combine all
     if (( $(echo "$interest > $collectinterestthreshold" | bc) )) || (( combine > 0 )); then
