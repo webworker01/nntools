@@ -48,7 +48,7 @@ if (( minedcount > 0 )); then
         echo "feedthisamountfixed: $feedthisamountfixed"
 
         rawtxhex=$($komodocli createrawtransaction ${feedthis} '''{ "'$nn_address'": '$feedthisamountfixed' }''')
-        rawtxid=$(sendRaw $rawtxhex)
+        sendRaw $rawtxhex
         echo "feeder created"
         feederfed=1
 
@@ -67,7 +67,7 @@ if (( minedcount > 0 )); then
 
         rawtxhexfeeder=$($komodocli createrawtransaction ${combinefeederutxos} '''{ "'$nn_address'": '$combinefeederamounts' }''')
 
-        rawtxid=$(sendRaw $rawtxhexfeeder)
+        sendRaw $rawtxhexfeeder
         feederfed=1
 
         echo "$dt [collectinterest] feed the feeder - txid : $rawtxid" >> $nntoolslogfile
@@ -107,7 +107,7 @@ if (( minedcount > 3 )) || (( minedcount > 0 && combine > 0 )); then
         combineconsolidateutxos=$(jq -r --argjson arr1 "$consolidatethese" --argjson arr2 "$alreadyconsolidated" -n '$arr1 + $arr2 | tostring')
 
         rawtxhex=$($komodocli createrawtransaction ${combineconsolidateutxos} '''{ "'$nn_address'": '$consolidateamountfixed' }''')
-        rawtxid=$(sendRaw $rawtxhex)
+        sendRaw $rawtxhex
 
         echo "$dt [collectinterest] combine all - txid : $rawtxid" >> $nntoolslogfile
 
@@ -119,7 +119,7 @@ if (( minedcount > 3 )) || (( minedcount > 0 && combine > 0 )); then
         consolidateutxostring=$(echo $consolidatethese | jq -r '. | tostring')
 
         rawtxhex=$($komodocli createrawtransaction ${consolidateutxostring} '''{ "'$nn_address'": '$consolidateamountfixed' }''')
-        rawtxid=$(sendRaw $rawtxhex)
+        sendRaw $rawtxhex
 
         echo "$dt [collectinterest] combine just mined - txid : $rawtxid" >> $nntoolslogfile
     fi
