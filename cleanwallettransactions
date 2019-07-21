@@ -8,8 +8,10 @@ source $scriptpath/config
 
 dt=$(date '+%Y-%m-%d %H:%M:%S');
 
-cleaner=$($komodocli cleanwallettransactions)
-echo "$dt [cleanwallettransactions] KMD - $cleaner" >> $nntoolslogfile
+cleanerremoved=$($komodocli cleanwallettransactions | jq -r .removed_transactions)
+if (cleanerremoved > 0); then
+    echo "$dt [cleanwallettransactions] KMD - Removed $cleanerremoved transactions" >> $nntoolslogfile
+fi
 
 if (( thirdpartycoins < 1 )); then
     for coins in "${coinlist[@]}"; do
