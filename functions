@@ -23,6 +23,8 @@ sendRaw()
         else
             rawtxid="failed no signed tx"
         fi
+
+        echo $rawtxid
     fi
 }
 
