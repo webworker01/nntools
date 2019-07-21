@@ -20,6 +20,8 @@ sendRaw()
 
         if [[ ! -z $signedtx ]]; then
             rawtxid=$($komodocli sendrawtransaction $signedtx)
+        else
+            rawtxid="failed no signed tx"
         fi
     fi
 }
