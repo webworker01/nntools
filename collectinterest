@@ -9,7 +9,6 @@ source $scriptpath/config
 source $scriptpath/functions
 
 if [[ ! -z $1 ]] && [[ "$1" == *"combine" ]]; then
-    echo "try combine all"
     combine=1
 else
     combine=0
@@ -23,51 +22,38 @@ collectinterestthreshold=0.25
 dt=$(date '+%Y-%m-%d %H:%M:%S');
 
 unspent=$($komodocli listunspent)
-minedcount=$(echo $unspent | jq '[.[] | select(.generated==true)] | length')
+minedcount=$(jq '[.[] | select(.generated==true)] | length' <<< $unspent)
 
 #check if feeder utxo needs to be fed
-feederutxo=$(echo $unspent | jq -r --arg utxosize $utxoamount --arg feedermax $utxofeederhigh '[.[] | select (.generated==false and .spendable==true and .amount>($utxosize|tonumber) and .amount<($feedermax|tonumber))]')
-feederutxovin=$(echo $feederutxo | jq '[.[] | {"txid":.txid, "vout":.vout}]')
-feederamount=$(echo $feederutxo | jq '[.[].amount] | add')
+feederutxo=$(jq -r --arg utxosize $utxoamount --arg feedermax $utxofeederhigh '[.[] | select (.generated==false and .spendable==true and .amount>($utxosize|tonumber) and .amount<($feedermax|tonumber))]' <<< $unspent)
+feederutxovin=$(jq '[.[] | {"txid":.txid, "vout":.vout}]' <<< $feederutxo)
+feederamount=$(jq '[.[].amount] | add' <<< $feederutxo)
 feederfed=0
 if (( minedcount > 0 )); then
-
-    feedutxo=$(echo $unspent | jq -r --arg minsize $utxofeederlow '[.[] | select (.amount>($minsize|tonumber) and .generated==true and .spendable==true)] | sort_by(.amount)[0]')
-    feedthis=$(echo $feedutxo | jq -r '[. | {"txid":.txid, "vout":.vout}] | tostring')
-    feedthisamount=$(echo $feedutxo | jq -r '.amount')
-    #feedthisamountfixed=$(echo "scale=8; $feedthisamount/1*1" | bc -l | sed 's/^\./0./')
+    feedutxo=$(jq -r --arg minsize $utxofeederlow '[.[] | select (.amount>($minsize|tonumber) and .generated==true and .spendable==true)] | sort_by(.amount)[0]' <<< $unspent)
+    feedthis=$(jq -r '[. | {"txid":.txid, "vout":.vout}] | tostring' <<< $feedutxo)
+    feedthisamount=$(jq -r '.amount' <<< $feedutxo)
     feedthisamountfixed=$( printf "%.8f" $feedthisamount )
 
     #if feeder utxo doesn't exist
     if [[ "$feederamount" == "null" ]]; then
-        printf "\ncreate the feeder\n"
-
-        echo "feederutxovin: $feederutxovin"
-        echo "feederamount: $feederamount"
-        echo "feedthis: $feedthis"
-        echo "feedthisamountfixed: $feedthisamountfixed"
 
         rawtxhex=$($komodocli createrawtransaction ${feedthis} '''{ "'$nn_address'": '$feedthisamountfixed' }''')
-        $rawtxid=$(sendRaw $rawtxhex)
-        echo "feeder created"
+        rawtxid=$(sendRaw $rawtxhex)
+
         feederfed=1
 
         echo "$dt [collectinterest] create the feeder - txid : $rawtxid" >> $nntoolslogfile
 
     #if feeder utxo is getting low
     elif (( $(echo "$feederamount < $utxofeederlow" | bc -l) )); then
-        printf "\nfeed the feeder\n"
-
-        echo "feederutxovin: $feederutxovin"
-        echo "feederamount: $feederamount"
-
         combinefeederamounts=$( printf "%.8f" $(bc -l <<< "($feederamount + $feedthisamountfixed)") )
 
         combinefeederutxos=$(jq -r --argjson arr1 "$feederutxovin" --argjson arr2 "$feedthis" -n '$arr1 + $arr2 | tostring')
 
         rawtxhex=$($komodocli createrawtransaction ${combinefeederutxos} '''{ "'$nn_address'": '$combinefeederamounts' }''')
 
-        $rawtxid=$(sendRaw $rawtxhex)
+        rawtxid=$(sendRaw $rawtxhex)
         feederfed=1
 
         echo "$dt [collectinterest] feed the feeder - txid : $rawtxid" >> $nntoolslogfile
@@ -82,45 +68,42 @@ if (( minedcount > 3 )) || (( minedcount > 0 && combine > 0 )); then
     #$komodocli lockunspent true $lockedtx
 
     unspent=$($komodocli listunspent)
-    alreadyutxounlocked=$(echo $unspent | jq -r --arg feedermax $utxofeederhigh '[.[] | select (.generated==false and .spendable==true and .amount>($feedermax|tonumber))]')
-    interest=$(echo $alreadyutxounlocked | jq -r '[.[].interest] | add')
+    alreadyutxounlocked=$(jq -r --arg feedermax $utxofeederhigh '[.[] | select (.generated==false and .spendable==true and .amount>($feedermax|tonumber))]' <<< $unspent)
+    interest=$(jq -r '[.[].interest] | add' <<< $alreadyutxounlocked)
     interest=$( printf "%.8f" $interest )
     printf "\nInterest: $interest\n"
 
-    consolidateutxo=$(echo $unspent | jq -r '[.[] | select (.generated==true and .spendable==true)]')
+    consolidateutxo=$(jq -r '[.[] | select (.generated==true and .spendable==true)]' <<< $unspent)
     #save one mined off the top to feed the feeder if needed
     if (( feederfed == 1 )); then
-        consolidateutxo=$(echo $consolidateutxo | jq -r '. | del(.[0])')
+        consolidateutxo=$(jq -r '. | del(.[0])' <<< $consolidateutxo)
     fi
-    consolidatethese=$(echo $consolidateutxo | jq -r '[.[] | {"txid":.txid, "vout":.vout}]')
-    consolidateamount=$(echo $consolidateutxo | jq -r '[.[].amount] | add')
+    consolidatethese=$(jq -r '[.[] | {"txid":.txid, "vout":.vout}]' <<< $consolidateutxo)
+    consolidateamount=$(jq -r '[.[].amount] | add' <<< $consolidateutxo)
+
+    echo "$dt [collectinterest] current interest $interest" >> $nntoolslogfile
 
     #combine all
     if (( $(echo "$interest > $collectinterestthreshold" | bc) )) || (( combine > 0 )); then
-        echo "combine all"
-
-        alreadyconsolidated=$(echo $alreadyutxounlocked | jq '[.[] | {"txid":.txid, "vout":.vout}]')
-        alreadyconsolidatedamount=$(echo $alreadyutxounlocked | jq -r '[.[].amount] | add')
+        alreadyconsolidated=$(jq '[.[] | {"txid":.txid, "vout":.vout}]' <<< $alreadyutxounlocked)
+        alreadyconsolidatedamount=$(jq -r '[.[].amount] | add' <<< $alreadyutxounlocked)
 
         consolidateamountfixed=$( printf "%.8f" $(bc -l <<< "($consolidateamount+$alreadyconsolidatedamount+$interest)") )
 
         combineconsolidateutxos=$(jq -r --argjson arr1 "$consolidatethese" --argjson arr2 "$alreadyconsolidated" -n '$arr1 + $arr2 | tostring')
 
         rawtxhex=$($komodocli createrawtransaction ${combineconsolidateutxos} '''{ "'$nn_address'": '$consolidateamountfixed' }''')
-        $rawtxid=$(sendRaw $rawtxhex)
-
+        rawtxid=$(sendRaw $rawtxhex)
 
         echo "$dt [collectinterest] combine all - txid : $rawtxid" >> $nntoolslogfile
 
     #combine just mined
     else
-        echo "combine just mined"
-
         consolidateamountfixed=$( printf "%.8f" $consolidateamount )
-        consolidateutxostring=$(echo $consolidatethese | jq -r '. | tostring')
+        consolidateutxostring=$(jq -r '. | tostring' <<< $consolidatethese)
 
         rawtxhex=$($komodocli createrawtransaction ${consolidateutxostring} '''{ "'$nn_address'": '$consolidateamountfixed' }''')
-        $rawtxid=$(sendRaw $rawtxhex)
+        rawtxid=$(sendRaw $rawtxhex)
 
         echo "$dt [collectinterest] combine just mined - txid : $rawtxid" >> $nntoolslogfile
     fi

@@ -8,7 +8,6 @@ sendRaw()
 {
     local rawtx=$1
 
-
     if [[ ! -z $rawtx ]]; then
         nlocktime=$(printf "%08x" $(date +%s) | dd conv=swab 2> /dev/null | rev)
 
@@ -24,7 +23,10 @@ sendRaw()
             rawtxid="failed no signed tx"
         fi
 
-        echo $rawtxid
+        echo "$dt [sendRaw] - txid : $rawtxid" >> $nntoolslogfile
+        echo "$rawtxid"
+    else
+        echo "failed"
     fi
 }
 
