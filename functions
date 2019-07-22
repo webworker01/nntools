@@ -3,6 +3,10 @@
 #
 # @author webworker01
 #
+scriptpath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+
+source $scriptpath/config
+source $scriptpath/functions
 
 sendRaw()
 {
@@ -23,8 +27,7 @@ sendRaw()
             rawtxid="failed no signed tx"
         fi
 
-        echo "$dt [sendRaw] - txid : $rawtxid" >> $nntoolslogfile
-        echo "$rawtxid"
+        echo "${rawtxid}"
     else
         echo "failed"
     fi
