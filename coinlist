@@ -17,7 +17,7 @@ coinlist=(
 'DSEC'
 'ETOMIC'
 'EQL'
-'GLXT'
+#'GLXT'
 'HODL'
 'HUSH3'
 'ILN'
