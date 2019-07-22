@@ -1,5 +1,11 @@
 #!/bin/bash
 #
+# Instead of sending mined coins away to another address, this script sets up a utxo based system
+# One "primary" utxo is maintained which allows for the bulk of rewards accruing
+# One "feeder" utxo is maintained which is used for utxo splits
+# Mined rewards are combined once their total is at least 10 KMD to start them accruing rewards
+# Once 0.25 kmd is accrued it is all collected into the "primary"
+#
 # @see https://github.com/DeckerSU/komodo_scripts/blob/master/sendawaynn.sh
 # @author webworker01
 #
@@ -42,7 +48,7 @@ if (( minedcount > 0 )); then
         rawtxid=$(sendRaw ${rawtxresult})
         feederfed=1
 
-        echo "$dt [collectinterest] create the feeder - txid : $rawtxid" >> $nntoolslogfile
+        echo "$dt [collectinterest] create feeder - txid : $rawtxid" >> $nntoolslogfile
 
     #if feeder utxo is getting low
     elif (( $(echo "$feederamount < $utxofeederlow" | bc -l) )); then
@@ -54,7 +60,7 @@ if (( minedcount > 0 )); then
         rawtxid=$(sendRaw ${rawtxresult})
         feederfed=1
 
-        echo "$dt [collectinterest] feed the feeder - txid : $rawtxid" >> $nntoolslogfile
+        echo "$dt [collectinterest] feed feeder - txid : $rawtxid" >> $nntoolslogfile
     fi
 fi
 
@@ -95,7 +101,7 @@ if (( minedcount > 3 )) || (( minedcount > 0 && combine > 0 )); then
 
         echo "$dt [collectinterest] combine all - txid : $rawtxid" >> $nntoolslogfile
 
-    #combine just mined
+    #combine mined
     else
         consolidateamountfixed=$( printf "%.8f" $consolidateamount )
         utxostring=$( jq -r '. | tostring' <<< $consolidatethese )
@@ -104,7 +110,7 @@ if (( minedcount > 3 )) || (( minedcount > 0 && combine > 0 )); then
         # echo "$dt [collectinterest] rawtxresult141: $rawtxresult" >> $nntoolslogfile
         rawtxid=$(sendRaw ${rawtxresult})
 
-        echo "$dt [collectinterest] combine just mined $consolidateamountfixed - txid : $rawtxid" >> $nntoolslogfile
+        echo "$dt [collectinterest] combine mined $consolidateamountfixed - txid : $rawtxid" >> $nntoolslogfile
     fi
 
     #$komodocli lockunspent false $lockedtx
