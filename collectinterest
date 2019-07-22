@@ -3,12 +3,10 @@
 # @see https://github.com/DeckerSU/komodo_scripts/blob/master/sendawaynn.sh
 # @author webworker01
 #
-PS4='$LINENO: '
-scriptpath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-set -x
+cd "${BASH_SOURCE%/*}" || exit
 
-source $scriptpath/config
-source $scriptpath/functions
+source config
+source functions
 
 if [[ ! -z $1 ]] && [[ "$1" == *"combine" ]]; then
     combine=1
@@ -81,7 +79,7 @@ if (( minedcount > 3 )) || (( minedcount > 0 && combine > 0 )); then
     consolidatethese=$(jq -r '[.[] | {"txid":.txid, "vout":.vout}]' <<< $consolidateutxo)
     consolidateamount=$(jq -r '[.[].amount] | add' <<< $consolidateutxo)
 
-    echo "$dt [collectinterest] current interest $interest - consolidateamount $consolidateamount" >> $nntoolslogfile
+    # echo "$dt [collectinterest] current interest $interest - consolidateamount $consolidateamount" >> $nntoolslogfile
 
     #combine all
     if (( $(echo "$interest > $collectinterestthreshold" | bc) )) || (( combine > 0 )); then
@@ -100,13 +98,13 @@ if (( minedcount > 3 )) || (( minedcount > 0 && combine > 0 )); then
     #combine just mined
     else
         consolidateamountfixed=$( printf "%.8f" $consolidateamount )
-        consolidateutxostring=$(jq -r '. | tostring' <<< $consolidatethese)
+        utxostring=$( jq -r '. | tostring' <<< $consolidatethese )
 
-        rawtxresult=$($komodocli createrawtransaction ${consolidateutxostring} '''{ "'$nn_address'": '$consolidateamountfixed' }''')
+        rawtxresult=$($komodocli createrawtransaction $utxostring '''{ "'$nn_address'": '$consolidateamountfixed' }''')
         # echo "$dt [collectinterest] rawtxresult141: $rawtxresult" >> $nntoolslogfile
         rawtxid=$(sendRaw ${rawtxresult})
 
-        echo "$dt [collectinterest] combine just mined ${consolidateamountfixed} - txid : $rawtxid" >> $nntoolslogfile
+        echo "$dt [collectinterest] combine just mined $consolidateamountfixed - txid : $rawtxid" >> $nntoolslogfile
     fi
 
     #$komodocli lockunspent false $lockedtx
