@@ -5,6 +5,7 @@
 #
 PS4='$LINENO: '
 scriptpath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+set -x
 
 source $scriptpath/config
 source $scriptpath/functions
@@ -70,7 +71,7 @@ if (( minedcount > 3 )) || (( minedcount > 0 && combine > 0 )); then
     alreadyutxounlocked=$(jq -r --arg feedermax $utxofeederhigh '[.[] | select (.generated==false and .spendable==true and .amount>($feedermax|tonumber))]' <<< $unspent)
     interest=$(jq -r '[.[].interest] | add' <<< $alreadyutxounlocked)
     interest=$( printf "%.8f" $interest )
-    printf "\nInterest: $interest\n"
+    #printf "\nInterest: $interest\n"
 
     consolidateutxo=$(jq -r '[.[] | select (.generated==true and .spendable==true)]' <<< $unspent)
     #save one mined off the top to feed the feeder if needed
@@ -101,7 +102,8 @@ if (( minedcount > 3 )) || (( minedcount > 0 && combine > 0 )); then
         consolidateamountfixed=$( printf "%.8f" $consolidateamount )
         consolidateutxostring=$(jq -r '. | tostring' <<< $consolidatethese)
 
-        rawtxresult=$($komodocli createrawtransaction ${consolidateutxostring} '''{ "'$nn_address'":'$consolidateamountfixed' }''')
+        rawtxresult=$($komodocli createrawtransaction ${consolidateutxostring} '''{ "'$nn_address'": '$consolidateamountfixed' }''')
+        # echo "$dt [collectinterest] rawtxresult141: $rawtxresult" >> $nntoolslogfile
         rawtxid=$(sendRaw ${rawtxresult})
 
         echo "$dt [collectinterest] combine just mined ${consolidateamountfixed} - txid : $rawtxid" >> $nntoolslogfile
