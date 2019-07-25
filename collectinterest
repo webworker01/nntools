@@ -48,7 +48,7 @@ if (( minedcount > 0 )); then
         rawtxid=$(sendRaw ${rawtxresult})
         feederfed=1
 
-        echo "$dt [collectinterest] create feeder - txid : $rawtxid" >> $nntoolslogfile
+        echo "$dt [collectinterest] create feeder $feedthisamountfixed - txid : $rawtxid" >> $nntoolslogfile
 
     #if feeder utxo is getting low
     elif (( $(echo "$feederamount < $utxofeederlow" | bc -l) )); then
@@ -60,7 +60,7 @@ if (( minedcount > 0 )); then
         rawtxid=$(sendRaw ${rawtxresult})
         feederfed=1
 
-        echo "$dt [collectinterest] feed feeder - txid : $rawtxid" >> $nntoolslogfile
+        echo "$dt [collectinterest] feed feeder $combinefeederamounts - txid : $rawtxid" >> $nntoolslogfile
     fi
 fi
 
@@ -99,7 +99,7 @@ if (( minedcount > 3 )) || (( minedcount > 0 && combine > 0 )); then
         rawtxresult=$($komodocli createrawtransaction ${combineconsolidateutxos} '''{ "'$nn_address'": '$consolidateamountfixed' }''')
         rawtxid=$(sendRaw ${rawtxresult})
 
-        echo "$dt [collectinterest] combine all - txid : $rawtxid" >> $nntoolslogfile
+        echo "$dt [collectinterest] combine all $consolidateamountfixed - txid : $rawtxid" >> $nntoolslogfile
 
     #combine mined
     else
