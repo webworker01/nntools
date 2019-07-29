@@ -8,13 +8,15 @@
 # @author webworker01
 #
 source config
+dt=$(date '+%Y-%m-%d %H:%M:%S');
 
 lastgen=$($komodocli listtransactions "*" 777 | jq '[.[] | select(.generated==true)] | .[-1]')
 if [[ "$lastgen" != "null" ]]; then
-    confirmations=$(echo $lastgen | jq .confirmations)
-    rawconfirmations=$(echo $lastgen | jq .rawconfirmations)
-    lastamount=$(echo $lastgen | jq .amount)
-    lasthash=$(echo $lastgen | jq -r .blockhash)
+    confirmations=$(jq .confirmations <<< $lastgen)
+    rawconfirmations=$(jq .rawconfirmations <<< $lastgen)
+    lastamount=$(jq .amount <<< $lastgen)
+    lasthash=$(jq -r .blockhash <<< $lastgen)
+    lasttxid=$(jq -r .txid <<< $lastgen)
     lastheight=$($komodocli getblockheader $lasthash | jq -r .height)
 
     printf "Last Amt:$lastamount Ht:$lastheight RawConfs:$rawconfirmations Confs:$confirmations"
@@ -24,14 +26,21 @@ if [[ "$lastgen" != "null" ]]; then
         eligible=$(( 65 - rawconfirmations ))
         printf " \033[0;32m[energy saving mode ${eligible}]\033[0m\n"
         $komodocli setgenerate false
+        if (( rawconfirmations == 3 )); then
+            echo "$dt [minerfixer] energy saving mode" >> $nntoolslogfile
+        fi
 
     #turn on setgenerate upon eligibility
     elif (( rawconfirmations == 65 )); then
         printf " \033[0;31m[setgenerate true]\033[0m\n"
+        echo "$dt [minerfixer] setgenerate true" >> $nntoolslogfile
         $komodocli setgenerate true 1
 
     elif (( rawconfirmations < 3 )); then
         printf " \033[0;32m[Block Found!]\033[0m\n"
+        if (( rawconfirmations == 1 )); then
+            echo "$dt [minerfixer] Block Found! Height: $lastheight Amount: $lastamount TxID: $lasttxid" >> $nntoolslogfile
+        fi
 
     #Default to do nothing and assume mining
     else
@@ -40,5 +49,6 @@ if [[ "$lastgen" != "null" ]]; then
 else
     printf " \033[0;31m[could not get last mined tx]\033[0m\n"
     printf " \033[0;31m[setgenerate true]\033[0m\n"
+    echo "$dt [minerfixer] could not get last mined tx! setgenerate true" >> $nntoolslogfile
     $komodocli setgenerate true 1
 fi

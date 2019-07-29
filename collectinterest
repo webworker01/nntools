@@ -99,7 +99,7 @@ if (( minedcount > 3 )) || (( minedcount > 0 && combine > 0 )); then
         rawtxresult=$($komodocli createrawtransaction ${combineconsolidateutxos} '''{ "'$nn_address'": '$consolidateamountfixed' }''')
         rawtxid=$(sendRaw ${rawtxresult})
 
-        echo "$dt [collectinterest] combine all $consolidateamountfixed - $interest interest - txid : $rawtxid" >> $nntoolslogfile
+        echo "$dt [collectinterest] combine all $consolidateamountfixed - interest: $interest  - txid : $rawtxid" >> $nntoolslogfile
 
     #combine mined
     else
@@ -110,7 +110,7 @@ if (( minedcount > 3 )) || (( minedcount > 0 && combine > 0 )); then
         # echo "$dt [collectinterest] rawtxresult141: $rawtxresult" >> $nntoolslogfile
         rawtxid=$(sendRaw ${rawtxresult})
 
-        echo "$dt [collectinterest] combine mined $consolidateamountfixed - txid : $rawtxid" >> $nntoolslogfile
+        echo "$dt [collectinterest] combine mined $consolidateamountfixed - interest: $interest  - txid : $rawtxid" >> $nntoolslogfile
     fi
 
     #$komodocli lockunspent false $lockedtx
