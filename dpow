@@ -32,7 +32,7 @@ else
         for coins in "${coinlist[@]}"; do
             coin=($coins)
 
-            echo "DPOW: ${coin[0]}"
+            echo "--DPOW: ${coin[0]}--"
             if [[ ${freqten[*]} =~ ${coin[0]} ]]; then
                 echo "Freq 10"
                 curl --url "http://127.0.0.1:${iguanaport}" --data "{\"agent\":\"iguana\",\"method\":\"dpow\",\"symbol\":\"${coin[0]}\",\"freq\":10,\"pubkey\":\"${nn_pubkey}\"}"
@@ -46,17 +46,17 @@ else
             sleep $sleeptime
         done
     else
-        echo "DPOW: CHIPS"
+        echo "--DPOW: CHIPS--"
         curl --url "http://127.0.0.1:${iguanaport}" --data "{\"agent\":\"iguana\",\"method\":\"dpow\",\"symbol\":\"CHIPS\",\"pubkey\":\"${nn_pubkey}\"}"
         sleep $sleeptime
-        echo "DPOW: GAME"
+        echo "--DPOW: GAME--"
         curl --url "http://127.0.0.1:${iguanaport}" --data "{\"agent\":\"iguana\",\"method\":\"dpow\",\"symbol\":\"GAME\",\"freq\":5,\"pubkey\":\"${nn_pubkey}\"}"
         sleep $sleeptime
-        echo "DPOW: EMC2"
+        echo "--DPOW: EMC2--"
         curl --url "http://127.0.0.1:${iguanaport}" --data "{\"agent\":\"iguana\",\"method\":\"dpow\",\"symbol\":\"EMC2\",\"freq\":5,\"pubkey\":\"${nn_pubkey}\"}"
-        echo "DPOW: GIN"
+        echo "--DPOW: GIN--"
         curl --url "http://127.0.0.1:${iguanaport}" --data "{\"agent\":\"iguana\",\"method\":\"dpow\",\"symbol\":\"GIN\",\"pubkey\":\"${nn_pubkey}\"}"
-        echo "DPOW: VRSC"
+        echo "--DPOW: VRSC--"
         curl --url "http://127.0.0.1:${iguanaport}" --data "{\"agent\":\"iguana\",\"method\":\"dpow\",\"symbol\":\"VRSC\",\"freq\":10,\"pubkey\":\"${nn_pubkey}\"}"
     fi
 fi

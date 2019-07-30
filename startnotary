@@ -4,9 +4,9 @@
 #
 scriptpath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
-source $scriptpath/config
-source $scriptpath/coinlist
-source $scriptpath/paths
+source ${scriptpath}/config
+source ${scriptpath}/coinlist
+source ${scriptpath}/paths
 
 pkill -15 iguana
 sleep 10
@@ -47,25 +47,28 @@ if (( thirdpartycoins < 1 )); then
     for coins in "${coinlist[@]}"; do
         coin=($coins)
         if [[ ! ${ignoreacs[*]} =~ ${coin[0]} ]]; then
+            echo "--Starting ${coin[0]}--"
             ./coins/${coin[0],,}_${iguanaport}
         fi
     done
 
-    sleep 30
+    #temp
+    echo "--Starting THC--"
+    ${scriptpath}/tmp/THC_7776
+
+    sleep 10
     curl --url "http://127.0.0.1:${iguanaport}" --data "{\"agent\":\"iguana\",\"method\":\"dpow\",\"symbol\":\"KMD\",\"pubkey\":\"${nn_pubkey}\"}"
 else
     for coins in "${coinsthird[@]}"; do
         coin=($coins)
-        echo "Starting ${coin[0]}"
+        echo "--Starting ${coin[0]}--"
         ./coins/${coin[0],,}_${iguanaport}
     done
-
-    #temp
-    $scriptpath/tmp/THC_7776
 fi
-sleep 30
+echo "Done adding coins to iguana, please wait to start dPoW..."
+sleep 60
 
-$scriptpath/dpow
+${scriptpath}/dpow
 
 if (( thirdpartycoins < 1 )); then
     echo "renice $iguanapid"
