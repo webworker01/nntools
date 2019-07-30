@@ -1,7 +1,7 @@
 #!/bin/bash
 coinlist=(
 'AXO'
-'BEER'
+#'BEER'
 'BET'
 'BOTS'
 'BTCH'
@@ -37,7 +37,7 @@ coinlist=(
 'PANGEA'
 'PGT'
 'PIRATE'
-'PIZZA'
+#'PIZZA'
 'PRLPAY'
 'REVS'
 'RICK'
@@ -45,7 +45,7 @@ coinlist=(
 'SEC'
 'SUPERNET'
 'THC'
-'VOTE2019'
+#'VOTE2019'
 #'VRSC'
 'WLC'
 'ZILLA'
