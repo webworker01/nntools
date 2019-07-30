@@ -1,0 +1,41 @@
+#!/bin/bash
+#
+# Script to join utxos into one without going over tx size limit
+#
+# Usage: consolidate <coinname>
+#
+# @author webworker01
+#
+
+source config
+source functions
+
+if [[ -z $1 ]]; then
+    echo "Usage: consolidate <coinname>"
+    exit 0
+fi
+
+if [[ $1 != "KMD" ]]; then
+    coin=$1
+    asset=" -ac_name=${1}"
+else
+    coin="KMD"
+    asset=""
+fi
+
+unspent=$($komodocli $asset listunspent)
+consolidateutxo=$(jq -r --arg checkaddr $nn_address '[.[] | select (.address==$checkaddr and .spendable==true)] | sort_by(-.amount)[0:399]' <<< $unspent)
+consolidatethese=$(jq -r '[.[] | {"txid":.txid, "vout":.vout}] | tostring' <<< $consolidateutxo)
+consolidateamount=$(jq -r '[.[].amount] | add' <<< $consolidateutxo)
+
+if [[ "$consolidateamount" != "null" ]]; then
+    consolidateamountfixed=$( printf "%.8f" $(bc -l <<< $consolidateamount) )
+
+    if (( $(echo "$consolidateamountfixed > 0" | bc -l) )); then
+
+        rawtxresult=$($komodocli $asset createrawtransaction ${consolidatethese} '''{ "'$nn_address'": '$consolidateamountfixed' }''')
+        rawtxid=$(sendRaw ${rawtxresult} ${coin})
+
+        echo "Sent $consolidateamount to $nn_address TXID: $rawtxid"
+    fi
+fi

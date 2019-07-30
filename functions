@@ -7,6 +7,14 @@
 sendRaw()
 {
     local rawtx=$1
+    local acname=$2
+
+    if [[ ! -z $acname ]] && [[ $acname != "KMD" ]]; then
+        asset=" -ac_name=${acname}"
+    else
+        asset=""
+    fi
+
 
     if [[ ! -z $rawtx ]]; then
         nlocktime=$(printf "%08x" $(date +%s) | dd conv=swab 2> /dev/null | rev)
@@ -15,10 +23,10 @@ sendRaw()
         txtail=000000000000000000000000000000
         hex=${hex::-38}${nlocktime}${txtail}
 
-        signedtx=$($komodocli signrawtransaction $hex | jq -r '.hex')
+        signedtx=$($komodocli $asset signrawtransaction $hex | jq -r '.hex')
 
         if [[ ! -z $signedtx ]]; then
-            rawtxid=$($komodocli sendrawtransaction $signedtx)
+            rawtxid=$($komodocli $asset sendrawtransaction $signedtx)
         else
             rawtxid="failed no signed tx"
         fi
