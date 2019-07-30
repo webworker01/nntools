@@ -59,6 +59,9 @@ else
         echo "Starting ${coin[0]}"
         ./coins/${coin[0],,}_${iguanaport}
     done
+
+    #temp
+    $scriptpath/tmp/THC_7776
 fi
 sleep 30
 
