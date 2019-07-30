@@ -51,6 +51,7 @@ if (( thirdpartycoins < 1 )); then
         fi
     done
 
+    sleep 30
     curl --url "http://127.0.0.1:${iguanaport}" --data "{\"agent\":\"iguana\",\"method\":\"dpow\",\"symbol\":\"KMD\",\"pubkey\":\"${nn_pubkey}\"}"
 else
     for coins in "${coinsthird[@]}"; do
@@ -59,7 +60,7 @@ else
         ./coins/${coin[0],,}_${iguanaport}
     done
 fi
-sleep 10
+sleep 30
 
 $scriptpath/dpow
 
