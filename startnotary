@@ -67,7 +67,7 @@ else
 fi
 echo "Done adding coins to iguana, please wait to start dPoW..."
 sleep 60
-
+echo "--Starting dPoW--"
 ${scriptpath}/dpow
 
 if (( thirdpartycoins < 1 )); then
