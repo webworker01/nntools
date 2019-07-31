@@ -52,7 +52,8 @@ komodo_asset -ac_name=MESH -ac_supply=1000007
 #komodo_asset -ac_name=MGNX -ac_supply=12465003 -ac_staked=90 -ac_reward=2000000000 -ac_halving=525960 -ac_cc=2 -ac_end=2629800 -addnode=142.93.27.180
 komodo_asset -ac_name=MGW -ac_supply=999999
 #komodo_asset -ac_name=MNZ -ac_supply=257142858
-komodo_asset -ac_name=MORTY -ac_supply=90000000000 -ac_reward=100000000 -ac_cc=3 -addnode=138.201.136.145
+#komodo_asset -ac_name=MORTY -ac_supply=90000000000 -ac_reward=100000000 -ac_cc=3 -addnode=138.201.136.145
+komodo_asset -ac_name=MORTY -ac_supply=90000000000 -ac_reward=100000000 -ac_cc=3 -ac_staked=10 -addnode=95.217.44.58 -addnode=138.201.136.145
 komodo_asset -ac_name=MSHARK -ac_supply=1400000
 komodo_asset -ac_name=NINJA -ac_supply=100000000
 komodo_asset -ac_name=OOT -ac_supply=216000000 -ac_sapling=5000000
@@ -63,7 +64,8 @@ komodo_asset -ac_name=PIRATE -ac_supply=0 -ac_reward=25600000000 -ac_halving=777
 komodo_asset -ac_name=PRLPAY -ac_supply=500000000
 #komodo_asset -ac_name=PTX -ac_supply=12000000 -ac_reward=1500000000 -ac_staked=50 -ac_end=12000000 -addnode=142.11.199.63
 komodo_asset -ac_name=RFOX -ac_supply=1000000000 -ac_reward=100000000
-komodo_asset -ac_name=RICK -ac_supply=90000000000 -ac_reward=100000000 -ac_cc=3 -addnode=138.201.136.145
+#komodo_asset -ac_name=RICK -ac_supply=90000000000 -ac_reward=100000000 -ac_cc=3 -addnode=138.201.136.145
+komodo_asset -ac_name=RICK -ac_supply=90000000000 -ac_reward=100000000 -ac_cc=3 -ac_staked=10 -addnode=95.217.44.58 -addnode=138.201.136.145
 komodo_asset -ac_name=REVS -ac_supply=1300000
 komodo_asset -ac_name=SEC -ac_supply=1000000000 -ac_cc=333
 komodo_asset -ac_name=SUPERNET -ac_supply=816061
