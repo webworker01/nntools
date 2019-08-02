@@ -8,6 +8,8 @@ source ${scriptpath}/config
 source ${scriptpath}/coinlist
 source ${scriptpath}/paths
 
+tmp7776=('THC' 'RICK' 'MORTY')
+
 pkill -15 iguana
 sleep 10
 
@@ -46,18 +48,18 @@ if (( thirdpartycoins < 1 )); then
 
     for coins in "${coinlist[@]}"; do
         coin=($coins)
-        if [[ ! ${ignoreacs[*]} =~ ${coin[0]} ]]; then
+        if [[ ! ${ignoreacs[*]} =~ ${coin[0]} ]] && [[ ! ${tmp7776[*]} =~ ${coin[0]} ]]; then
             echo "--Starting ${coin[0]}--"
             ./coins/${coin[0],,}_${iguanaport}
         fi
     done
 
     #temp
-    echo "--Starting THC--"
+    echo "--Starting tmp/THC_7776--"
     ${scriptpath}/tmp/THC_7776
-    echo "--Starting RICK--"
+    echo "--Starting tmp/RICK_7776--"
     ${scriptpath}/tmp/RICK_7776
-    echo "--Starting MORTY--"
+    echo "--Starting tmp/MORTY_7776--"
     ${scriptpath}/tmp/MORTY_7776
 
     sleep 10
