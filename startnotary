@@ -56,11 +56,11 @@ if (( thirdpartycoins < 1 )); then
 
     #temp
     echo "--Starting tmp/THC_7776--"
-    ${scriptpath}/tmp/THC_7776
+    ${scriptpath}/7776/THC_7776
     echo "--Starting tmp/RICK_7776--"
-    ${scriptpath}/tmp/RICK_7776
+    ${scriptpath}/7776/RICK_7776
     echo "--Starting tmp/MORTY_7776--"
-    ${scriptpath}/tmp/MORTY_7776
+    ${scriptpath}/7776/MORTY_7776
 
     sleep 10
     curl --url "http://127.0.0.1:${iguanaport}" --data "{\"agent\":\"iguana\",\"method\":\"dpow\",\"symbol\":\"KMD\",\"pubkey\":\"${nn_pubkey}\"}"
