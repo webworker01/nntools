@@ -55,11 +55,11 @@ if (( thirdpartycoins < 1 )); then
     done
 
     #temp
-    echo "--Starting tmp/THC_7776--"
+    echo "--Starting local THC_7776--"
     ${scriptpath}/7776/THC_7776
-    echo "--Starting tmp/RICK_7776--"
+    echo "--Starting local RICK_7776--"
     ${scriptpath}/7776/RICK_7776
-    echo "--Starting tmp/MORTY_7776--"
+    echo "--Starting local MORTY_7776--"
     ${scriptpath}/7776/MORTY_7776
 
     sleep 10
