@@ -30,10 +30,9 @@ curl --url "http://127.0.0.1:${iguanaport}" --data "{\"agent\":\"SuperNET\",\"me
 sleep 3
 
 #seeds
-curl --url "http://127.0.0.1:${iguanaport}" --data "{\"agent\":\"iguana\",\"method\":\"addnotary\",\"ipaddr\":\"95.213.238.100\"}"
-curl --url "http://127.0.0.1:${iguanaport}" --data "{\"agent\":\"iguana\",\"method\":\"addnotary\",\"ipaddr\":\"77.75.121.138\"}"
-curl --url "http://127.0.0.1:${iguanaport}" --data "{\"agent\":\"iguana\",\"method\":\"addnotary\",\"ipaddr\":\"103.6.12.105\"}"
-curl --url "http://127.0.0.1:${iguanaport}" --data "{\"agent\":\"iguana\",\"method\":\"addnotary\",\"ipaddr\":\"139.99.209.214\"}"
+for seed in "${dpowseeds[@]}"; do
+    curl --url "http://127.0.0.1:${iguanaport}" --data "{\"agent\":\"iguana\",\"method\":\"addnotary\",\"ipaddr\":\"${seed}\"}"
+done
 
 if (( thirdpartycoins < 1 )); then
     ./coins/kmd_${iguanaport}  # add KMD

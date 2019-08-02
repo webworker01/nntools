@@ -61,5 +61,8 @@ sproutcoins=('OOT' 'ZILLA')
 #Add additional -addnode parameters for coin daemons
 addnodes="-addnode=seed.komodostats.com -addnode=seed.webworker.sh"
 
+#Configure initial seeds to connect to iguana network
+dpowseeds=('95.213.238.100' '77.75.121.138' '103.6.12.105' '139.99.209.214')
+
 #which notaryid to use as reference node when checking masks (0 to 63)
 referencenode=7
