@@ -42,6 +42,8 @@ fi
 
 ./wp_${iguanaport} # Unlock wallet
 
+sleep 30
+
 if (( thirdpartycoins < 1 )); then
     ./coins/btc_${iguanaport} # add BTC
 
@@ -71,7 +73,7 @@ else
     done
 fi
 echo "Done adding coins to iguana, please wait to start dPoW..."
-sleep 60
+sleep 90
 echo "--Starting dPoW--"
 ${scriptpath}/dpow
 
