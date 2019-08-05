@@ -1,8 +1,8 @@
 # Advanced networking tweaks
 
-https://docs.komodoplatform.com/mmV1/guides/mmV1-Network-Optimization.html
-https://wwwx.cs.unc.edu/~sparkst/howto/network_tuning.php#Steps
-https://wiki.mikejung.biz/Sysctl_tweaks
+* https://docs.komodoplatform.com/mmV1/guides/mmV1-Network-Optimization.html
+* https://wwwx.cs.unc.edu/~sparkst/howto/network_tuning.php#Steps
+* https://wiki.mikejung.biz/Sysctl_tweaks
 
 ```
 sudo modprobe tcp_bbr
