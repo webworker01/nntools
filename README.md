@@ -49,6 +49,7 @@ File Name | Function
 **networktweaksundo.txt** | Reference to my default Ubuntu 16.04 net config "just in case"
 **paths** | Stores paths to different coin files
 **rebuild*** | Files to rebuild coin daemons that have already been cloned
+**7776** | Stores ready to execute 7776 files
 
 See Also
 ----------
