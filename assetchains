@@ -23,7 +23,7 @@ function komodo_asset()
     fi
 }
 
-komodo_asset -ac_name=AXO -ac_supply=200000000
+komodo_asset -ac_name=AXO -ac_supply=200000000 -ac_ccactivate=130000
 komodo_asset -ac_name=BET -ac_supply=999999
 komodo_asset -ac_name=BNTN -ac_supply=500000000
 komodo_asset -ac_name=BOTS -ac_supply=999999
