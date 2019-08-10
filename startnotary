@@ -8,7 +8,7 @@ source ${scriptpath}/config
 source ${scriptpath}/coinlist
 source ${scriptpath}/paths
 
-tmp7776=('THC' 'RICK' 'MORTY')
+tmp7776=('THC')
 
 pkill -15 iguana
 sleep 10
