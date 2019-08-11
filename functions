@@ -29,7 +29,7 @@ log()
             colorcode=34
             ;;
         *)
-            colorcode=31
+            colorcode=32
             ;;
     esac
 

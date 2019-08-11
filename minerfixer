@@ -19,7 +19,7 @@ if [[ "$lastgen" != "null" ]]; then
     lasttxid=$(jq -r .txid <<< $lastgen)
     lastheight=$($komodocli getblockheader $lasthash | jq -r .height)
 
-    log "minerfixer" "Last Amt:$lastamount Ht:$lastheight RawConfs:$rawconfirmations Confs:$confirmations" "32" "echo"
+    log "minerfixer" "Last Amt:$lastamount Ht:$lastheight RawConfs:$rawconfirmations Confs:$confirmations" "green" "echo"
 
     #between 3 and 64 confirmations go into power saving mode
     if (( (rawconfirmations > 2 && rawconfirmations < 65) )); then
@@ -27,9 +27,9 @@ if [[ "$lastgen" != "null" ]]; then
 
         $komodocli setgenerate false
         if (( rawconfirmations == 3 )); then
-            log "minerfixer" "energy saving mode" "32"
+            log "minerfixer" "energy saving mode" "green"
         else
-            log "minerfixer" "energy saving mode" "32" "echo"
+            log "minerfixer" "energy saving mode" "green" "echo"
         fi
 
     #turn on setgenerate upon eligibility
@@ -39,14 +39,14 @@ if [[ "$lastgen" != "null" ]]; then
 
     elif (( rawconfirmations < 3 )); then
         if (( rawconfirmations == 1 )); then
-            log "minerfixer" "Block Found! Height: $lastheight Amount: $lastamount TxID: $lasttxid" "32"
+            log "minerfixer" "Block Found! Height: $lastheight Amount: $lastamount TxID: $lasttxid" "red"
         else
-            log "minerfixer" " [[ Block found! ]]" "32" "echo"
+            log "minerfixer" " [[ Block found! ]]" "green" "echo"
         fi
 
     #Default to do nothing and assume mining
     else
-        log "minerfixer" "mining.." "31" "echo"
+        log "minerfixer" "mining.." "green" "echo"
     fi
 else
     log "minerfixer" "could not get last mined tx! setgenerate true"

@@ -55,7 +55,7 @@ if [[ $coin == "KMD" ]]; then
         sleep 10
         confirmations=$($komodocli gettransaction $txid2 | jq .confirmations)
         i=$((i+1))
-        log "resetwallet" "send feeder waiting for confirmation $confirmations ($i) - ${txid2}" "31" "echo"
+        log "resetwallet" "send feeder waiting for confirmation $confirmations ($i) - ${txid2}" "red" "echo"
     done
 fi
 
@@ -82,7 +82,7 @@ $komodocli $asset stop
 i=0
 while [ -f $pidfile ]; do
    i=$((i+1))
-   log "resetwallet" "Waiting for daemon $coin stop ($i)" "31" "echo"
+   log "resetwallet" "Waiting for daemon $coin stop ($i)" "red" "echo"
    sleep 1
 done
 sleep 15
@@ -96,7 +96,7 @@ $komodod $daemon_args &
 i=0
 while ! $komodocli $asset getinfo >/dev/null 2>&1; do
    i=$((i+1))
-   log "resetwallet" "Waiting for daemon start $coin ($i)" "31" "echo"
+   log "resetwallet" "Waiting for daemon start $coin ($i)" "red" "echo"
    sleep 1
 done
 
