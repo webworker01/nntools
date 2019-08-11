@@ -29,6 +29,9 @@ nn_pubkey=
 #Enter your notary node IPv4 address
 nn_ipaddress=
 
+#Date format for logging
+datetime=$(date '+%Y-%m-%d %H:%M:%S')
+
 #Loop stats script every this many seconds
 sleepytime=600
 #Else change to false if you don't want it to loop

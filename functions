@@ -15,7 +15,6 @@ sendRaw()
         asset=""
     fi
 
-
     if [[ ! -z $rawtx ]]; then
         nlocktime=$(printf "%08x" $(date +%s) | dd conv=swab 2> /dev/null | rev)
 

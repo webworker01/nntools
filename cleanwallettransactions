@@ -6,7 +6,7 @@ scriptpath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 source $scriptpath/coinlist
 source $scriptpath/config
 
-dt=$(date '+%Y-%m-%d %H:%M:%S');
+dt=$(date '+%Y-%m-%d %H:%M:%S')
 
 cleanerremoved=$($komodocli cleanwallettransactions | jq -r .removed_transactions)
 if (( cleanerremoved > 0 )); then

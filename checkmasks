@@ -29,6 +29,8 @@ else
     echo
     echo "My recvmask: $myrecvmask"
     curl -s --url "http://127.0.0.1:${iguanaport}" --data "{\"agent\":\"dpow\",\"method\":\"active\",\"maskhex\":\"$myrecvmask\"}" | jq -c -r '.set'
+    echo "not:"
+    curl -s --url "http://127.0.0.1:${iguanaport}" --data "{\"agent\":\"dpow\",\"method\":\"active\",\"maskhex\":\"$myrecvmask\"}" | jq -c -r '. | del(.maskhex) | del(.tag) | .not'
 
     bestmask=$(echo $bestmaskdata | jq -c 'group_by(.bestmask) | del(.[] | select(.[0].bestmask == "               0" )) | del(.[] | select(.[0].bestmask == " 0" )) | map ({ "total":length, "bestmask":.[0].bestmask }) | sort_by(.total) | reverse')
     bestmaskmask=$(echo $bestmask | jq .[0].bestmask | sed 's/"//g' | awk '{$1=$1};1')
