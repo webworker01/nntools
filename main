@@ -6,7 +6,11 @@
 #
 scriptpath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
+#imports
 source ${scriptpath}/config
 source ${scriptpath}/coinlist
 source ${scriptpath}/paths
 source ${scriptpath}/functions
+
+#defaults
+datetime=${datetime:-$(date '+%Y-%m-%d %H:%M:%S')}
