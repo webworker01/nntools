@@ -55,7 +55,7 @@ otherutxoqty=50
 #You can modify this list of ACs to exclude or comment out the line to show all
 ignoreacs=('VOTE2018' 'VOTE2019' 'BEER' 'PIZZA')
 
-#Location for nntools.log
+#Location for nntools.log or set to blank to disable
 nntoolslogfile=$HOME/nntools.log
 
 #Define coins that are sprout

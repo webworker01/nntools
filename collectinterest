@@ -9,10 +9,10 @@
 # @see https://github.com/DeckerSU/komodo_scripts/blob/master/sendawaynn.sh
 # @author webworker01
 #
-cd "${BASH_SOURCE%/*}" || exit
+scriptpath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $scriptpath/main
 
-source config
-source functions
+cd "${BASH_SOURCE%/*}" || exit
 
 if [[ ! -z $1 ]] && [[ "$1" == *"combine" ]]; then
     combine=1
@@ -25,7 +25,7 @@ utxofeederhigh=9
 utxofeederlow=3
 collectinterestthreshold=0.25
 
-dt=$(date '+%Y-%m-%d %H:%M:%S');
+dt=$(date '+%Y-%m-%d %H:%M:%S')
 
 unspent=$($komodocli listunspent)
 minedcount=$(jq '[.[] | select(.generated==true)] | length' <<< $unspent)
@@ -48,7 +48,7 @@ if (( minedcount > 0 )); then
         rawtxid=$(sendRaw ${rawtxresult})
         feederfed=1
 
-        echo "$dt [collectinterest] create feeder $feedthisamountfixed - txid : $rawtxid" >> $nntoolslogfile
+        log "collectinterest" "create feeder $feedthisamountfixed - txid : $rawtxid"
 
     #if feeder utxo is getting low
     elif (( $(echo "$feederamount < $utxofeederlow" | bc -l) )); then
@@ -60,7 +60,7 @@ if (( minedcount > 0 )); then
         rawtxid=$(sendRaw ${rawtxresult})
         feederfed=1
 
-        echo "$dt [collectinterest] feed feeder $combinefeederamounts - txid : $rawtxid" >> $nntoolslogfile
+        log "collectinterest" "feed feeder $combinefeederamounts - txid : $rawtxid"
     fi
 fi
 
@@ -99,18 +99,16 @@ if (( minedcount > 3 )) || (( minedcount > 0 && combine > 0 )); then
         rawtxresult=$($komodocli createrawtransaction ${combineconsolidateutxos} '''{ "'$nn_address'": '$consolidateamountfixed' }''')
         rawtxid=$(sendRaw ${rawtxresult})
 
-        echo "$dt [collectinterest] combine all $consolidateamountfixed - interest: $interest  - txid : $rawtxid" >> $nntoolslogfile
-
+        log "collectinterest" "combine all $consolidateamountfixed - interest: $interest  - txid : $rawtxid"
     #combine mined
     else
         consolidateamountfixed=$( printf "%.8f" $consolidateamount )
         utxostring=$( jq -r '. | tostring' <<< $consolidatethese )
 
         rawtxresult=$($komodocli createrawtransaction $utxostring '''{ "'$nn_address'": '$consolidateamountfixed' }''')
-        # echo "$dt [collectinterest] rawtxresult141: $rawtxresult" >> $nntoolslogfile
         rawtxid=$(sendRaw ${rawtxresult})
 
-        echo "$dt [collectinterest] combine mined $consolidateamountfixed - interest: $interest  - txid : $rawtxid" >> $nntoolslogfile
+        log "collectinterest" "combine mined $consolidateamountfixed - interest: $interest  - txid : $rawtxid"
     fi
 
     #$komodocli lockunspent false $lockedtx

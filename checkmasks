@@ -6,7 +6,8 @@
 #
 # @author webworker01
 #
-source config
+scriptpath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $scriptpath/main
 
 if [[ ! -z $1 ]]; then
     if [[ "$1" == "all" ]]; then

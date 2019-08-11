@@ -3,10 +3,8 @@
 #
 # @author webworker01
 #
-source coinlist
-source config
-source functions
-source paths
+scriptpath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $scriptpath/main
 
 color_red=$'\033[0;31m'
 color_reset=$'\033[0m'

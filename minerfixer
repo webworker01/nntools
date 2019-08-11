@@ -7,8 +7,8 @@
 #
 # @author webworker01
 #
-source config
-dt=$(date '+%Y-%m-%d %H:%M:%S');
+scriptpath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $scriptpath/main
 
 lastgen=$($komodocli listtransactions "*" 777 | jq '[.[] | select(.generated==true)] | .[-1]')
 if [[ "$lastgen" != "null" ]]; then
@@ -19,36 +19,36 @@ if [[ "$lastgen" != "null" ]]; then
     lasttxid=$(jq -r .txid <<< $lastgen)
     lastheight=$($komodocli getblockheader $lasthash | jq -r .height)
 
-    printf "Last Amt:$lastamount Ht:$lastheight RawConfs:$rawconfirmations Confs:$confirmations"
+    log "minerfixer" "Last Amt:$lastamount Ht:$lastheight RawConfs:$rawconfirmations Confs:$confirmations" "32" "echo"
 
     #between 3 and 64 confirmations go into power saving mode
     if (( (rawconfirmations > 2 && rawconfirmations < 65) )); then
         eligible=$(( 65 - rawconfirmations ))
-        printf " \033[0;32m[energy saving mode ${eligible}]\033[0m\n"
+
         $komodocli setgenerate false
         if (( rawconfirmations == 3 )); then
-            echo "$dt [minerfixer] energy saving mode" >> $nntoolslogfile
+            log "minerfixer" "energy saving mode" "32"
+        else
+            log "minerfixer" "energy saving mode" "32" "echo"
         fi
 
     #turn on setgenerate upon eligibility
     elif (( rawconfirmations == 65 )); then
-        printf " \033[0;31m[setgenerate true]\033[0m\n"
-        echo "$dt [minerfixer] setgenerate true" >> $nntoolslogfile
+        log "minerfixer" "setgenerate true"
         $komodocli setgenerate true 1
 
     elif (( rawconfirmations < 3 )); then
-        printf " \033[0;32m[Block Found!]\033[0m\n"
         if (( rawconfirmations == 1 )); then
-            echo "$dt [minerfixer] Block Found! Height: $lastheight Amount: $lastamount TxID: $lasttxid" >> $nntoolslogfile
+            log "minerfixer" "Block Found! Height: $lastheight Amount: $lastamount TxID: $lasttxid" "32"
+        else
+            log "minerfixer" " [[ Block found! ]]" "32" "echo"
         fi
 
     #Default to do nothing and assume mining
     else
-        printf " \033[0;31m[mining]\033[0m\n"
+        log "minerfixer" "mining.." "31" "echo"
     fi
 else
-    printf " \033[0;31m[could not get last mined tx]\033[0m\n"
-    printf " \033[0;31m[setgenerate true]\033[0m\n"
-    echo "$dt [minerfixer] could not get last mined tx! setgenerate true" >> $nntoolslogfile
+    log "minerfixer" "could not get last mined tx! setgenerate true"
     $komodocli setgenerate true 1
 fi

@@ -4,8 +4,9 @@
 #
 # @author webworker01
 #
-source config
-source coinlist
+scriptpath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $scriptpath/main
+
 addresstarget=$1
 
 if [[ -z $addresstarget ]]; then

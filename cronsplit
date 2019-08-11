@@ -11,22 +11,18 @@
 # @author webworker01
 #
 scriptpath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-
-source $scriptpath/coinlist
-source $scriptpath/config
-source $scriptpath/paths
+source $scriptpath/main
 
 utxoamt=0.00010000
 splitamount=10000
-
-dt=$(date '+%Y-%m-%d %H:%M:%S');
 
 kmdutxos=$($komodocli listunspent | jq --arg amt "$utxoamt" '[.[] | select(.amount==($amt|tonumber))] | length')
 if (( kmdutxos < kmdutxoqty )); then
     echo "KMD utxos: $kmdutxos"
 
     splitter=$($scriptpath/splitfunds KMD $kmdutxoqty)
-    echo "$dt [cronsplit] KMD - utxos: $kmdutxos - $splitter" >> $nntoolslogfile
+
+    log "cronsplit" "KMD - utxos: $kmdutxos - $splitter"
 fi
 
 #no params in cli indicates just the short list of kmd specific coins
@@ -46,7 +42,7 @@ if [[ -z $1 ]]; then
                         echo "${coin[0]} utxos sprout: $acutxo"
                         splitter=$($scriptpath/splitfunds ${coin[0]} $acutxoqty 0)
                     fi
-                    echo "$dt [cronsplit] ${coin[0]} - utxos: $acutxo - $splitter" >> $nntoolslogfile
+                    log "cronsplit" "${coin[0]} - utxos: $acutxo - $splitter"
                 fi
             fi
         done
@@ -85,7 +81,7 @@ else
         if (( otherutxo < otherutxoqty )); then
             echo "${coin[0]} utxos: $otherutxo"
             splitter=$(curl --url "http://127.0.0.1:$iguanaport" --data "{\"coin\":\"${coin[0]}\",\"agent\":\"iguana\",\"method\":\"splitfunds\",\"satoshis\":\"$coinsplitamount\",\"sendflag\":1,\"duplicates\":$otherutxoqty}")
-            echo "$dt [cronsplit] ${coin[0]} - utxos: $otherutxo - $splitter" >> $nntoolslogfile
+            log "cronsplit" "${coin[0]} - utxos: $otherutxo - $splitter"
         fi
     done
 fi

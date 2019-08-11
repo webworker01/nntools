@@ -3,8 +3,7 @@
 # @author webworker01
 #
 scriptpath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-source ${scriptpath}/config
-source ${scriptpath}/functions
+source ${scriptpath}/main
 
 if [[ ! -z $1 ]] && [[ $1 != "KMD" ]]; then
     coin=$1
@@ -33,8 +32,7 @@ consolidateamount=$(jq -r '[.[].amount] | add' <<< $unspent)
 consolidateamountfixed=$( printf "%.8f" $(bc -l <<< "($consolidateamount+$interest)") )
 rawtxresult=$($komodocli createrawtransaction ${consolidatethese} '''{ "'$nn_address'": '$consolidateamountfixed' }''')
 txid=$(sendRaw ${rawtxresult})
-echo "[collectinterest] combine all $consolidateamountfixed - interest: $interest  - txid : $txid" >> $nntoolslogfile
-printf "\033[0;31m[[Wallet Reset]] $coin balance sent $consolidateamountfixed - interest: $interest  - txid : $txid\033[0m\n"
+log "resetwallet" "$coin balance sent $consolidateamountfixed - interest: $interest  - txid : $txid"
 
 i=0
 confirmations=0
@@ -42,7 +40,7 @@ while [ "$confirmations" -eq "0" ]; do
     sleep 10
     confirmations=$($komodocli $asset gettransaction $txid | jq .confirmations)
     i=$((i+1))
-    printf "\033[0;31m[[Wallet Reset]] sendbalance - waiting for confirmation $confirmations ($i) - ${txid}\033[0m\n"
+    log "resetwallet" "sendbalance - waiting for confirmation $confirmations ($i) - ${txid}"
 done
 blockhash=$($komodocli $asset gettransaction $txid | jq -r .blockhash)
 scanfrom=$($komodocli $asset getblock $blockhash | jq .height)
@@ -50,25 +48,25 @@ scanfrom=$($komodocli $asset getblock $blockhash | jq .height)
 #send feeder tx
 if [[ $coin == "KMD" ]]; then
     txid2=$($komodocli sendtoaddress $nn_address 5)
-    printf "\033[0;31m[[Wallet Reset]] $coin send feeder UTXO of 5: $txid2\033[0m\n"
+    log "resetwallet" "$coin send feeder UTXO of 5: $txid2"
     i=0
     confirmations=0
     while [ "$confirmations" -eq "0" ]; do
         sleep 10
         confirmations=$($komodocli gettransaction $txid2 | jq .confirmations)
         i=$((i+1))
-        printf "\033[0;31m[[Wallet Reset]] send feeder waiting for confirmation $confirmations ($i) - ${txid2}\033[0m\n"
+        log "resetwallet" "send feeder waiting for confirmation $confirmations ($i) - ${txid2}" "31" "echo"
     done
 fi
 
+#split utxos
 if [[ $coin == "KMD" ]]; then
     splitter=$($scriptpath/splitfunds $coin $kmdutxoqty)
 else
     splitter=$($scriptpath/splitfunds $coin $acutxoqty)
 fi
-printf "\033[0;31m[[Wallet Reset]] $coin - splitter: $splitter"
-
-printf "\033[0;31m[[Wallet Reset]] $coin - scanfrom: $scanfrom\033[0m\n"
+log "resetwallet" "$coin - splitter: $splitter"
+log "resetwallet" "$coin - scanfrom: $scanfrom"
 
 #Grab daemon args before killing
 if [[ $coin == "KMD" ]]; then
@@ -77,34 +75,34 @@ else
     daemon_args=$(ps -fC komodod | grep -- "-pubkey=${nn_pubkey}" | grep -- "-ac_name=${coin}" | grep -Po "komodod .*" | sed 's/komodod//g' | sed -e 's/-reindex//g' | sed -e 's/-rescan//g')
 fi
 
-printf "\033[0;31m[[Wallet Reset]] $coin - killing daemon - scanfrom: $scanfrom - restart command - $komodod $daemon_args\033[0m\n"
+log "resetwallet" "$coin - killing daemon - scanfrom: $scanfrom - restart command: $komodod $daemon_args"
 
 $komodocli $asset stop
 
 i=0
 while [ -f $pidfile ]; do
    i=$((i+1))
-   printf "\033[0;31m[[Wallet Reset]] Waiting for daemon $coin stop ($i)\033[0m\n"
+   log "resetwallet" "Waiting for daemon $coin stop ($i)" "31" "echo"
    sleep 1
 done
 sleep 15
 mv $datadir/wallet.dat $datadir/wallet.dat.old
 
 #restart the daemon
-printf "\033[0;31m[[Wallet Reset]] Restart daemon $komodod $daemon_args\033[0m\n"
+log "resetwallet" "Restart daemon $komodod $daemon_args"
 
 $komodod $daemon_args &
 
 i=0
 while ! $komodocli $asset getinfo >/dev/null 2>&1; do
    i=$((i+1))
-   printf "\033[0;31m[[Wallet Reset]] Waiting for daemon start $coin ($i)\033[0m\n"
+   log "resetwallet" "Waiting for daemon start $coin ($i)" "31" "echo"
    sleep 1
 done
 
 #Import the keys in the new wallet
 importedaddress=$($komodocli $asset importprivkey $privkey "" true $scanfrom)
-printf "\033[0;31m[[Wallet Reset]] Imported $coin address -> $importedaddress as height $scanfrom\033[0m\n"
+log "resetwallet" "Imported $coin address -> $importedaddress as height $scanfrom"
 
 newbalance=$($komodocli $asset getbalance)
-printf "\033[0;31m[[Wallet Reset]] Done ${coin}! Balance $newbalance\033[0m\n"
+log "resetwallet" "Done ${coin}! Balance $newbalance"

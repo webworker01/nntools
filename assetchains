@@ -2,7 +2,8 @@
 #
 #assetchains
 #
-source config
+scriptpath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $scriptpath/main
 
 name=$1
 

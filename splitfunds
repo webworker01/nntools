@@ -10,10 +10,8 @@
 # @author webworker01
 # @author DeckerSU
 #
-
 scriptpath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-
-source $scriptpath/config
+source $scriptpath/main
 
 #base58 decode by grondilu https://github.com/grondilu/bitcoin-bash-tools/blob/master/bitcoin.sh
 declare -a base58=(

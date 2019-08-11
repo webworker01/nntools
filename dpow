@@ -3,9 +3,7 @@
 # @author webworker01
 #
 scriptpath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-
-source ${scriptpath}/config
-source ${scriptpath}/coinlist
+source $scriptpath/main
 
 freqten=('RFOX VRSC')
 freqtwo=('KMDICE')

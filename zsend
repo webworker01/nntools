@@ -6,7 +6,8 @@
 #
 # @author webworker01
 #
-source config
+scriptpath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $scriptpath/main
 
 if [[ -z $1 ]] || [[ -z $2 ]] || [[ -z $3 ]] || [[ -z $4 ]]; then
     echo "Usage: zsend <coinname> <fromaddress> <toaddress> <amounttosend>"
