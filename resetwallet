@@ -24,14 +24,18 @@ lockedtx=$($komodocli $asset listlockunspent | jq -c .)
 $komodocli $asset lockunspent true $lockedtx
 
 #send complete balance to self
-unspent=$($komodocli listunspent | jq '[.[] | select(.spendable==true)]')
-interest=$(jq -r '[.[].interest] | add' <<< $unspent)
-interest=$( printf "%.8f" $interest )
+unspent=$($komodocli $asset listunspent | jq '[.[] | select(.spendable==true)]')
+if [[ $coin == "KMD" ]]; then
+    interest=$(jq -r '[.[].interest] | add' <<< $unspent)
+    interest=$( printf "%.8f" $interest )
+else
+    interest=0
+fi
 consolidatethese=$(jq -rc '[.[] | {"txid":.txid, "vout":.vout}]' <<< $unspent)
 consolidateamount=$(jq -r '[.[].amount] | add' <<< $unspent)
 consolidateamountfixed=$( printf "%.8f" $(bc -l <<< "($consolidateamount+$interest)") )
-rawtxresult=$($komodocli createrawtransaction ${consolidatethese} '''{ "'$nn_address'": '$consolidateamountfixed' }''')
-txid=$(sendRaw ${rawtxresult})
+rawtxresult=$($komodocli $asset createrawtransaction ${consolidatethese} '''{ "'$nn_address'": '$consolidateamountfixed' }''')
+txid=$(sendRaw ${rawtxresult} ${coin})
 log "resetwallet" "$coin balance sent $consolidateamountfixed - interest: $interest  - txid : $txid"
 
 i=0
@@ -40,7 +44,7 @@ while [ "$confirmations" -eq "0" ]; do
     sleep 10
     confirmations=$($komodocli $asset gettransaction $txid | jq .confirmations)
     i=$((i+1))
-    log "resetwallet" "sendbalance - waiting for confirmation $confirmations ($i) - ${txid}"
+    log "resetwallet" "sendbalance - waiting for confirmation $confirmations ($i) - ${txid}"  "red" "echo"
 done
 blockhash=$($komodocli $asset gettransaction $txid | jq -r .blockhash)
 scanfrom=$($komodocli $asset getblock $blockhash | jq .height)
@@ -66,7 +70,7 @@ else
     splitter=$($scriptpath/splitfunds $coin $acutxoqty)
 fi
 log "resetwallet" "$coin - splitter: $splitter"
-log "resetwallet" "$coin - scanfrom: $scanfrom"
+log "resetwallet" "$coin - scanfrom: $scanfrom" "red" "echo"
 
 #Grab daemon args before killing
 if [[ $coin == "KMD" ]]; then
@@ -91,7 +95,9 @@ mv $datadir/wallet.dat $datadir/wallet.dat.old
 #restart the daemon
 log "resetwallet" "Restart daemon $komodod $daemon_args"
 
+cd $scriptpath/7776/
 $komodod $daemon_args &
+cd $scriptpath
 
 i=0
 while ! $komodocli $asset getinfo >/dev/null 2>&1; do
