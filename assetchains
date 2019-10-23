@@ -33,6 +33,7 @@ komodo_asset -ac_name=BTCH -ac_supply=20998641
 komodo_asset -ac_name=CCL -ac_supply=200000000 -ac_end=1 -ac_cc=2 -addressindex=1 -spentindex=1 -addnode=142.93.136.89 -addnode=195.201.22.89
 komodo_asset -ac_name=CEAL -ac_supply=366666666
 komodo_asset -ac_name=CHAIN -ac_supply=999999
+komodo_asset -ac_name=COMMOD -ac_supply=0 -ac_reward=204800000000,100000000 -ac_end=482130,0 -ac_halving=43830,525960 -ac_decay=50000000,10000000 -ac_eras=2 -ac_cc=777 -ac_public=1 -addnode=34.246.186.176 -addnode=34.251.151.148
 komodo_asset -ac_name=COQUICASH -ac_supply=72000000 -ac_reward=7200000000 -ac_staked=50 -ac_halving=420000 -ac_cc=2 -ac_ccenable=227,235,236,241 -addnode=78.47.108.168
 komodo_asset -ac_name=CRYPTO -ac_supply=999999
 komodo_asset -ac_name=DEX -ac_supply=999999
