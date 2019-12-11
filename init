@@ -74,9 +74,9 @@ echo "pubkey=$nn_pubkey" > $HOME/komodo/src/pubkey.txt
 
 #Iguana
 cd $HOME
-git clone https://github.com/jl777/SuperNET
-cd SuperNET/iguana
-git checkout beta_season3
+git clone https://github.com/KomodoPlatform/dPoW
+cd dPoW
+# git checkout beta_season3
 cp $HOME/komodo/src/pubkey.txt $HOME/SuperNET/iguana/pubkey.txt
 
 if (( thirdpartycoins < 1 )); then

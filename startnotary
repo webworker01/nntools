@@ -5,14 +5,12 @@
 scriptpath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 source $scriptpath/main
 
-tmp7776=('THC')
-
 pkill -15 iguana
 sleep 10
 
 $komodocli lockunspent true $($komodocli listlockunspent | jq -c .)
 
-cd $HOME/SuperNET/iguana
+cd $HOME/dPoW/iguana
 if (( thirdpartycoins < 1 )); then
     iguanamode="notary"
 else
@@ -49,10 +47,6 @@ if (( thirdpartycoins < 1 )); then
             ./coins/${coin[0],,}_${iguanaport}
         fi
     done
-
-    #temp
-    echo "--Starting local THC_7776--"
-    ${scriptpath}/7776/THC_7776
 
     sleep 30
     curl --url "http://127.0.0.1:${iguanaport}" --data "{\"agent\":\"iguana\",\"method\":\"dpow\",\"symbol\":\"KMD\",\"pubkey\":\"${nn_pubkey}\"}"
