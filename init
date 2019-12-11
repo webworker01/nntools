@@ -77,7 +77,7 @@ cd $HOME
 git clone https://github.com/KomodoPlatform/dPoW
 cd dPoW
 # git checkout beta_season3
-cp $HOME/komodo/src/pubkey.txt $HOME/SuperNET/iguana/pubkey.txt
+cp $HOME/komodo/src/pubkey.txt $HOME/dPoW/iguana/pubkey.txt
 
 if (( thirdpartycoins < 1 )); then
     #bitcoin
