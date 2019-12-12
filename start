@@ -19,6 +19,7 @@ if (( thirdpartycoins < 1 )); then
 
     ./assetchains
 else
+    log "start" "Starting KMD"
     $komodod -pubkey=$nn_pubkey $addnodes &
 
     for coins in "${coinsthird[@]}"; do
