@@ -20,6 +20,7 @@ function komodo_asset()
 {
     if [[ -z "$name" || "$1" == "-ac_name=$name" ]]; then
         cd $scriptpath/7776/
+        log "assetchains" "Starting $1"
         $komodod "$@" -pubkey=$nn_pubkey -addnode=$seed_ip1 $addnodes ${args[2]} ${args[3]} ${args[4]} ${args[5]} ${args[6]} ${args[7]} ${args[8]} ${args[9]} &
         sleep $delay
     fi
@@ -43,7 +44,7 @@ komodo_asset -ac_name=EQL -ac_supply=500000000 -ac_ccactivate=205000
 komodo_asset -ac_name=ETOMIC -ac_supply=100000000
 #komodo_asset -ac_name=GLXT -ac_supply=10000000000
 komodo_asset -ac_name=HODL -ac_supply=9999999
-komodo_asset -ac_name=HUSH3 -ac_sapling=1 -ac_reward=0,1125000000,562500000 -ac_halving=129,340000,840000 -ac_end=128,340000,5422111 -ac_eras=3 -ac_blocktime=150 -ac_cc=2 -ac_ccenable=228,234,235,236,241 -ac_founders=1 -ac_supply=6178674 -ac_perc=11111111 -clientname=GoldenSandtrout -addnode=188.165.212.101 -addnode=136.243.227.142 -addnode=5.9.224.250 -ac_cclib=hush3 -ac_script=76a9145eb10cf64f2bab1b457f1f25e658526155928fac88ac
+# komodo_asset -ac_name=HUSH3 -ac_sapling=1 -ac_reward=0,1125000000,562500000 -ac_halving=129,340000,840000 -ac_end=128,340000,5422111 -ac_eras=3 -ac_blocktime=150 -ac_cc=2 -ac_ccenable=228,234,235,236,241 -ac_founders=1 -ac_supply=6178674 -ac_perc=11111111 -clientname=GoldenSandtrout -addnode=188.165.212.101 -addnode=136.243.227.142 -addnode=5.9.224.250 -ac_cclib=hush3 -ac_script=76a9145eb10cf64f2bab1b457f1f25e658526155928fac88ac
 komodo_asset -ac_name=ILN -ac_supply=10000000000 -ac_cc=2 -addressindex=1 -spentindex=1 -addnode=51.75.122.83
 komodo_asset -ac_name=JUMBLR -ac_supply=999999
 komodo_asset -ac_name=K64 -ac_supply=64000777 -ac_reward=0 -ac_staked=10 -addnode=18.197.20.211
