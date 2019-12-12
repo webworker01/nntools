@@ -12,15 +12,19 @@ sleeptime=1
 if [[ ! -z $1 ]]; then
     case "$1" in
         GAME|EMC2)
+            log "dpow" "Start ${1} Freq 5"
             curl --url "http://127.0.0.1:${iguanaport}" --data "{\"agent\":\"iguana\",\"method\":\"dpow\",\"symbol\":\"GAME\",\"freq\":5,\"pubkey\":\"${nn_pubkey}\"}"
             ;;
         RFOX|VRSC)
+            log "dpow" "Start ${1} Freq 10"
             curl --url "http://127.0.0.1:${iguanaport}" --data "{\"agent\":\"iguana\",\"method\":\"dpow\",\"symbol\":\"$1\",\"freq\":10,\"pubkey\":\"${nn_pubkey}\"}"
             ;;
         KMDICE)
+            log "dpow" "Start ${1} Freq 2"
             curl --url "http://127.0.0.1:${iguanaport}" --data "{\"agent\":\"iguana\",\"method\":\"dpow\",\"symbol\":\"$1\",\"freq\":2,\"pubkey\":\"${nn_pubkey}\"}"
             ;;
         *)
+            log "dpow" "Start ${1} Freq Default"
             curl --url "http://127.0.0.1:${iguanaport}" --data "{\"agent\":\"iguana\",\"method\":\"dpow\",\"symbol\":\"$1\",\"pubkey\":\"${nn_pubkey}\"}"
             ;;
     esac
@@ -30,31 +34,32 @@ else
         for coins in "${coinlist[@]}"; do
             coin=($coins)
 
-            echo "--DPOW: ${coin[0]}--"
             if [[ ${freqten[*]} =~ ${coin[0]} ]]; then
-                echo "Freq 10"
+                log "dpow" "Start ${coin[0]} Freq 10"
                 curl --url "http://127.0.0.1:${iguanaport}" --data "{\"agent\":\"iguana\",\"method\":\"dpow\",\"symbol\":\"${coin[0]}\",\"freq\":10,\"pubkey\":\"${nn_pubkey}\"}"
             elif [[ ${freqtwo[*]} =~ ${coin[0]} ]]; then
-                echo "Freq 2"
+                log "dpow" "Start ${coin[0]} Freq 2"
                 curl --url "http://127.0.0.1:${iguanaport}" --data "{\"agent\":\"iguana\",\"method\":\"dpow\",\"symbol\":\"${coin[0]}\",\"freq\":2,\"pubkey\":\"${nn_pubkey}\"}"
             else
-                echo "Freq Default"
+                log "dpow" "Start ${coin[0]} Freq Default"
                 curl --url "http://127.0.0.1:${iguanaport}" --data "{\"agent\":\"iguana\",\"method\":\"dpow\",\"symbol\":\"${coin[0]}\",\"pubkey\":\"${nn_pubkey}\"}"
             fi
             sleep $sleeptime
         done
+        log "dpow" "Start HUSH3 Freq Default"
+        curl --url "http://127.0.0.1:${iguanaport}" --data "{\"agent\":\"iguana\",\"method\":\"dpow\",\"symbol\":\"HUSH3\",\"pubkey\":\"${nn_pubkey}\"}"
     else
-        echo "--DPOW: CHIPS--"
+        log "dpow" "Start CHIPS Freq Default"
         curl --url "http://127.0.0.1:${iguanaport}" --data "{\"agent\":\"iguana\",\"method\":\"dpow\",\"symbol\":\"CHIPS\",\"pubkey\":\"${nn_pubkey}\"}"
         sleep $sleeptime
-        echo "--DPOW: GAME--"
+        log "dpow" "Start GAME Freq Default"
         curl --url "http://127.0.0.1:${iguanaport}" --data "{\"agent\":\"iguana\",\"method\":\"dpow\",\"symbol\":\"GAME\",\"freq\":5,\"pubkey\":\"${nn_pubkey}\"}"
         sleep $sleeptime
-        echo "--DPOW: EMC2--"
+        log "dpow" "Start EMC2 Freq Default"
         curl --url "http://127.0.0.1:${iguanaport}" --data "{\"agent\":\"iguana\",\"method\":\"dpow\",\"symbol\":\"EMC2\",\"freq\":5,\"pubkey\":\"${nn_pubkey}\"}"
-        echo "--DPOW: GIN--"
+        log "dpow" "Start GIN Freq Default"
         curl --url "http://127.0.0.1:${iguanaport}" --data "{\"agent\":\"iguana\",\"method\":\"dpow\",\"symbol\":\"GIN\",\"pubkey\":\"${nn_pubkey}\"}"
-        echo "--DPOW: VRSC--"
+        log "dpow" "Start VRSC Freq Default"
         curl --url "http://127.0.0.1:${iguanaport}" --data "{\"agent\":\"iguana\",\"method\":\"dpow\",\"symbol\":\"VRSC\",\"freq\":10,\"pubkey\":\"${nn_pubkey}\"}"
     fi
 fi
