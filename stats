@@ -102,6 +102,10 @@ outputstats ()
         coin=($coins)
 
         seasonfilter=$timefilter2
+
+        #expand coinexec
+        eval $(echo coinexec=${coin[1]})
+
         case ${coin[0]} in
             BTC)
                 coinsutxoamount=$utxoamt
@@ -116,9 +120,9 @@ outputstats ()
                 coinsutxoamount=$utxoamt
                 coinsntraddr=Gftmt8hgzgNu6f1o85HMPuwTVBMSV2TYSt
                 ;;
-            HUSH)
+            HUSH3)
                 coinsutxoamount=$utxoamt
-                coinsntraddr=t1fvTULnsz9ZCcpmQ8ZSN6xhUpfkgEuqeNX
+                coinsntraddr=$kmdntrzaddr
                 ;;
             EMC2)
                 coinsutxoamount=0.00100000
@@ -130,8 +134,7 @@ outputstats ()
                 ;;
         esac
 
-        #expand coinexec
-        eval $(echo coinexec=${coin[1]})
+
 
         coinstxinfo=$($coinexec listtransactions "" $txscanamount)
         coinslastntrztime=$(echo $coinstxinfo | jq -r --arg address "$coinsntraddr" '[.[] | select(.address==$address)] | sort_by(.time) | last | "\(.time)"')

@@ -6,8 +6,15 @@ scriptpath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 source $scriptpath/main
 
 if (( thirdpartycoins < 1 )); then
-    bitcoind &
     $komodod -gen -genproclimit=1 -notary -pubkey=$nn_pubkey $addnodes &
+
+    for coins in "${coinsfirst[@]}"; do
+        coin=($coins)
+        echo "Starting ${coin[0]}"
+        eval $(echo coinexec=${coin[2]})
+        $coinexec -pubkey=$nn_pubkey $addnodes &
+    done
+
     ./assetchains
 else
     $komodod -pubkey=$nn_pubkey $addnodes &

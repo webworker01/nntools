@@ -111,6 +111,12 @@ onlynet=ipv4
 deprecatedrpc=estimatefee
 EOF
     chmod 600 $HOME/.bitcoin/bitcoin.conf
+
+    #HUSH3
+    cd $HOME
+    git clone https://github.com/KomodoPlatform/komodo --branch hush3 --single-branch hush3
+    cd hush3 && git checkout cc35198f1da23a617caf95ed087033d8dfb8ce89
+    ./zcutil/build.sh -j$(expr $(nproc) - 1)
 else
     #CHIPS
     cd $HOME
