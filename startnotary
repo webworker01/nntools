@@ -72,3 +72,5 @@ if (( thirdpartycoins < 1 )); then
     sudo renice -20 -p ${iguanapid}
 fi
 ps -al | grep iguana
+
+log "startnotary" "dPoW started"
