@@ -51,7 +51,7 @@ if (( thirdpartycoins < 1 )); then
     done
 
     log "startnotary" "Adding HUSH3"
-    ./coins/hush3_${iguanaport}
+    $scriptpath/coins/hush3_${iguanaport}
 
     sleep 30
     curl --url "http://127.0.0.1:${iguanaport}" --data "{\"agent\":\"iguana\",\"method\":\"dpow\",\"symbol\":\"KMD\",\"pubkey\":\"${nn_pubkey}\"}"
