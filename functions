@@ -53,7 +53,8 @@ sendRaw()
     fi
 
     if [[ ! -z $rawtx ]]; then
-        nlocktime=$(printf "%08x" $(date +%s) | dd conv=swab 2> /dev/null | rev)
+        # nlocktime=$(printf "%08x" $(date +%s) | dd conv=swab 2> /dev/null | rev)
+        nlocktime="00000000"
 
         hex=${rawtx::-8}$nlocktime
         txtail=000000000000000000000000000000
