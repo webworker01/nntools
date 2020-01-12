@@ -1,0 +1,51 @@
+#!/bin/bash
+#
+# Loop and collect every UTXO until completely consolidated
+# @author webworker01
+#
+
+scriptpath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $scriptpath/main
+
+cd "${BASH_SOURCE%/*}" || exit
+
+# Specify coin
+if [[ -z $1 ]]; then
+    echo "collectall <coinname> <exclude_amount (optional - consolidate all but this value)"
+    exit 0
+fi
+coin=$1
+
+if [[ $1 != "KMD" ]]; then
+    coin=$1
+    asset=" -ac_name=${1}"
+else
+    coin="KMD"
+    asset=""
+fi
+
+if [[ -z $2 ]]; then
+    exclude_amount=0
+else
+    exclude_amount=$2
+fi
+
+# Get current UTXO amount
+unspent_amount=$($komodocli $asset listunspent | jq --arg checkaddr $nn_address --arg exclude_amount $exclude_amount '. | select(.amount!=$exclude_amount and .address==$checkaddr and .spendable==true) | length')
+c=0
+while (( unspent_amount > 1)); do
+    txid=$(./consolidate $1 $2)
+    unspent_amount=$($komodocli $asset listunspent | jq '. | length')
+    log "collectall" "Consolidate TX: $txid New unspent_amount: $unspent_amount"
+
+    i=0
+    confirmations=0
+    while [ "$confirmations" -eq "0" ]; do
+        sleep 10
+        confirmations=$($komodocli $asset gettransaction $txid | jq .confirmations)
+        i=$((i+1))
+        log "collectall" "consolidate - waiting for confirmation $confirmations ($i) - ${txid}"  "red" "echo"
+    done
+    c=$((c+1))
+done
+log "collectall" "Consolidation completed x${c}"

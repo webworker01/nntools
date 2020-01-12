@@ -134,8 +134,6 @@ outputstats ()
                 ;;
         esac
 
-
-
         coinstxinfo=$($coinexec listtransactions "" $txscanamount)
         coinslastntrztime=$(echo $coinstxinfo | jq -r --arg address "$coinsntraddr" '[.[] | select(.address==$address)] | sort_by(.time) | last | "\(.time)"')
 

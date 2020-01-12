@@ -8,6 +8,11 @@
 #32 = green
 #33 = yellow
 #34 = blue
+
+# @param category string
+# @param message string
+# @param color (red|green|yellow|blue)
+# @param mode (echo|file) echo = echo only, file = logfile only
 log()
 {
     local category=$1
