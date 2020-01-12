@@ -1,6 +1,10 @@
 #!/bin/bash
 #
 # Loop and collect every UTXO until completely consolidated
+#
+# Usage: collectall <coinname> <exclude_amount (optional - consolidate all but this value)
+#
+# If exclude_amount is specified, it will ignore these values
 # @author webworker01
 #
 
