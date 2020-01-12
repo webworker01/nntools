@@ -35,8 +35,6 @@ unspent_amount=$($komodocli $asset listunspent | jq --arg checkaddr $nn_address 
 c=0
 while (( unspent_amount > 1)); do
     txid=$(./consolidate $1 $2)
-    unspent_amount=$($komodocli $asset listunspent | jq '. | length')
-    log "collectall" "Consolidate TX: $txid New unspent_amount: $unspent_amount"
 
     i=0
     confirmations=0
@@ -46,6 +44,10 @@ while (( unspent_amount > 1)); do
         i=$((i+1))
         log "collectall" "consolidate - waiting for confirmation $confirmations ($i) - ${txid}"  "red" "echo"
     done
+
+    unspent_amount=$($komodocli $asset listunspent | jq '. | length')
+    log "collectall" "Consolidate TX: $txid New unspent_amount: $unspent_amount"
+
     c=$((c+1))
 done
 log "collectall" "Consolidation completed x${c}"
