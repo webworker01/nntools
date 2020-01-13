@@ -117,6 +117,12 @@ EOF
     git clone https://github.com/KomodoPlatform/komodo --branch hush3 --single-branch hush3
     cd hush3 && git checkout cc35198f1da23a617caf95ed087033d8dfb8ce89
     ./zcutil/build.sh -j$(expr $(nproc) - 1)
+
+    #VERUS
+    cd $HOME
+    git clone https://github.com/VerusCoin/VerusCoin.git --branch v0.6.0-7 --single-branch
+    cd VerusCoin && git checkout 249191886b59929575953425656d4a31328758eb
+    ./zcutil/build.sh -j$(expr $(nproc) - 1)
 else
     #CHIPS
     cd $HOME
@@ -226,11 +232,11 @@ EOF
     chmod 600 $HOME/.gincoincore/gincoin.conf
 
     #VRSC
-    cd $HOME
-    git clone https://github.com/VerusCoin/VerusCoin
-    cd VerusCoin
-    git checkout master
-    ./zcutil/build.sh -j$(nproc)
+    # cd $HOME
+    # git clone https://github.com/VerusCoin/VerusCoin
+    # cd VerusCoin
+    # git checkout master
+    # ./zcutil/build.sh -j$(nproc)
 fi
 
 echo
