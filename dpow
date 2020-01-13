@@ -48,6 +48,9 @@ else
         done
         log "dpow" "Start HUSH3 Freq Default"
         curl --url "http://127.0.0.1:${iguanaport}" --data "{\"agent\":\"iguana\",\"method\":\"dpow\",\"symbol\":\"HUSH3\",\"pubkey\":\"${nn_pubkey}\"}"
+        sleep $sleeptime
+        log "dpow" "Start VRSC Freq Default"
+        curl --url "http://127.0.0.1:${iguanaport}" --data "{\"agent\":\"iguana\",\"method\":\"dpow\",\"symbol\":\"VRSC\",\"freq\":10,\"pubkey\":\"${nn_pubkey}\"}"
     else
         log "dpow" "Start CHIPS Freq Default"
         curl --url "http://127.0.0.1:${iguanaport}" --data "{\"agent\":\"iguana\",\"method\":\"dpow\",\"symbol\":\"CHIPS\",\"pubkey\":\"${nn_pubkey}\"}"

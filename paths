@@ -10,6 +10,7 @@ hushd="$HOME/hush3/src/komodod -ac_name=HUSH3 -ac_sapling=1 -ac_reward=0,1125000
 coinsfirst=(
 'BTC $HOME/bitcoin/src/bitcoin-cli $HOME/bitcoin/src/bitcoind .bitcoin'
 'HUSH3 $hushcli $hushd .komodo/HUSH3'
+'VRSC $HOME/VerusCoin/src/verus $HOME/VerusCoin/src/verusd .komodo/VRSC'
 )
 
 coinsthird=(
@@ -28,5 +29,5 @@ declare -A repos=(
 [GAME]="$HOME/GameCredits origin/master"
 [EMC2]="$HOME/einsteinium origin/master"
 [GIN]="$HOME/gincoin-core origin/master"
-[VRSC]="$HOME/VerusCoin origin/master"
+# [VRSC]="$HOME/VerusCoin origin/master"
 )
