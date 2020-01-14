@@ -123,11 +123,6 @@ EOF
     git clone https://github.com/VerusCoin/VerusCoin.git --branch v0.6.0-7 --single-branch
     cd VerusCoin && git checkout 249191886b59929575953425656d4a31328758eb
     ./zcutil/build.sh -j$(expr $(nproc) - 1)
-    mkdir -p $HOME/.komodo/VRSC
-    cd $HOME/.komodo/VRSC
-    wget https://bootstrap.0x03.services/veruscoin/VRSC-bootstrap.tar.gz
-    tar -xvzf VRSC-bootstrap.tar.gz
-    rm VRSC-bootstrap.tar.gz
 else
     #CHIPS
     cd $HOME
