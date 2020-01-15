@@ -25,6 +25,23 @@ if (( kmdutxos < kmdutxoqty )); then
     log "cronsplit" "KMD - utxos: $kmdutxos - $splitter"
 fi
 
+doSplit() {
+    local coin=$1
+
+    acutxo=$($komodocli -ac_name=${coin} listunspent | jq --arg amt "$utxoamt" '[.[] | select(.amount==($amt|tonumber))] | length')
+
+    if (( acutxo < acutxoqty )); then
+        if [[ ! ${sproutcoins[*]} =~ ${coin} ]]; then
+            echo "${coin} utxos sapling: $acutxo"
+            splitter=$($scriptpath/splitfunds ${coin} $acutxoqty)
+        else
+            echo "${coin} utxos sprout: $acutxo"
+            splitter=$($scriptpath/splitfunds ${coin} $acutxoqty 0)
+        fi
+        log "cronsplit" "${coin} - utxos: $acutxo - $splitter"
+    fi
+}
+
 #no params in cli indicates just the short list of kmd specific coins
 if [[ -z $1 ]]; then
     if (( thirdpartycoins < 1 )); then
@@ -32,20 +49,11 @@ if [[ -z $1 ]]; then
             coin=($coins)
 
             if [[ ! ${ignoreacs[*]} =~ ${coin[0]} ]]; then
-                acutxo=$($komodocli -ac_name=${coin[0]} listunspent | jq --arg amt "$utxoamt" '[.[] | select(.amount==($amt|tonumber))] | length')
-
-                if (( acutxo < acutxoqty )); then
-                    if [[ ! ${sproutcoins[*]} =~ ${coin[0]} ]]; then
-                        echo "${coin[0]} utxos sapling: $acutxo"
-                        splitter=$($scriptpath/splitfunds ${coin[0]} $acutxoqty)
-                    else
-                        echo "${coin[0]} utxos sprout: $acutxo"
-                        splitter=$($scriptpath/splitfunds ${coin[0]} $acutxoqty 0)
-                    fi
-                    log "cronsplit" "${coin[0]} - utxos: $acutxo - $splitter"
-                fi
+                doSplit ${coin[0]}
             fi
         done
+
+        doSplit "VRSC"
     fi
 else
     declare -a othercoins=()
@@ -62,6 +70,10 @@ else
     #for now any param indicates to run the long running coins (e.g. btc game chips) run this every hour or something?
     for coins in "${othercoins[@]}"; do
         coin=($coins)
+
+        if [[ ${coin[0]} == "VRSC" ]]; then
+            continue
+        fi
 
         if [[ ${coin[0]} == "GAME" ]] || [[ ${coin[0]} == "EMC2" ]]; then
             coinsutxoamount=0.00100000
