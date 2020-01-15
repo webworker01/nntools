@@ -6,26 +6,34 @@ scriptpath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 source $scriptpath/main
 
 if (( thirdpartycoins < 1 )); then
-    log "start" "Starting KMD"
-    $komodod -gen -genproclimit=1 -notary -pubkey=$nn_pubkey $addnodes &
+    if [[ -z "$1" || "$1" == "KMD" ]]; then
+        log "start" "Starting KMD"
+        $komodod -gen -genproclimit=1 -notary -pubkey=$nn_pubkey $addnodes &
+    fi
 
     for coins in "${coinsfirst[@]}"; do
         coin=($coins)
-        cd $scriptpath/7776/
-        log "start" "Starting ${coin[0]}"
-        eval $(echo coinexec=${coin[2]})
-        $coinexec -pubkey=$nn_pubkey $addnodes &
+        if [[ -z "$1" || "$1" == "${coin[0]}" ]]; then
+            cd $scriptpath/7776/
+            log "start" "Starting ${coin[0]}"
+            eval $(echo coinexec=${coin[2]})
+            $coinexec -pubkey=$nn_pubkey $addnodes &
+        fi
     done
 
-    $scriptpath/assetchains
+    $scriptpath/assetchains $1
 else
-    log "start" "Starting KMD"
-    $komodod -pubkey=$nn_pubkey $addnodes &
+    if [[ -z "$1" || "$1" == "KMD" ]]; then
+        log "start" "Starting KMD"
+        $komodod -pubkey=$nn_pubkey $addnodes &
+    fi
 
     for coins in "${coinsthird[@]}"; do
         coin=($coins)
-        log "start" "Starting ${coin[0]}"
-        eval $(echo coinexec=${coin[2]})
-        $coinexec -pubkey=$nn_pubkey $addnodes &
+        if [[ -z "$1" || "$1" == "${coin[0]}" ]]; then
+            log "start" "Starting ${coin[0]}"
+            eval $(echo coinexec=${coin[2]})
+            $coinexec -pubkey=$nn_pubkey $addnodes &
+        fi
     done
 fi
