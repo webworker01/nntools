@@ -5,20 +5,29 @@
 scriptpath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 source $scriptpath/main
 
-cleanerremoved=$($komodocli cleanwallettransactions | jq -r .removed_transactions)
-if (( cleanerremoved > 0 )); then
-    log "cleanwallettransactions" "KMD - Removed $cleanerremoved transactions"
-fi
+clean() {
+    coin=$1
+    if [[ -z "$coin" || "$coin" == "KMD" ]]; then
+        acparam=""
+    else
+        acparam="-ac_name=${coin}"
+    fi
+
+    cleanerremoved=$($komodocli ${acparam} cleanwallettransactions | jq -r .removed_transactions)
+    if (( cleanerremoved > 0 )); then
+        log "cleanwallettransactions" "${coin} - Removed $cleanerremoved transactions"
+    fi
+}
+
+clean "KMD"
 
 if (( thirdpartycoins < 1 )); then
     for coins in "${coinlist[@]}"; do
         coin=($coins)
         if [[ ! ${ignoreacs[*]} =~ ${coin[0]} ]]; then
-            echo ${coin[0]}
-            cleanerremoved=$($komodocli -ac_name=${coin[0]} cleanwallettransactions | jq -r .removed_transactions)
-            if (( cleanerremoved > 0 )); then
-                log "cleanwallettransactions" "${coin[0]} - Removed $cleanerremoved transactions"
-            fi
+            clean ${coin[0]}
         fi
     done
+
+    clean "HUSH3"
 fi
