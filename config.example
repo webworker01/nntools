@@ -52,6 +52,9 @@ btcutxoqty=200
 #Lower threshold for third party coin utxos
 otherutxoqty=50
 
+#size to monitor for in bytes
+monitorsize=20000000
+
 #You can modify this list of ACs to exclude or comment out the line to show all
 ignoreacs=('VOTE2018' 'VOTE2019' 'BEER' 'PIZZA')
 
