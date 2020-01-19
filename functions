@@ -57,13 +57,23 @@ sendRaw()
         asset=""
     fi
 
+    if [[ ! -z $3 ]] && [[ $3 != "1" ]]; then
+        sapling=0
+    else
+        sapling=1
+    fi
+
     if [[ ! -z $rawtx ]]; then
         # nlocktime=$(printf "%08x" $(date +%s) | dd conv=swab 2> /dev/null | rev)
         nlocktime="00000000"
 
         hex=${rawtx::-8}$nlocktime
-        txtail=000000000000000000000000000000
-        hex=${hex::-38}${nlocktime}${txtail}
+
+        if (( sapling > 0 )); then
+            rawtx=$rawtx"000000000000000000000000000000" # sapling end of tx
+            txtail=000000000000000000000000000000
+            hex=${hex::-38}${nlocktime}${txtail}
+        fi
 
         signedtx=$($komodocli $asset signrawtransaction $hex | jq -r '.hex')
 

@@ -1,5 +1,9 @@
 #!/bin/bash
 #
+# Usage: ./resetwallet <COINNAME> <numutxos> <sapling=1/0>
+# e.g.   ./resetwallet KMD
+# e.g.   ./resetwallet OOT 0
+#
 # @author webworker01
 #
 scriptpath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
@@ -13,6 +17,12 @@ else
     coin="KMD"
     asset=""
     datadir="$HOME/.komodo"
+fi
+
+if [[ ! -z $2 ]] && [[ $2 != "1" ]]; then
+    sapling=0
+else
+    sapling=1
 fi
 
 pidfile="$datadir/komodod.pid"
@@ -35,7 +45,11 @@ consolidatethese=$(jq -rc '[.[] | {"txid":.txid, "vout":.vout}]' <<< $unspent)
 consolidateamount=$(jq -r '[.[].amount] | add' <<< $unspent)
 consolidateamountfixed=$( printf "%.8f" $(bc -l <<< "($consolidateamount+$interest)") )
 rawtxresult=$($komodocli $asset createrawtransaction ${consolidatethese} '''{ "'$nn_address'": '$consolidateamountfixed' }''')
-txid=$(sendRaw ${rawtxresult} ${coin})
+txid=$(sendRaw ${rawtxresult} ${coin} ${sapling})
+echo $rawtxresult
+echo $txid
+exit 0
+
 log "resetwallet" "$coin balance sent $consolidateamountfixed - interest: $interest  - txid : $txid"
 
 i=0
