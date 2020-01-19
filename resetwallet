@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Usage: ./resetwallet <COINNAME> <numutxos> <sapling=1/0>
+# Usage: ./resetwallet <COINNAME> <sapling=1/0>
 # e.g.   ./resetwallet KMD
 # e.g.   ./resetwallet OOT 0
 #
