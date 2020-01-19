@@ -46,10 +46,6 @@ consolidateamount=$(jq -r '[.[].amount] | add' <<< $unspent)
 consolidateamountfixed=$( printf "%.8f" $(bc -l <<< "($consolidateamount+$interest)") )
 rawtxresult=$($komodocli $asset createrawtransaction ${consolidatethese} '''{ "'$nn_address'": '$consolidateamountfixed' }''')
 txid=$(sendRaw ${rawtxresult} ${coin} ${sapling})
-echo $rawtxresult
-echo $txid
-exit 0
-
 log "resetwallet" "$coin balance sent $consolidateamountfixed - interest: $interest  - txid : $txid"
 
 i=0
