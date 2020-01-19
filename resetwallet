@@ -77,7 +77,7 @@ fi
 if [[ $coin == "KMD" ]]; then
     splitter=$($scriptpath/splitfunds $coin $kmdutxoqty)
 else
-    splitter=$($scriptpath/splitfunds $coin $acutxoqty)
+    splitter=$($scriptpath/splitfunds $coin $acutxoqty $sapling)
 fi
 log "resetwallet" "$coin - splitter: $splitter"
 log "resetwallet" "$coin - scanfrom: $scanfrom" "red" "echo"
