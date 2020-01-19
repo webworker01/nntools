@@ -28,7 +28,7 @@ function komodo_asset()
 
 komodo_asset -ac_name=AXO -ac_supply=200000000 -ac_ccactivate=130000
 komodo_asset -ac_name=BET -ac_supply=999999
-komodo_asset -ac_name=BNTN -ac_supply=500000000
+# komodo_asset -ac_name=BNTN -ac_supply=500000000
 komodo_asset -ac_name=BOTS -ac_supply=999999
 komodo_asset -ac_name=BTCH -ac_supply=20998641
 komodo_asset -ac_name=CCL -ac_supply=200000000 -ac_end=1 -ac_cc=2 -addressindex=1 -spentindex=1 -addnode=142.93.136.89 -addnode=195.201.22.89
@@ -38,9 +38,9 @@ komodo_asset -ac_name=CCL -ac_supply=200000000 -ac_end=1 -ac_cc=2 -addressindex=
 komodo_asset -ac_name=COQUICASH -ac_supply=72000000 -ac_reward=7200000000 -ac_staked=50 -ac_halving=420000 -ac_cc=2 -ac_ccenable=227,235,236,241 -addnode=78.47.108.168
 komodo_asset -ac_name=CRYPTO -ac_supply=999999
 komodo_asset -ac_name=DEX -ac_supply=999999
-komodo_asset -ac_name=DION -ac_supply=3900000000 -ac_reward=22260000000 -ac_staked=100 -ac_cc=1 -ac_end=4300000000 -addnode=51.75.124.34
+# komodo_asset -ac_name=DION -ac_supply=3900000000 -ac_reward=22260000000 -ac_staked=100 -ac_cc=1 -ac_end=4300000000 -addnode=51.75.124.34
 # komodo_asset -ac_name=DSEC -ac_supply=7000000
-komodo_asset -ac_name=EQL -ac_supply=500000000 -ac_ccactivate=205000
+# komodo_asset -ac_name=EQL -ac_supply=500000000 -ac_ccactivate=205000
 komodo_asset -ac_name=ETOMIC -ac_supply=100000000
 #komodo_asset -ac_name=GLXT -ac_supply=10000000000
 komodo_asset -ac_name=HODL -ac_supply=9999999
@@ -65,7 +65,7 @@ komodo_asset -ac_name=OUR -ac_reward=1478310502 -ac_halving=525600 -ac_cc=42 -ac
 komodo_asset -ac_name=PANGEA -ac_supply=999999
 komodo_asset -ac_name=PGT -ac_supply=10000000 -ac_end=1 -addnode=190.114.254.104
 komodo_asset -ac_name=PIRATE -ac_supply=0 -ac_reward=25600000000 -ac_halving=77777 -ac_private=1 -addnode=178.63.77.56 -addnode=136.243.102.225 -addressindex=1 -spentindex=1
-komodo_asset -ac_name=PRLPAY -ac_supply=500000000
+# komodo_asset -ac_name=PRLPAY -ac_supply=500000000
 #komodo_asset -ac_name=PTX -ac_supply=12000000 -ac_reward=1500000000 -ac_staked=50 -ac_end=12000000 -addnode=142.11.199.63
 komodo_asset -ac_name=RFOX -ac_supply=1000000000 -ac_reward=100000000
 #komodo_asset -ac_name=RICK -ac_supply=90000000000 -ac_reward=100000000 -ac_cc=3 -addnode=138.201.136.145
