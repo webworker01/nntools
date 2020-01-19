@@ -6,12 +6,12 @@ scriptpath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 source $scriptpath/main
 
 if (( $thirdpartycoins < 1 )); then
-    while true; do
+    while [[ ! -z $monitorsize ]]; do
         log "monitor" "started"
         for coins in "${coinlist[@]}"; do
             coin=($coins)
             walletsize=$(ls -l ~/.komodo/${coin[0]}/wallet.dat  | awk '{print $5}')
-            if [[ ! -z $monitorsize ]] && (( $walletsize > $monitorsize )); then
+            if (( $walletsize > $monitorsize )); then
                 log "monitor" "${coin[0]} - $walletsize"
                 if [[ ${sproutcoins[*]} =~ ${coin[0]} ]]; then
                     $scriptpath/resetwallet ${coin[0]} 0
