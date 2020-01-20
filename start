@@ -24,6 +24,7 @@ if (( thirdpartycoins < 1 )); then
     $scriptpath/assetchains $1
 
     if [[ -z "$1" ]]; then
+        sleep 300
         $scriptpath/monitor
     fi
 else
