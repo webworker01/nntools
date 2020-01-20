@@ -7,10 +7,6 @@ source $scriptpath/main
 
 name=$1
 
-#usefsm=(
-#'-ac_name=KMDICE'
-#)
-
 args=("$@")
 seed_ip1=`getent hosts zero.kolo.supernet.org | awk '{ print $1 }'`
 
@@ -19,9 +15,14 @@ delay=1
 function komodo_asset()
 {
     if [[ -z "$name" || "$1" == "-ac_name=$name" ]]; then
+
+        replaceString=""
+        coinname=$(echo "${1/-ac_name=/$replaceString}")
+        coinname=$(echo "${coinname}/")
+
         cd $scriptpath/7776/
         log "assetchains" "Starting $1"
-        $komodod "$@" -pubkey=$nn_pubkey -addnode=$seed_ip1 $addnodes ${args[2]} ${args[3]} ${args[4]} ${args[5]} ${args[6]} ${args[7]} ${args[8]} ${args[9]} &
+        $komodod "$@" -pubkey=$nn_pubkey -addnode=$seed_ip1 $addnodes ${args[2]} ${args[3]} ${args[4]} ${args[5]} ${args[6]} ${args[7]} ${args[8]} ${args[9]} -pid=${HOME}/.komodo/${coinname}komodod.pid &
         sleep $delay
     fi
 }
