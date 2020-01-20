@@ -20,6 +20,8 @@ log()
     local color=$3
     local mode=$4
 
+    local datetime=$(date '+%Y-%m-%d %H:%M:%S')
+
     case $color in
         red)
             colorcode=31
