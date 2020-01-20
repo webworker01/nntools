@@ -1,8 +1,10 @@
 #!/bin/bash
 #
-# Usage: ./resetwallet <COINNAME> <sapling=1/0>
-# e.g.   ./resetwallet KMD
+# Usage: ./resetwallet <COINNAME> <sapling=1/0> <resettooldest=1/0>
+# e.g.   ./resetwallet KMD 1 1
 # e.g.   ./resetwallet OOT 0
+#
+# resettooldest=1 will not send any transactions and only delete wallet and rescan from the oldest tx in the wallet
 #
 # @author webworker01
 #
@@ -25,61 +27,76 @@ else
     sapling=1
 fi
 
+if [[ ! -z $3 ]] && [[ $3 != "1" ]]; then
+    resettooldest=0
+else
+    resettooldest=1
+fi
+
 pidfile="$datadir/komodod.pid"
 
 privkey=$($komodocli $asset dumpprivkey $nn_address)
 
-#unlock all tx
-lockedtx=$($komodocli $asset listlockunspent | jq -c .)
-$komodocli $asset lockunspent true $lockedtx
+if (( resettooldest < 1 )); then
+    #unlock all tx
+    lockedtx=$($komodocli $asset listlockunspent | jq -c .)
+    $komodocli $asset lockunspent true $lockedtx
 
-#send complete balance to self
-unspent=$($komodocli $asset listunspent | jq '[.[] | select(.spendable==true)]')
-if [[ $coin == "KMD" ]]; then
-    interest=$(jq -r '[.[].interest] | add' <<< $unspent)
-    interest=$( printf "%.8f" $interest )
-else
-    interest=0
-fi
-consolidatethese=$(jq -rc '[.[] | {"txid":.txid, "vout":.vout}]' <<< $unspent)
-consolidateamount=$(jq -r '[.[].amount] | add' <<< $unspent)
-consolidateamountfixed=$( printf "%.8f" $(bc -l <<< "($consolidateamount+$interest)") )
-rawtxresult=$($komodocli $asset createrawtransaction ${consolidatethese} '''{ "'$nn_address'": '$consolidateamountfixed' }''')
-txid=$(sendRaw ${rawtxresult} ${coin} ${sapling})
-log "resetwallet" "$coin - balance sent $consolidateamountfixed - interest: $interest  - txid : $txid"
+    #send complete balance to self
+    unspent=$($komodocli $asset listunspent | jq '[.[] | select(.spendable==true)]')
+    if [[ $coin == "KMD" ]]; then
+        interest=$(jq -r '[.[].interest] | add' <<< $unspent)
+        interest=$( printf "%.8f" $interest )
+    else
+        interest=0
+    fi
+    consolidatethese=$(jq -rc '[.[] | {"txid":.txid, "vout":.vout}]' <<< $unspent)
+    consolidateamount=$(jq -r '[.[].amount] | add' <<< $unspent)
+    consolidateamountfixed=$( printf "%.8f" $(bc -l <<< "($consolidateamount+$interest)") )
+    rawtxresult=$($komodocli $asset createrawtransaction ${consolidatethese} '''{ "'$nn_address'": '$consolidateamountfixed' }''')
+    txid=$(sendRaw ${rawtxresult} ${coin} ${sapling})
+    log "resetwallet" "$coin - balance sent $consolidateamountfixed - interest: $interest  - txid : $txid"
 
-i=0
-confirmations=0
-while [ "$confirmations" -eq "0" ]; do
-    sleep 10
-    confirmations=$($komodocli $asset gettransaction $txid | jq .confirmations)
-    i=$((i+1))
-    log "resetwallet" "$coin - sendbalance - waiting for confirmation $confirmations ($i) - ${txid}"  "red" "echo"
-done
-blockhash=$($komodocli $asset gettransaction $txid | jq -r .blockhash)
-scanfrom=$($komodocli $asset getblock $blockhash | jq .height)
-
-#send feeder tx
-if [[ $coin == "KMD" ]]; then
-    txid2=$($komodocli sendtoaddress $nn_address 5)
-    log "resetwallet" "$coin - send feeder UTXO of 5: $txid2"
     i=0
     confirmations=0
     while [ "$confirmations" -eq "0" ]; do
         sleep 10
-        confirmations=$($komodocli gettransaction $txid2 | jq .confirmations)
+        confirmations=$($komodocli $asset gettransaction $txid | jq .confirmations)
         i=$((i+1))
-        log "resetwallet" "$coin - send feeder waiting for confirmation $confirmations ($i) - ${txid2}" "red" "echo"
+        log "resetwallet" "$coin - sendbalance - waiting for confirmation $confirmations ($i) - ${txid}"  "red" "echo"
     done
+    blockhash=$($komodocli $asset gettransaction $txid | jq -r .blockhash)
+    scanfrom=$($komodocli $asset getblock $blockhash | jq .height)
+
+    #send feeder tx
+    if [[ $coin == "KMD" ]]; then
+        txid2=$($komodocli sendtoaddress $nn_address 5)
+        log "resetwallet" "$coin - send feeder UTXO of 5: $txid2"
+        i=0
+        confirmations=0
+        while [ "$confirmations" -eq "0" ]; do
+            sleep 10
+            confirmations=$($komodocli gettransaction $txid2 | jq .confirmations)
+            i=$((i+1))
+            log "resetwallet" "$coin - send feeder waiting for confirmation $confirmations ($i) - ${txid2}" "red" "echo"
+        done
+    fi
+
+    #split utxos
+    if [[ $coin == "KMD" ]]; then
+        splitter=$($scriptpath/splitfunds $coin $kmdutxoqty)
+    else
+        splitter=$($scriptpath/splitfunds $coin $acutxoqty $sapling)
+    fi
+    log "resetwallet" "$coin - splitter: $splitter"
+
+else
+    #reset to oldest utxo
+    blockcount=$(komodo-cli $asset getblockcount)
+    oldestutxo=$(komodo-cli $asset listunspent | jq 'sort_by(.confirmations)[-1] | .rawconfirmations')
+    scanfrom=$(( blockcount - oldestutxo ))
 fi
 
-#split utxos
-if [[ $coin == "KMD" ]]; then
-    splitter=$($scriptpath/splitfunds $coin $kmdutxoqty)
-else
-    splitter=$($scriptpath/splitfunds $coin $acutxoqty $sapling)
-fi
-log "resetwallet" "$coin - splitter: $splitter"
 log "resetwallet" "$coin - scanfrom: $scanfrom" "red" "echo"
 
 #Grab daemon args before killing
