@@ -7,7 +7,6 @@ source $scriptpath/main
 
 if (( $thirdpartycoins < 1 )); then
     while [[ ! -z $monitorsize ]]; do
-        log "monitor" "started"
         for coins in "${coinlist[@]}"; do
             coin=($coins)
             walletsize=$(ls -l ~/.komodo/${coin[0]}/wallet.dat  | awk '{print $5}')
