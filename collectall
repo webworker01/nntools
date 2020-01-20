@@ -50,7 +50,7 @@ while (( unspent_amount > 1)); do
         log "collectall" "consolidate - waiting for confirmation $confirmations ($i) - ${txid}"  "red" "echo"
     done
 
-    unspent_amount=$($komodocli $asset listunspent | jq '. | length')
+    unspent_amount=$($komodocli $asset listunspent | jq --arg checkaddr $nn_address --arg exclude_amount $exclude_amount '[.[] | select(.amount!=$exclude_amount and .address==$checkaddr and .spendable==true)] | length')
     log "collectall" "Consolidate TX: $txid New unspent_amount: $unspent_amount"
 
     c=$((c+1))
