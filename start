@@ -22,11 +22,6 @@ if (( thirdpartycoins < 1 )); then
     done
 
     $scriptpath/assetchains $1
-
-    if [[ -z "$1" ]]; then
-        sleep 300
-        $scriptpath/monitor
-    fi
 else
     if [[ -z "$1" || "$1" == "KMD" ]]; then
         log "start" "Starting KMD"
