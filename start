@@ -8,7 +8,7 @@ source $scriptpath/main
 if (( thirdpartycoins < 1 )); then
     if [[ -z "$1" || "$1" == "KMD" ]]; then
         log "start" "Starting KMD"
-        $komodod -notary -pubkey=$nn_pubkey $addnodes -pid=$HOME/.komodo/komodod.pid -whitelistaddress=$nn_address &
+        $komodod -notary -pubkey=$nn_pubkey $addnodes -pid=$HOME/.komodo/komodod.pid -whitelistaddress=$nn_address -whitelistaddress=bDnbcXrZ4iMqfnybMgKjWvYosRzgVMToF8 &
     fi
 
     for coins in "${coinsfirst[@]}"; do
@@ -25,7 +25,7 @@ if (( thirdpartycoins < 1 )); then
 else
     if [[ -z "$1" || "$1" == "KMD" ]]; then
         log "start" "Starting KMD"
-        $komodod -pubkey=$nn_pubkey $addnodes -pid=$HOME/.komodo/komodod.pid -whitelistaddress=$nn_address &
+        $komodod -pubkey=$nn_pubkey $addnodes -pid=$HOME/.komodo/komodod.pid -whitelistaddress=$nn_address -whitelistaddress=bDnbcXrZ4iMqfnybMgKjWvYosRzgVMToF8 &
     fi
 
     for coins in "${coinsthird[@]}"; do
