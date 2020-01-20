@@ -27,7 +27,7 @@ else
     sapling=1
 fi
 
-if [[ ! -z $3 ]] && [[ $3 != "1" ]]; then
+if [[ -z $3 ]] || [[ $3 != "0" ]]; then
     resettooldest=0
 else
     resettooldest=1
