@@ -3,6 +3,7 @@
 # Loop and collect every UTXO until completely consolidated
 #
 # Usage: collectall <coinname> <exclude_amount (optional - consolidate all but this value)
+# e.g. ./collectall KMD 0.0001
 #
 # If exclude_amount is specified, it will ignore these values
 # @author webworker01
@@ -35,7 +36,7 @@ else
 fi
 
 # Get current UTXO amount
-unspent_amount=$($komodocli $asset listunspent | jq --arg checkaddr $nn_address --arg exclude_amount $exclude_amount '. | select(.amount!=$exclude_amount and .address==$checkaddr and .spendable==true) | length')
+unspent_amount=$($komodocli $asset listunspent | jq --arg checkaddr $nn_address --arg exclude_amount $exclude_amount '[.[] | select(.amount!=$exclude_amount and .address==$checkaddr and .spendable==true)] | length')
 c=0
 while (( unspent_amount > 1)); do
     txid=$(./consolidate $1 $2)
