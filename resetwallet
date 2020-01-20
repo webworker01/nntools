@@ -101,9 +101,9 @@ log "resetwallet" "$coin - scanfrom: $scanfrom" "red" "echo"
 
 #Grab daemon args before killing
 if [[ $coin == "KMD" ]]; then
-    daemon_args=$(ps -fC komodod | grep -- "-pubkey=${nn_pubkey}" | grep -v -- "-ac_name=" | grep -Po "komodod .*" | sed 's/komodod//g' | sed -e 's/-reindex//g' | sed -e 's/-rescan//g')
+    daemon_args=$(ps -fC komodod | grep -- "-pubkey=${nn_pubkey}" | grep -v -- "-ac_name=" | grep -Po "komodod .*" | sed 's/komodod //g' | sed -e 's/-reindex//g' | sed -e 's/-rescan//g')
 else
-    daemon_args=$(ps -fC komodod | grep -- "-pubkey=${nn_pubkey}" | grep -- "-ac_name=${coin}" | grep -Po "komodod .*" | sed 's/komodod//g' | sed -e 's/-reindex//g' | sed -e 's/-rescan//g')
+    daemon_args=$(ps -fC komodod | grep -- "-pubkey=${nn_pubkey}" | grep -- "-ac_name=${coin}" | grep -Po "komodod .*" | sed 's/komodod //g' | sed -e 's/-reindex//g' | sed -e 's/-rescan//g')
 fi
 
 log "resetwallet" "$coin - killing daemon - scanfrom: $scanfrom - restart command: $komodod $daemon_args"
