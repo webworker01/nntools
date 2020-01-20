@@ -23,7 +23,7 @@ if (( thirdpartycoins < 1 )); then
 
     $scriptpath/assetchains $1
 
-    if [[ -z "$1"]]; then
+    if [[ -z "$1" ]]; then
         $scriptpath/monitor
     fi
 else

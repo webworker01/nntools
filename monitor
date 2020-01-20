@@ -18,8 +18,6 @@ if (( $thirdpartycoins < 1 )); then
                 else
                     $scriptpath/resetwallet ${coin[0]}
                 fi
-
-                sleep 60
             fi
         done
         sleep $sleepytime
