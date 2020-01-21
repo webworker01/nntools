@@ -10,6 +10,7 @@ pkill -15 iguana
 
 if (( thirdpartycoins < 1 )); then
     pkill -15 bitcoind
+    pkill -15 verusd
 else
     for coins in "${coinsthird[@]}"; do
         coin=($coins)
