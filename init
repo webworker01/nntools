@@ -74,7 +74,7 @@ echo "pubkey=$nn_pubkey" > $HOME/komodo/src/pubkey.txt
 
 #Iguana
 cd $HOME
-git clone https://github.com/KomodoPlatform/dPoW
+git clone https://github.com/KomodoPlatform/dPoW -b master --single-branch
 cd dPoW
 # git checkout beta_season3
 cp $HOME/komodo/src/pubkey.txt $HOME/dPoW/iguana/pubkey.txt
