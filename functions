@@ -53,7 +53,7 @@ calcFee()
     local vins=$1
     local vouts=$2
     local size=$(bc -l <<< "${vins} * 148 + ${vouts} * 34 + ${vins} + 10")
-    local fee=$( printf "%.8f" $(bc -l <<< "${size} / 1024 * ${txfeeperkb} + 0.00000001") ) #round up for good measure
+    local fee=$( printf "%.8f" $(bc -l <<< "${size} / 1024 * ${txfeeperkb}") )
 
     echo "${fee}"
 }
@@ -88,12 +88,11 @@ sendRaw()
         # nlocktime=$(printf "%08x" $(date +%s) | dd conv=swab 2> /dev/null | rev)
         nlocktime="00000000"
 
-        hex=${rawtx::-8}$nlocktime
-
         if (( sapling > 0 )); then
-            # rawtx=$rawtx"000000000000000000000000000000" # sapling end of tx
-            txtail=000000000000000000000000000000
-            hex=${hex::-38}${nlocktime}${txtail}
+            txtail="000000000000000000000000000000"
+            hex=${rawtx::-38}${nlocktime}${txtail}
+        else
+            hex=${rawtx::-8}${nlocktime}
         fi
 
         signedtx=$($komodocli $asset signrawtransaction $hex | jq -r '.hex')
