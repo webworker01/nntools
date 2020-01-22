@@ -48,22 +48,31 @@ log()
     fi
 }
 
+# @return (1|0)
+isSapling()
+{
+    local coin=$1
+    if [[ ! ${sproutcoins[*]} =~ ${coin} ]]; then
+        echo 1
+    else
+        echo 0
+    fi
+}
+
 sendRaw()
 {
     local rawtx=$1
     local acname=$2
 
     if [[ ! -z $acname ]] && [[ $acname != "KMD" ]]; then
+        coin=$acname
         asset=" -ac_name=${acname}"
     else
+        coin="KMD"
         asset=""
     fi
 
-    if [[ ! -z $3 ]] && [[ $3 != "1" ]]; then
-        sapling=0
-    else
-        sapling=1
-    fi
+    sapling=$(isSapling $coin)
 
     if [[ ! -z $rawtx ]]; then
         # nlocktime=$(printf "%08x" $(date +%s) | dd conv=swab 2> /dev/null | rev)
@@ -72,7 +81,7 @@ sendRaw()
         hex=${rawtx::-8}$nlocktime
 
         if (( sapling > 0 )); then
-            rawtx=$rawtx"000000000000000000000000000000" # sapling end of tx
+            # rawtx=$rawtx"000000000000000000000000000000" # sapling end of tx
             txtail=000000000000000000000000000000
             hex=${hex::-38}${nlocktime}${txtail}
         fi

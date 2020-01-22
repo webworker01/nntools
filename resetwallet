@@ -1,8 +1,7 @@
 #!/bin/bash
 #
-# Usage: ./resetwallet <COINNAME> <sapling=1/0> <resettooldest=1/0>
-# e.g.   ./resetwallet KMD 1 1
-# e.g.   ./resetwallet OOT 0
+# Usage: ./resetwallet <COINNAME> <resettooldest=1/0>
+# e.g.   ./resetwallet KMD 1
 #
 # resettooldest=1 will not send any transactions and only delete wallet and rescan from the oldest tx in the wallet
 #
@@ -15,23 +14,21 @@ if [[ ! -z $1 ]] && [[ $1 != "KMD" ]]; then
     coin=$1
     asset=" -ac_name=$1"
     datadir="$HOME/.komodo/$coin"
+    txfee=0
 else
     coin="KMD"
     asset=""
     datadir="$HOME/.komodo"
+    txfee=$txfee
 fi
 
-if [[ ! -z $2 ]] && [[ $2 != "1" ]]; then
-    sapling=0
-else
-    sapling=1
-fi
-
-if [[ -z $3 ]] || [[ $3 != "0" ]]; then
+if [[ -z $2 ]] || [[ $2 != "0" ]]; then
     resettooldest=0
 else
     resettooldest=1
 fi
+
+sapling=$(isSapling $coin)
 
 pidfile="$datadir/komodod.pid"
 
@@ -52,9 +49,9 @@ if (( resettooldest < 1 )); then
     fi
     consolidatethese=$(jq -rc '[.[] | {"txid":.txid, "vout":.vout}]' <<< $unspent)
     consolidateamount=$(jq -r '[.[].amount] | add' <<< $unspent)
-    consolidateamountfixed=$( printf "%.8f" $(bc -l <<< "($consolidateamount+$interest)") )
+    consolidateamountfixed=$( printf "%.8f" $(bc -l <<< "(${consolidateamount}+${interest}-${txfee})") )
     rawtxresult=$($komodocli $asset createrawtransaction ${consolidatethese} '''{ "'$nn_address'": '$consolidateamountfixed' }''')
-    txid=$(sendRaw ${rawtxresult} ${coin} ${sapling})
+    txid=$(sendRaw ${rawtxresult} ${coin})
     log "resetwallet" "$coin - balance sent $consolidateamountfixed - interest: $interest  - txid : $txid"
 
     i=0

@@ -37,7 +37,7 @@ if (( minedcount > 0 )); then
     feedutxo=$(jq -r --arg minsize $utxofeederlow '[.[] | select (.amount>($minsize|tonumber) and .generated==true and .spendable==true)] | sort_by(.amount)[0]' <<< $unspent)
     feedthis=$(jq -r '[. | {"txid":.txid, "vout":.vout}] | tostring' <<< $feedutxo)
     feedthisamount=$(jq -r '.amount' <<< $feedutxo)
-    feedthisamountfixed=$( printf "%.8f" $feedthisamount )
+    feedthisamountfixed=$( printf "%.8f" $(bc -l <<< "(${feedthisamount}-${txfee})") )
 
     #if feeder utxo doesn't exist
     if [[ "$feederamount" == "null" ]]; then
@@ -50,7 +50,7 @@ if (( minedcount > 0 )); then
 
     #if feeder utxo is getting low
     elif (( $(echo "$feederamount < $utxofeederlow" | bc -l) )); then
-        combinefeederamounts=$( printf "%.8f" $(bc -l <<< "($feederamount + $feedthisamountfixed)") )
+        combinefeederamounts=$( printf "%.8f" $(bc -l <<< "(${feederamount} + ${feedthisamountfixed})") )
 
         combinefeederutxos=$(jq -r --argjson arr1 "$feederutxovin" --argjson arr2 "$feedthis" -n '$arr1 + $arr2 | tostring')
 
@@ -90,7 +90,7 @@ if (( minedcount > 3 )) || (( minedcount > 0 && combine > 0 )); then
         alreadyconsolidated=$(jq '[.[] | {"txid":.txid, "vout":.vout}]' <<< $alreadyutxounlocked)
         alreadyconsolidatedamount=$(jq -r '[.[].amount] | add' <<< $alreadyutxounlocked)
 
-        consolidateamountfixed=$( printf "%.8f" $(bc -l <<< "($consolidateamount+$alreadyconsolidatedamount+$interest)") )
+        consolidateamountfixed=$( printf "%.8f" $(bc -l <<< "(${consolidateamount}+${alreadyconsolidatedamount}+${interest}-${txfee})") )
 
         combineconsolidateutxos=$(jq -r --argjson arr1 "$consolidatethese" --argjson arr2 "$alreadyconsolidated" -n '$arr1 + $arr2 | tostring')
 
@@ -100,7 +100,7 @@ if (( minedcount > 3 )) || (( minedcount > 0 && combine > 0 )); then
         log "collectinterest" "combine all $consolidateamountfixed - interest: $interest  - txid : $rawtxid"
     #combine mined
     else
-        consolidateamountfixed=$( printf "%.8f" $consolidateamount )
+        consolidateamountfixed=$( printf "%.8f" $(bc -l <<< "(${consolidateamount}-${txfee})") )
         utxostring=$( jq -r '. | tostring' <<< $consolidatethese )
 
         rawtxresult=$($komodocli createrawtransaction $utxostring '''{ "'$nn_address'": '$consolidateamountfixed' }''')

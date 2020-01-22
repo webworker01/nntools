@@ -1,24 +1,22 @@
 #!/bin/bash
 #
+# Currently only ACs
+#
 # @author webworker01
 #
 scriptpath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 source $scriptpath/main
 
 if (( $thirdpartycoins < 1 )); then
-    while [[ ! -z $monitorsize ]]; do
+    # while [[ ! -z $monitorsize ]]; do
         for coins in "${coinlist[@]}"; do
             coin=($coins)
             walletsize=$(ls -l ~/.komodo/${coin[0]}/wallet.dat  | awk '{print $5}')
             if (( $walletsize > $monitorsize )); then
                 log "monitor" "${coin[0]} - $walletsize"
-                if [[ ${sproutcoins[*]} =~ ${coin[0]} ]]; then
-                    $scriptpath/resetwallet ${coin[0]} 0
-                else
-                    $scriptpath/resetwallet ${coin[0]}
-                fi
+                $scriptpath/resetwallet ${coin[0]}
             fi
         done
-        sleep $sleepytime
-    done
+        # sleep $sleepytime
+    # done
 fi
