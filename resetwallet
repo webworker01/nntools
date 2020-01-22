@@ -14,12 +14,12 @@ if [[ ! -z $1 ]] && [[ $1 != "KMD" ]]; then
     coin=$1
     asset=" -ac_name=$1"
     datadir="$HOME/.komodo/$coin"
-    txfee=0
+    txfeeperkb=0
 else
     coin="KMD"
     asset=""
     datadir="$HOME/.komodo"
-    txfee=$txfee
+    txfeeperkb=$txfeeperkb
 fi
 
 if [[ -z $2 ]] || [[ $2 != "0" ]]; then
@@ -48,8 +48,10 @@ if (( resettooldest < 1 )); then
         interest=0
     fi
     consolidatethese=$(jq -rc '[.[] | {"txid":.txid, "vout":.vout}]' <<< $unspent)
+    consolidatetheselength=$(jq -r '. | length' <<< $unspent)
+    consolidatethesetxfee=$(calcFee ${consolidatetheselength} 1)
     consolidateamount=$(jq -r '[.[].amount] | add' <<< $unspent)
-    consolidateamountfixed=$( printf "%.8f" $(bc -l <<< "(${consolidateamount}+${interest}-${txfee})") )
+    consolidateamountfixed=$( printf "%.8f" $(bc -l <<< "(${consolidateamount}+${interest}-${consolidatethesetxfee})") )
     rawtxresult=$($komodocli $asset createrawtransaction ${consolidatethese} '''{ "'$nn_address'": '$consolidateamountfixed' }''')
     txid=$(sendRaw ${rawtxresult} ${coin})
     log "resetwallet" "$coin - balance sent $consolidateamountfixed - interest: $interest  - txid : $txid"

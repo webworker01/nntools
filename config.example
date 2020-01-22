@@ -53,7 +53,7 @@ btcutxoqty=200
 otherutxoqty=50
 
 #Standard tx fee amount
-txfee=0.000035
+txfeeperkb=0.000035
 
 #size to monitor for in bytes
 monitorsize=20000000

@@ -48,6 +48,16 @@ log()
     fi
 }
 
+calcFee()
+{
+    local vins=$1
+    local vouts=$2
+    local size=$(bc -l <<< "${vins} * 148 + ${vouts} * 34 + ${vins} + 10")
+    local fee=$( printf "%.8f" $(bc -l <<< "${size} / 1024 * ${txfeeperkb} + 0.00000001") ) #round up for good measure
+
+    echo "${fee}"
+}
+
 # @return (1|0)
 isSapling()
 {

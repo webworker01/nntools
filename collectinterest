@@ -30,14 +30,19 @@ minedcount=$(jq '[.[] | select(.generated==true)] | length' <<< $unspent)
 
 #check if feeder utxo needs to be fed
 feederutxo=$(jq -r --arg utxosize $utxoamount --arg feedermax $utxofeederhigh '[.[] | select (.generated==false and .spendable==true and .amount>($utxosize|tonumber) and .amount<($feedermax|tonumber))]' <<< $unspent)
+feederutxolength=$(jq -r '. | length' <<< $feederutxo)
+feederutxotxfee=$(calcFee ${feederutxolength} 1)
 feederutxovin=$(jq '[.[] | {"txid":.txid, "vout":.vout}]' <<< $feederutxo)
 feederamount=$(jq '[.[].amount] | add' <<< $feederutxo)
 feederfed=0
+
 if (( minedcount > 0 )); then
     feedutxo=$(jq -r --arg minsize $utxofeederlow '[.[] | select (.amount>($minsize|tonumber) and .generated==true and .spendable==true)] | sort_by(.amount)[0]' <<< $unspent)
+    feedutxolength=$(jq -r '. | length' <<< $feedutxo)
+    feedutxotxfee=$(calcFee ${feedutxolength} 1)
     feedthis=$(jq -r '[. | {"txid":.txid, "vout":.vout}] | tostring' <<< $feedutxo)
     feedthisamount=$(jq -r '.amount' <<< $feedutxo)
-    feedthisamountfixed=$( printf "%.8f" $(bc -l <<< "(${feedthisamount}-${txfee})") )
+    feedthisamountfixed=$( printf "%.8f" $(bc -l <<< "(${feedthisamount}-${feedutxotxfee})") )
 
     #if feeder utxo doesn't exist
     if [[ "$feederamount" == "null" ]]; then
@@ -50,7 +55,7 @@ if (( minedcount > 0 )); then
 
     #if feeder utxo is getting low
     elif (( $(echo "$feederamount < $utxofeederlow" | bc -l) )); then
-        combinefeederamounts=$( printf "%.8f" $(bc -l <<< "(${feederamount} + ${feedthisamountfixed})") )
+        combinefeederamounts=$( printf "%.8f" $(bc -l <<< "(${feederamount} + ${feedthisamountfixed} - ${feederutxotxfee})") )
 
         combinefeederutxos=$(jq -r --argjson arr1 "$feederutxovin" --argjson arr2 "$feedthis" -n '$arr1 + $arr2 | tostring')
 
@@ -80,6 +85,8 @@ if (( minedcount > 3 )) || (( minedcount > 0 && combine > 0 )); then
     if (( feederfed == 1 )); then
         consolidateutxo=$(jq -r '. | del(.[0])' <<< $consolidateutxo)
     fi
+    consolidateutxolength=$(jq -r '. | length' <<< $consolidateutxo)
+    consolidateutxotxfee=$(calcFee ${consolidateutxolength} 1)
     consolidatethese=$(jq -r '[.[] | {"txid":.txid, "vout":.vout}]' <<< $consolidateutxo)
     consolidateamount=$(jq -r '[.[].amount] | add' <<< $consolidateutxo)
 
@@ -88,9 +95,11 @@ if (( minedcount > 3 )) || (( minedcount > 0 && combine > 0 )); then
     #combine all
     if (( $(echo "$interest > $collectinterestthreshold" | bc) )) || (( combine > 0 )); then
         alreadyconsolidated=$(jq '[.[] | {"txid":.txid, "vout":.vout}]' <<< $alreadyutxounlocked)
+        alreadyconsolidateutxolength=$(jq -r '. | length' <<< $alreadyutxounlocked)
+        alreadyconsolidateutxotxfee=$(calcFee ${alreadyconsolidateutxolength} 1)
         alreadyconsolidatedamount=$(jq -r '[.[].amount] | add' <<< $alreadyutxounlocked)
 
-        consolidateamountfixed=$( printf "%.8f" $(bc -l <<< "(${consolidateamount}+${alreadyconsolidatedamount}+${interest}-${txfee})") )
+        consolidateamountfixed=$( printf "%.8f" $(bc -l <<< "(${consolidateamount}+${alreadyconsolidatedamount}+${interest}-${consolidateutxotxfee}-${alreadyconsolidateutxotxfee})") )
 
         combineconsolidateutxos=$(jq -r --argjson arr1 "$consolidatethese" --argjson arr2 "$alreadyconsolidated" -n '$arr1 + $arr2 | tostring')
 
@@ -100,7 +109,7 @@ if (( minedcount > 3 )) || (( minedcount > 0 && combine > 0 )); then
         log "collectinterest" "combine all $consolidateamountfixed - interest: $interest  - txid : $rawtxid"
     #combine mined
     else
-        consolidateamountfixed=$( printf "%.8f" $(bc -l <<< "(${consolidateamount}-${txfee})") )
+        consolidateamountfixed=$( printf "%.8f" $(bc -l <<< "(${consolidateamount}-${consolidateutxotxfee})") )
         utxostring=$( jq -r '. | tostring' <<< $consolidatethese )
 
         rawtxresult=$($komodocli createrawtransaction $utxostring '''{ "'$nn_address'": '$consolidateamountfixed' }''')

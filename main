@@ -16,4 +16,4 @@ source ${scriptpath}/functions
 addnodes=${addnodes:="-addnode=seed.komodostats.com -addnode=seed.webworker.sh"}
 datetime=${datetime:=$(date '+%Y-%m-%d %H:%M:%S')}
 dpowseeds=${dpowseeds:=('95.213.238.100' '77.75.121.138' '103.6.12.105' '139.99.209.214')}
-txfee=${txfee:=0.000035}
+txfeeperkb=${txfeeperkb:=0.000035}
