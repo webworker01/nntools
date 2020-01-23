@@ -118,7 +118,7 @@ else
     daemon_args=$(ps -fC komodod | grep -- "-pubkey=${nn_pubkey}" | grep -- "-ac_name=${coin}" | grep -Po "komodod .*" | sed 's/komodod //g' | sed -e 's/-reindex//g' | sed -e 's/-rescan//g')
 fi
 
-log "resetwallet" "$coin - killing daemon - scanfrom: $scanfrom - restart command: $komodod $daemon_args"
+log "resetwallet" "$coin - killing daemon - scanfrom: $scanfrom - restart command: $coinexec $daemon_args"
 
 $komodocli $asset stop
 
@@ -132,10 +132,10 @@ sleep 15
 mv $datadir/wallet.dat $datadir/wallet.dat.old
 
 #restart the daemon
-log "resetwallet" "$coin - Restart daemon $komodod $daemon_args"
+log "resetwallet" "$coin - Restart daemon $coinexec $daemon_args"
 
 cd $scriptpath/7776/
-$komodod $daemon_args &
+$coinexec $daemon_args &
 cd $scriptpath
 
 i=0
