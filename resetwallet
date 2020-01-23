@@ -20,7 +20,6 @@ if [[ ! -z $1 ]] && [[ $1 != "KMD" ]]; then
     for coins in "${coinsfirst[@]}"; do
         searchcoin=($coins)
         if [[ "$1" == "${searchcoin[0]}" ]]; then
-            log "resetwallet" "$1 matched ${searchcoin[0]}"
             eval $(echo coinexec=${searchcoin[2]})
             datadir="${HOME}/${searchcoin[3]}"
         fi
