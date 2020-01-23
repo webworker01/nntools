@@ -19,8 +19,6 @@ if [[ ! -z $1 ]] && [[ $1 != "KMD" ]]; then
     for coins in "${coinsfirst[@]}"; do
         coin=($coins)
         if [[ -z "$1" || "$1" == "${coin[0]}" ]]; then
-            cd $scriptpath/7776/
-            log "start" "Starting ${coin[0]}"
             eval $(echo coinexec=${coin[2]})
         fi
     done
