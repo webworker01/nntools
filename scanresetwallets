@@ -25,11 +25,11 @@ if (( $thirdpartycoins < 1 )); then
         fi
 
         #check vrsc
-        walletsize=$(ls -l ~/.komodo/VRSC/wallet.dat  | awk '{print $5}')
-        if (( $walletsize > $monitorsize )); then
-            log "scanresetwallets" "VRSC - $walletsize"
-            $scriptpath/resetwallet "VRSC"
-        fi
+        # walletsize=$(ls -l ~/.komodo/VRSC/wallet.dat  | awk '{print $5}')
+        # if (( $walletsize > $monitorsize )); then
+        #     log "scanresetwallets" "VRSC - $walletsize"
+        #     $scriptpath/resetwallet "VRSC"
+        # fi
 
         #check acs
         for coins in "${coinlist[@]}"; do
