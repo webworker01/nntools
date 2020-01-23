@@ -15,11 +15,25 @@ if [[ ! -z $1 ]] && [[ $1 != "KMD" ]]; then
     asset=" -ac_name=$1"
     datadir="$HOME/.komodo/$coin"
     txfeeperkb=0
+
+    for coins in "${coinsfirst[@]}"; do
+        coin=($coins)
+        if [[ -z "$1" || "$1" == "${coin[0]}" ]]; then
+            cd $scriptpath/7776/
+            log "start" "Starting ${coin[0]}"
+            eval $(echo coinexec=${coin[2]})
+        fi
+    done
+
+    if [[ -z $coinexec ]]; then
+        coinexec=$komodod
+    fi
 else
     coin="KMD"
     asset=""
     datadir="$HOME/.komodo"
     txfeeperkb=$txfeeperkb
+    coinexec=$komodod
 fi
 
 if [[ -z $2 ]] || [[ $2 != "0" ]]; then
