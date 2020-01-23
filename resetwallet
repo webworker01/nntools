@@ -13,19 +13,21 @@ source ${scriptpath}/main
 if [[ ! -z $1 ]] && [[ $1 != "KMD" ]]; then
     coin=$1
     asset=" -ac_name=$1"
-    datadir="$HOME/.komodo/$coin"
     txfeeperkb=0
+    datadir=""
+    coinexec=""
 
     for coins in "${coinsfirst[@]}"; do
-        coin=($coins)
-        if [[ -z "$1" || "$1" == "${coin[0]}" ]]; then
-            eval $(echo coinexec=${coin[2]})
+        searchcoin=($coins)
+        if [[ "$1" == "${searchcoin[0]}" ]]; then
+            log "resetwallet" "$1 matched ${searchcoin[0]}"
+            eval $(echo coinexec=${searchcoin[2]})
+            datadir="${HOME}/${searchcoin[3]}"
         fi
     done
 
-    if [[ -z $coinexec ]]; then
-        coinexec=$komodod
-    fi
+    coinexec=${coinexec:=$komodod}
+    datadir=${datadir:="$HOME/.komodo/$coin"}
 else
     coin="KMD"
     asset=""
