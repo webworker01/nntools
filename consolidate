@@ -49,7 +49,7 @@ consolidatethese=$(jq -r '[.[] | {"txid":.txid, "vout":.vout}] | tostring' <<< $
 consolidatetheselength=$(jq -r '. | length' <<< $consolidateutxo)
 consolidateamount=$(jq -r '[.[].amount] | add' <<< $consolidateutxo)
 
-txfee=$(calcFee ${consolidatetheselength} 1 "p2pkh")
+txfee=$(calcFee ${consolidatetheselength} 1 "p2pkh" "p2pkh")
 
 if [[ "$consolidateamount" != "null" ]]; then
     consolidateamountfixed=$( printf "%.8f" $(bc -l <<< "(${consolidateamount}-${txfee})") )

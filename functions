@@ -52,18 +52,22 @@ calcFee()
 {
     local vins=$1
     local vouts=$2
-    local scripttype=$3
+    local scripttypein=$3
+    local scripttypeout=$4
 
-    case $scripttype in
-        p2pkh)
-            local vinmultiplier=180
-            ;;
-        *)
-            local vinmultiplier=130
-            ;;
-    esac
+    if [[ $scripttypein == "p2pk" ]]; then
+        local vinmultiplier = 100
+    else
+        local vinmultiplier = 150
+    fi
 
-    local size=$(bc -l <<< "${vins} * ${vinmultiplier} + ${vouts} * 44 + 65")
+    if [[ $scripttypeout == "p2pk" ]]; then
+        local voutmultiplier = 44
+    else
+        local voutmultiplier = 35
+    fi
+
+    local size=$(bc -l <<< "${vins} * ${vinmultiplier} + ${vouts} * ${voutmultiplier} + 65")
     local fee=$( printf "%.8f" $(bc -l <<< "${size} / 1024 * ${txfeeperkb}") )
     log "calcfee" "size: ${size} fee: ${fee}" "" "file"
 

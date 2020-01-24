@@ -90,7 +90,7 @@ if [[ $utxo != "null" ]]; then
     outbits=$(eval printf "%0.s$outbits" {1..$SPLIT_COUNT})
     rawtx=$rawtx$outbits
 
-    txfee=$(calcFee 1 $((SPLIT_COUNT+1)) "p2pkh")
+    txfee=$(calcFee 1 $((SPLIT_COUNT+1)) "p2pkh" "p2pk")
 
     change=$( printf "%.8f" $(bc -l <<< "(${amount}-${SPLIT_TOTAL}-${txfee})") )
     change=$( sed 's/^0*//' <<< ${change//./} )
