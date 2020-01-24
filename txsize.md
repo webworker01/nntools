@@ -9,13 +9,13 @@ See [calcFee](https://github.com/webworker01/nntools/blob/master/functions#L51) 
 * tx version                  8
 * versiongroupid              8
 * numberofinputs              2
-* vins:     (p2pkh=150,p2pk=100)
+* vins:     (p2pkh=296,p2pk=228)
     * txid                    64
     * vout #                  8
     * unknown                 2
     * scriptsig:
-        * p2pkh               107
-        * p2pk                73
+        * p2pkh               214
+        * p2pk                146
     * unknown ffffffff        8
 * numberofoutputs             2
 * vouts:      (p2pkh=70,p2pk=88)

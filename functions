@@ -56,7 +56,7 @@ calcFee()
     local scripttypeout=$4
 
     if [[ $scripttypein == "p2pk" ]]; then
-        local vinmultiplier=100
+        local vinmultiplier=114
     else
         local vinmultiplier=150
     fi
