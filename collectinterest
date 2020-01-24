@@ -4,7 +4,7 @@
 # One "primary" utxo is maintained which allows for the bulk of rewards accruing
 # One "feeder" utxo is maintained which is used for utxo splits
 # Mined rewards are combined once their total is at least 10 KMD to start them accruing rewards
-# Once 0.25 kmd is accrued it is all collected into the "primary"
+# Once 1 kmd is accrued it is all collected into the "primary"
 #
 # @see https://github.com/DeckerSU/komodo_scripts/blob/master/sendawaynn.sh
 # @author webworker01
@@ -23,20 +23,21 @@ fi
 utxoamount=0.001
 utxofeederhigh=9
 utxofeederlow=3
-collectinterestthreshold=0.25
+collectinterestthreshold=1
 
 unspent=$($komodocli listunspent)
 minedcount=$(jq '[.[] | select(.generated==true)] | length' <<< $unspent)
 
-#check if feeder utxo needs to be fed
-feederutxo=$(jq -r --arg utxosize $utxoamount --arg feedermax $utxofeederhigh '[.[] | select (.generated==false and .spendable==true and .amount>($utxosize|tonumber) and .amount<($feedermax|tonumber))]' <<< $unspent)
-feederutxolength=$(jq -r '. | length' <<< $feederutxo)
-feederutxotxfee=$(calcFee ${feederutxolength} 1)
-feederutxovin=$(jq '[.[] | {"txid":.txid, "vout":.vout}]' <<< $feederutxo)
-feederamount=$(jq '[.[].amount] | add' <<< $feederutxo)
-feederfed=0
-
+#handle feeder if there's a mined block to work with
 if (( minedcount > 0 )); then
+    #check if feeder utxo needs to be fed
+    feederutxo=$(jq -r --arg utxosize $utxoamount --arg feedermax $utxofeederhigh '[.[] | select (.generated==false and .spendable==true and .amount>($utxosize|tonumber) and .amount<($feedermax|tonumber))]' <<< $unspent)
+    feederutxolength=$(jq -r '. | length' <<< $feederutxo)
+    feederutxotxfee=$(calcFee ${feederutxolength} 1 "p2pkh")
+    feederutxovin=$(jq '[.[] | {"txid":.txid, "vout":.vout}]' <<< $feederutxo)
+    feederamount=$(jq '[.[].amount] | add' <<< $feederutxo)
+    feederfed=0
+
     feedutxo=$(jq -r --arg minsize $utxofeederlow '[.[] | select (.amount>($minsize|tonumber) and .generated==true and .spendable==true)] | sort_by(.amount)[0]' <<< $unspent)
     feedutxolength=$(jq -r '. | length' <<< $feedutxo)
     feedutxotxfee=$(calcFee ${feedutxolength} 1)
@@ -46,7 +47,6 @@ if (( minedcount > 0 )); then
 
     #if feeder utxo doesn't exist
     if [[ "$feederamount" == "null" ]]; then
-
         rawtxresult=$($komodocli createrawtransaction ${feedthis} '''{ "'$nn_address'": '$feedthisamountfixed' }''')
         rawtxid=$(sendRaw ${rawtxresult})
         feederfed=1
@@ -56,7 +56,6 @@ if (( minedcount > 0 )); then
     #if feeder utxo is getting low
     elif (( $(echo "$feederamount < $utxofeederlow" | bc -l) )); then
         combinefeederamounts=$( printf "%.8f" $(bc -l <<< "(${feederamount} + ${feedthisamountfixed} - ${feederutxotxfee})") )
-
         combinefeederutxos=$(jq -r --argjson arr1 "$feederutxovin" --argjson arr2 "$feedthis" -n '$arr1 + $arr2 | tostring')
 
         rawtxresult=$($komodocli createrawtransaction ${combinefeederutxos} '''{ "'$nn_address'": '$combinefeederamounts' }''')

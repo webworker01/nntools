@@ -49,7 +49,7 @@ consolidatethese=$(jq -r '[.[] | {"txid":.txid, "vout":.vout}] | tostring' <<< $
 consolidatetheselength=$(jq -r '. | length' <<< $consolidateutxo)
 consolidateamount=$(jq -r '[.[].amount] | add' <<< $consolidateutxo)
 
-txfee=$(calcFee ${consolidatetheselength} 1)
+txfee=$(calcFee ${consolidatetheselength} 1 "p2pkh")
 
 if [[ "$consolidateamount" != "null" ]]; then
     consolidateamountfixed=$( printf "%.8f" $(bc -l <<< "(${consolidateamount}-${txfee})") )
@@ -59,7 +59,7 @@ if [[ "$consolidateamount" != "null" ]]; then
         rawtxresult=$($komodocli $asset createrawtransaction ${consolidatethese} '''{ "'$nn_address'": '$consolidateamountfixed' }''')
         rawtxid=$(sendRaw ${rawtxresult} ${coin})
 
-        log "consolidate" "Sent $consolidateamount to $nn_address TXID: $rawtxid" "green" "file"
+        log "consolidate" "${coin} - Sent $consolidateamount to $nn_address TXID: $rawtxid" "green" "file"
         echo $rawtxid
     fi
 fi

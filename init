@@ -116,7 +116,7 @@ EOF
     cd $HOME
     # git clone https://github.com/KomodoPlatform/komodo --branch hush3 --single-branch hush3
     # cd hush3 && git checkout cc35198f1da23a617caf95ed087033d8dfb8ce89
-    git clone https://github.com/MyHush/hush3
+    git clone https://github.com/MyHush/hush3 --branch v3.3.1 --single-branch hush3
     cd hush3 && git checkout v3.3.1
     ./zcutil/build.sh -j$(expr $(nproc) - 1)
 
