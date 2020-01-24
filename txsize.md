@@ -1,3 +1,11 @@
+# Sapling Raw Transaction Hex
+
+To calculate the size of a transaction in bytes, get the hex string with `getrawtransaction` and divide by 2.
+
+Before the transaction is signed, we do not know the hex of the actual transaction, so here I attempt to estimate. Some strings I have not yet identified and simply have marked as "unknown".
+
+See [calcFee](https://github.com/webworker01/nntools/blob/master/functions) for a simplified bash implementation.
+
 * tx version                  8
 * versiongroupid              8
 * numberofinputs              2
