@@ -59,7 +59,7 @@ calcFee()
             local vinmultiplier=180
             ;;
         *)
-            local vinmultiplier=120
+            local vinmultiplier=130
             ;;
     esac
 
