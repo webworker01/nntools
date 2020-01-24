@@ -56,15 +56,15 @@ calcFee()
     local scripttypeout=$4
 
     if [[ $scripttypein == "p2pk" ]]; then
-        local vinmultiplier = 100
+        local vinmultiplier=100
     else
-        local vinmultiplier = 150
+        local vinmultiplier=150
     fi
 
     if [[ $scripttypeout == "p2pk" ]]; then
-        local voutmultiplier = 44
+        local voutmultiplier=44
     else
-        local voutmultiplier = 35
+        local voutmultiplier=35
     fi
 
     local size=$(bc -l <<< "${vins} * ${vinmultiplier} + ${vouts} * ${voutmultiplier} + 65")
