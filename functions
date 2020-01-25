@@ -67,7 +67,7 @@ calcFee()
         local voutmultiplier=35
     fi
 
-    local size=$(bc -l <<< "${vins} * ${vinmultiplier} + ${vouts} * ${voutmultiplier} + 65")
+    local size=$(bc -l <<< "${vins} * ${vinmultiplier} + ${vouts} * ${voutmultiplier} + 30")
     local fee=$( printf "%.8f" $(bc -l <<< "${size} / 1024 * ${txfeeperkb}") )
     log "calcfee" "size: ${size} fee: ${fee}" "" "file"
 
