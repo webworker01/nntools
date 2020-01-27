@@ -20,9 +20,9 @@ else
 fi
 
 #search
-for coins in "${coinsfirst[@]}"; do
+for coins in "${searchlist[@]}"; do
     searchcoin=($coins)
-    if [[ ${searchcoin[4]} == "rescan" && "$1" == "${searchcoin[0]}" ]]; then
+    if [[ "${searchcoin[4]}" == "rescan" ]] && [[ "$1" == "${searchcoin[0]}" ]]; then
         eval $(echo coincli=${searchcoin[1]})
         eval $(echo coinexec=${searchcoin[2]})
         eval $(echo pidfile=${searchcoin[5]})
@@ -39,8 +39,10 @@ coin=$1
 
 if [[ ! -z $btc_address && $coin == "BTC" ]]; then
     address=$btc_address
+    splitqty=$btcutxoqty
 elif [[ ! -z $chips_address && $coin == "CHIPS" ]]; then
     address=$chips_address
+    splitqty=$otherutxoqty
 else
     echo "can't find address for $coin"
     exit 0
@@ -71,8 +73,8 @@ blockhash=$($coincli gettransaction $txid | jq -r .blockhash)
 scanfrom=$($coincli getblock $blockhash | jq .height)
 
 #split funds
-splitter=$(curl --url "http://127.0.0.1:$iguanaport" --data "{\"coin\":\"BTC\",\"agent\":\"iguana\",\"method\":\"splitfunds\",\"satoshis\":\"$splitamount\",\"sendflag\":1,\"duplicates\":$btcutxoqty}")
-log "cronsplit" "${coin} - utxos: $btcutxoqty - $splitter"
+splitter=$(curl --url "http://127.0.0.1:$iguanaport" --data "{\"coin\":\"${coin}\",\"agent\":\"iguana\",\"method\":\"splitfunds\",\"satoshis\":\"$splitamount\",\"sendflag\":1,\"duplicates\":$splitqty}")
+log "cronsplit" "${coin} - utxos: $splitqty - $splitter"
 
 #stop daemon
 $coincli stop
@@ -89,8 +91,16 @@ sleep 15
 mv $datadir/wallet.dat $datadir/wallet.dat.old
 
 #start daemon
-log "resetwallet" "Restart daemon bitcoind"
-bitcoind &
+log "resetwallet" "Restart daemon ${coinexec}"
+$coinexec &
+
+#wait for start
+i=0
+while ! $coincli getinfo >/dev/null 2>&1; do
+   i=$((i+1))
+   log "resetwallet" "$coin - Waiting for daemon start ($i)" "red" "echo"
+   sleep 1
+done
 
 #import key without scan
 importedaddress=$($coincli importprivkey $privkey "" false)
