@@ -68,6 +68,9 @@ confirmations=0
 while [ "$confirmations" -eq "0" ]; do
     sleep 10
     eval $(echo confirmations=$($confcheck))
+    if [[ "$confirmations" == "null" ]]; then
+        confirmations=0
+    fi
     i=$(($i+1))
     log "resetwallet" "sendbalance - waiting for confirmation $confirmations ($i) - ${txid}"  "red" "echo"
 done
