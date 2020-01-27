@@ -13,13 +13,13 @@ if [[ -z $1 ]]; then
 fi
 
 if (( $thirdpartycoins < 1 )); then
-    searchlist=$coinsfirst
+    searchlist="coinsfirst[@]"
 else
-    searchlist=$coinsthird
+    searchlist="coinsthird[@]"
 fi
 
 #search
-for coins in "${searchlist[@]}"; do
+for coins in "${!searchlist}"; do
     searchcoin=($coins)
     if [[ "${searchcoin[4]}" == "newaddress" ]] && [[ "$1" == "${searchcoin[0]}" ]]; then
         eval $(echo coincli=${searchcoin[1]})
