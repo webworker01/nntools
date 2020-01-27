@@ -4,7 +4,6 @@
 #
 # @author webworker01
 #
-
 scriptpath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 source $scriptpath/main
 
@@ -60,7 +59,7 @@ privkey=$($coincli dumpprivkey $address)
 #send balance to self
 balance=$($coincli getbalance)
 txid=$($coincli sendtoaddress $address $balance "" "" true)
-log "resetwallet" "${coin} balance sent $balance - txid : $txid"
+log "resetwalletrescan" "${coin} balance sent $balance - txid : $txid"
 
 #get block height of tx
 i=0
@@ -72,14 +71,14 @@ while [ "$confirmations" -eq "0" ]; do
         confirmations=0
     fi
     i=$(($i+1))
-    log "resetwallet" "sendbalance - waiting for confirmation $confirmations ($i) - ${txid}"  "red" "echo"
+    log "resetwalletrescan" "sendbalance - waiting for confirmation $confirmations ($i) - ${txid}"  "red" "echo"
 done
 blockhash=$($coincli gettransaction $txid | jq -r .blockhash)
 scanfrom=$($coincli getblock $blockhash | jq .height)
 
 #split funds
 splitter=$(curl --url "http://127.0.0.1:$iguanaport" --data "{\"coin\":\"${coin}\",\"agent\":\"iguana\",\"method\":\"splitfunds\",\"satoshis\":\"$splitamount\",\"sendflag\":1,\"duplicates\":$splitqty}")
-log "cronsplit" "${coin} - utxos: $splitqty - $splitter"
+log "resetwalletrescan" "${coin} - utxos: $splitqty - $splitter"
 
 #stop daemon
 $coincli stop
@@ -87,7 +86,7 @@ $coincli stop
 i=0
 while [ -f $pidfile ]; do
    i=$((i+1))
-   log "resetwallet" "Waiting for daemon $coin stop ($i)" "red" "echo"
+   log "resetwalletrescan" "Waiting for daemon $coin stop ($i)" "red" "echo"
    sleep 1
 done
 sleep 15
@@ -96,26 +95,26 @@ sleep 15
 mv $datadir/wallet.dat $datadir/wallet.dat.old
 
 #start daemon
-log "resetwallet" "Restart daemon ${coinexec}"
+log "resetwalletrescan" "Restart daemon ${coinexec}"
 $coinexec &
 
 #wait for start
 i=0
 while ! $coincli getinfo >/dev/null 2>&1; do
    i=$((i+1))
-   log "resetwallet" "$coin - Waiting for daemon start ($i)" "red" "echo"
+   log "resetwalletrescan" "$coin - Waiting for daemon start ($i)" "red" "echo"
    sleep 1
 done
 
 #import key without scan
 importedaddress=$($coincli importprivkey $privkey "" false)
-log "resetwallet" "${coin} - Imported  address -> $importedaddress"
+log "resetwalletrescan" "${coin} - Imported  address -> $importedaddress"
 
 #use rescanblockchain ("start_height")
 $coincli rescanblockchain $scanfrom
-log "resetwallet" "${coin} - Start rescan from height $scanfrom"
+log "resetwalletrescan" "${coin} - Start rescan from height $scanfrom"
 
 sleep 15
 
 newbalance=$($coincli getbalance)
-log "resetwallet" "${coin}- Done! Balance $newbalance"
+log "resetwalletrescan" "${coin}- Done! Balance $newbalance"
