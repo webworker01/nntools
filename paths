@@ -9,16 +9,16 @@ hushcli="$HOME/hush3/src/komodo-cli -ac_name=HUSH3"
 hushd="$HOME/hush3/src/komodod -ac_name=HUSH3 -ac_sapling=1 -ac_reward=0,1125000000,562500000 -ac_halving=129,340000,840000 -ac_end=128,340000,5422111 -ac_eras=3 -ac_blocktime=150 -ac_cc=2 -ac_ccenable=228,234,235,236,241 -ac_founders=1 -ac_supply=6178674 -ac_perc=11111111 -clientname=GoldenSandtrout -addnode=188.165.212.101 -addnode=136.243.227.142 -addnode=5.9.224.250 -ac_cclib=hush3 -ac_script=76a9145eb10cf64f2bab1b457f1f25e658526155928fac88ac -pid=${HOME}/.komodo/HUSH3/komodod.pid"
 verusd="$HOME/VerusCoin/src/verusd -pid=${HOME}/.komodo/VRSC/komodod.pid"
 coinsfirst=(
-'BTC $HOME/bitcoin/src/bitcoin-cli $HOME/bitcoin/src/bitcoind .bitcoin'
-'HUSH3 $hushcli $hushd .komodo/HUSH3'
-'VRSC $HOME/VerusCoin/src/verus $verusd .komodo/VRSC'
+'BTC $HOME/bitcoin/src/bitcoin-cli $HOME/bitcoin/src/bitcoind .bitcoin rescan bitcoind.pid'
+'HUSH3 $hushcli $hushd .komodo/HUSH3 kmd'
+'VRSC $HOME/VerusCoin/src/verus $verusd .komodo/VRSC zimport'
 )
 
 coinsthird=(
-'CHIPS $HOME/chips3/src/chips-cli $HOME/chips3/src/chipsd .chips'
-'GAME $HOME/GameCredits/src/gamecredits-cli $HOME/GameCredits/src/gamecreditsd .gamecredits'
-'EMC2 $HOME/einsteinium/src/einsteinium-cli $HOME/einsteinium/src/einsteiniumd .einsteinium'
-'GIN $HOME/gincoin-core/src/gincoin-cli $HOME/gincoin-core/src/gincoind .gincoincore'
+'CHIPS $HOME/chips3/src/chips-cli $HOME/chips3/src/chipsd .chips rescan chipsd.pid'
+'GAME $HOME/GameCredits/src/gamecredits-cli $HOME/GameCredits/src/gamecreditsd .gamecredits 0'
+'EMC2 $HOME/einsteinium/src/einsteinium-cli $HOME/einsteinium/src/einsteiniumd .einsteinium 0'
+'GIN $HOME/gincoin-core/src/gincoin-cli $HOME/gincoin-core/src/gincoind .gincoincore 0'
 # 'VRSC $HOME/VerusCoin/src/verus $HOME/VerusCoin/src/verusd .komodo/VRSC'
 )
 

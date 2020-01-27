@@ -76,3 +76,6 @@ dpowseeds=('95.213.238.100' '77.75.121.138' '103.6.12.105' '139.99.209.214')
 
 #which notaryid to use as reference node when checking masks (0 to 63)
 referencenode=7
+
+btc_address=
+chips_address=
