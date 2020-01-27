@@ -39,11 +39,11 @@ coin=$1
 if [[ ! -z $btc_address && $coin == "BTC" ]]; then
     address=$btc_address
     splitqty=$btcutxoqty
-    confcheck="$coincli gettransaction $txid | jq .confirmations"
+    confcheck=".confirmations"
 elif [[ ! -z $chips_address && $coin == "CHIPS" ]]; then
     address=$chips_address
     splitqty=$otherutxoqty
-    confcheck="$coincli gettransaction $txid | jq .rawconfirmations"
+    confcheck=".rawconfirmations"
 else
     echo "can't find address for $coin"
     exit 0
@@ -66,7 +66,7 @@ i=0
 confirmations=0
 while [ "$confirmations" -eq "0" ]; do
     sleep 10
-    eval $(echo confirmations=$($confcheck))
+    confirmations=$(eval "${coincli} gettransaction ${txid} | jq ${confcheck}")
     if [[ "$confirmations" == "null" ]]; then
         confirmations=0
     fi

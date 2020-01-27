@@ -48,6 +48,7 @@ pidfile="$datadir/$pidfile"
 
 utxoamt=0.00010000
 splitamount=10000
+confcheck=".rawconfirmations"
 
 privkey=$($coincli dumpprivkey $address)
 
@@ -58,19 +59,19 @@ log "resetwalletnewaddress" "Temp Address: ${tempaddress} Key: ${tempkey}"
 #send balance to self
 balance=$($coincli getbalance)
 txid=$($coincli sendtoaddress $tempaddress $balance "" "" true)
-log "resetwallet" "${coin} balance $balance sent to $tempaddress - txid : $txid"
+log "resetwalletnewaddress" "${coin} balance $balance sent to $tempaddress - txid : $txid"
 
 #wait for confirmation
 i=0
 confirmations=0
 while [ "$confirmations" -eq "0" ]; do
     sleep 10
-    confirmations=$($coincli gettransaction $txid | jq .rawconfirmations)
+    confirmations=$(eval "${coincli} gettransaction ${txid} | jq ${confcheck}")
     if [[ "$confirmations" == "null" ]]; then
         confirmations=0
     fi
     i=$(($i+1))
-    log "resetwallet" "sendbalance - waiting for confirmation $confirmations ($i) - ${txid}"  "red" "echo"
+    log "resetwalletnewaddress" "sendbalance - waiting for confirmation $confirmations ($i) - ${txid}"  "red" "echo"
 done
 
 #stop daemon
@@ -101,11 +102,11 @@ done
 
 #import temp key with scan
 importedtempaddress=$($coincli importprivkey $tempkey)
-log "resetwalletrescan" "${coin} - Imported  address -> $importedtempaddress"
+log "resetwalletrescan" "${coin} - Imported temp address -> $importedtempaddress"
 
 #import key without scan
 importedaddress=$($coincli importprivkey $privkey "" false)
-log "resetwalletrescan" "${coin} - Imported  address -> $importedaddress"
+log "resetwalletrescan" "${coin} - Imported address -> $importedaddress"
 
 #send balance to self
 balance=$($coincli getbalance)
@@ -117,13 +118,17 @@ i=0
 confirmations=0
 while [ "$confirmations" -eq "0" ]; do
     sleep 10
-    confirmations=$($coincli gettransaction $txid | jq .rawconfirmations)
+    confirmations=$(eval "${coincli} gettransaction ${txid} | jq ${confcheck}")
     if [[ "$confirmations" == "null" ]]; then
         confirmations=0
     fi
     i=$(($i+1))
     log "resetwalletrescan" "sendbalance - waiting for confirmation $confirmations ($i) - ${txid}"  "red" "echo"
 done
+
+#split funds
+splitter=$(curl --url "http://127.0.0.1:$iguanaport" --data "{\"coin\":\"${coin}\",\"agent\":\"iguana\",\"method\":\"splitfunds\",\"satoshis\":\"$splitamount\",\"sendflag\":1,\"duplicates\":$splitqty}")
+log "resetwalletrescan" "${coin} - utxos: $splitqty - $splitter"
 
 newbalance=$($coincli getbalance)
 log "resetwalletrescan" "${coin} - Done! Balance $newbalance"
