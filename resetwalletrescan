@@ -40,9 +40,11 @@ coin=$1
 if [[ ! -z $btc_address && $coin == "BTC" ]]; then
     address=$btc_address
     splitqty=$btcutxoqty
+    confcheck="$coincli gettransaction $txid | jq .confirmations"
 elif [[ ! -z $chips_address && $coin == "CHIPS" ]]; then
     address=$chips_address
     splitqty=$otherutxoqty
+    confcheck="$coincli gettransaction $txid | jq .rawconfirmations"
 else
     echo "can't find address for $coin"
     exit 0
@@ -65,8 +67,8 @@ i=0
 confirmations=0
 while [ "$confirmations" -eq "0" ]; do
     sleep 10
-    confirmations=$($coincli gettransaction $txid | jq .confirmations)
-    i=$((i+1))
+    eval $(echo confirmations=$($confcheck))
+    i=$(($i+1))
     log "resetwallet" "sendbalance - waiting for confirmation $confirmations ($i) - ${txid}"  "red" "echo"
 done
 blockhash=$($coincli gettransaction $txid | jq -r .blockhash)
