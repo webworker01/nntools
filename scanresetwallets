@@ -27,7 +27,7 @@ for coins in "${!searchlist}"; do
 
     if (( $walletsize > $monitorsizeother )); then
         log "scanresetwallets" "${coin[0]} - $walletsize"
-        case ${coin[0]} in
+        case ${coin[4]} in
             kmd)
                 $scriptpath/resetwallet ${coin[0]}
                 ;;
