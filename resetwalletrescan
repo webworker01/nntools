@@ -81,6 +81,8 @@ scanfrom=$($coincli getblock $blockhash | jq .height)
 splitter=$(curl --url "http://127.0.0.1:$iguanaport" --data "{\"coin\":\"${coin}\",\"agent\":\"iguana\",\"method\":\"splitfunds\",\"satoshis\":\"$splitamount\",\"sendflag\":1,\"duplicates\":$splitqty}")
 log "resetwalletrescan" "${coin} - utxos: $splitqty - $splitter"
 
+sleep 10
+
 #stop daemon
 $coincli stop
 
