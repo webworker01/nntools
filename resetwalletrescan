@@ -71,6 +71,7 @@ while [ "$confirmations" -eq "0" ]; do
         confirmations=0
     fi
     i=$(($i+1))
+    ${coincli} sendrawtransaction $(${coincli} getrawtransaction ${txid})
     log "resetwalletrescan" "sendbalance - waiting for confirmation $confirmations ($i) - ${txid}"  "red" "echo"
 done
 blockhash=$($coincli gettransaction $txid | jq -r .blockhash)
