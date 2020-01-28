@@ -8,30 +8,45 @@
 scriptpath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 source $scriptpath/main
 
+#check kmd
+walletsize=$(ls -l ~/.komodo/wallet.dat  | awk '{print $5}')
+if (( $walletsize > $monitorsizekmd )); then
+    log "scanresetwallets" "KMD - $walletsize"
+    $scriptpath/resetwallet "KMD"
+fi
+
+if (( $thirdpartycoins < 1 )); then
+    searchlist="coinsfirst[@]"
+else
+    searchlist="coinsthird[@]"
+fi
+
+for coins in "${!searchlist}"; do
+    coin=($coins)
+    walletsize=$(ls -l ~/${coin[3]}/wallet.dat  | awk '{print $5}')
+
+    if (( $walletsize > $monitorsizeother )); then
+        log "scanresetwallets" "${coin[0]} - $walletsize"
+        case ${coin[0]} in
+            kmd)
+                $scriptpath/resetwallet ${coin[0]}
+                ;;
+            newaddress)
+                $scriptpath/resetwalletnewaddress ${coin[0]}
+                ;;
+            rescan)
+                $scriptpath/resetwalletrescan ${coin[0]}
+                ;;
+            zimport)
+                echo "zimport not implemented yet"
+                ;;
+        esac
+    fi
+done
+
+#check acs
 if (( $thirdpartycoins < 1 )); then
     # while [[ ! -z $monitorsize ]]; do
-        #check kmd
-        walletsize=$(ls -l ~/.komodo/wallet.dat  | awk '{print $5}')
-        if (( $walletsize > $monitorsizekmd )); then
-            log "scanresetwallets" "KMD - $walletsize"
-            $scriptpath/resetwallet "KMD"
-        fi
-
-        #check hush3
-        walletsize=$(ls -l ~/.komodo/HUSH3/wallet.dat  | awk '{print $5}')
-        if (( $walletsize > $monitorsize )); then
-            log "scanresetwallets" "HUSH3 - $walletsize"
-            $scriptpath/resetwallet "HUSH3"
-        fi
-
-        #check vrsc
-        # walletsize=$(ls -l ~/.komodo/VRSC/wallet.dat  | awk '{print $5}')
-        # if (( $walletsize > $monitorsize )); then
-        #     log "scanresetwallets" "VRSC - $walletsize"
-        #     $scriptpath/resetwallet "VRSC"
-        # fi
-
-        #check acs
         for coins in "${coinlist[@]}"; do
             coin=($coins)
             walletsize=$(ls -l ~/.komodo/${coin[0]}/wallet.dat  | awk '{print $5}')
@@ -42,11 +57,4 @@ if (( $thirdpartycoins < 1 )); then
         done
         # sleep $sleepytime
     # done
-else
-    #check kmd
-    walletsize=$(ls -l ~/.komodo/wallet.dat  | awk '{print $5}')
-    if (( $walletsize > $monitorsizekmd )); then
-        log "scanresetwallets" "KMD - $walletsize"
-        $scriptpath/resetwallet "KMD"
-    fi
 fi
