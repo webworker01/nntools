@@ -59,7 +59,7 @@ log "resetwalletnewaddress" "Temp Address: ${tempaddress} Key: ${tempkey}"
 #send balance to self
 balance=$($coincli getbalance)
 txid=$($coincli sendtoaddress $tempaddress $balance "" "" true)
-log "resetwalletnewaddress" "${coin} balance $balance sent to $tempaddress - txid : $txid"
+log "resetwalletnewaddress" "${coin} balance $balance sent to temp $tempaddress - txid : $txid"
 
 #wait for confirmation
 i=0
@@ -111,7 +111,7 @@ log "resetwalletnewaddress" "${coin} - Imported address -> $importedaddress"
 #send balance to self
 balance=$($coincli getbalance)
 txid=$($coincli sendtoaddress $address $balance "" "" true)
-log "resetwalletnewaddress" "${coin} balance $balance sent to $address - txid : $txid"
+log "resetwalletnewaddress" "${coin} balance $balance sent to main $address - txid : $txid"
 
 #wait for confirmation
 i=0
