@@ -90,7 +90,7 @@ mv $datadir/wallet.dat $datadir/wallet.dat.old
 
 #start daemon
 log "resetwalletnewaddress" "Restart daemon ${coinexec}"
-$coinexec &
+$coinexec -pubkey=$nn_pubkey &
 
 #wait for start
 i=0
