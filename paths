@@ -10,8 +10,8 @@ hushd="$HOME/hush3/src/komodod -ac_name=HUSH3 -ac_sapling=1 -ac_reward=0,1125000
 verusd="$HOME/VerusCoin/src/verusd -pid=${HOME}/.komodo/VRSC/komodod.pid"
 coinsfirst=(
 'BTC $HOME/bitcoin/src/bitcoin-cli $HOME/bitcoin/src/bitcoind .bitcoin rescan bitcoind.pid'
-'HUSH3 $hushcli $hushd .komodo/HUSH3 kmd'
-'VRSC $HOME/VerusCoin/src/verus $verusd .komodo/VRSC zimport'
+'HUSH3 $hushcli $hushd .komodo/HUSH3 kmd komodod.pid'
+'VRSC $HOME/VerusCoin/src/verus $verusd .komodo/VRSC zimport komodod.pid'
 )
 
 coinsthird=(
@@ -19,6 +19,7 @@ coinsthird=(
 'GAME $HOME/GameCredits/src/gamecredits-cli $HOME/GameCredits/src/gamecreditsd .gamecredits newaddress gamecredits.pid'
 'EMC2 $HOME/einsteinium/src/einsteinium-cli $HOME/einsteinium/src/einsteiniumd .einsteinium newaddress einsteinium.pid'
 'GIN $HOME/gincoin-core/src/gincoin-cli $HOME/gincoin-core/src/gincoind .gincoincore newaddress gincoind.pid'
+'HUSH3 $hushcli $hushd .komodo/HUSH3 kmd komodod.pid'
 # 'VRSC $HOME/VerusCoin/src/verus $HOME/VerusCoin/src/verusd .komodo/VRSC'
 )
 

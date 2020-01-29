@@ -84,21 +84,16 @@ outputstats ()
             "$(timeSince $($komodocli getblock $($komodocli getbestblockhash) | jq .time))" \
             "$(echo $kmdinfo | jq .connections)" \
             "$(ls -lh ~/.komodo/wallet.dat  | awk '{print $5}')" \
-            "$((time $komodocli listunspent) 2>&1 >/dev/null)" \
+            "$( (time $komodocli listunspent) 2>&1 > /dev/null )" \
             "$(echo $kmdtxinfo | jq '[.[] | select(.generated==true)] | length') mined"
 
-    declare -a othercoins=()
-    if (( thirdpartycoins < 1 )); then
-        for i in ${!coinsfirst[@]}; do
-            othercoins[$i]="${coinsfirst[$i]}"
-        done
+    if (( $thirdpartycoins < 1 )); then
+        othercoins="coinsfirst[@]"
     else
-        for i in ${!coinsthird[@]}; do
-            othercoins[$i]="${coinsthird[$i]}"
-        done
+        othercoins="coinsthird[@]"
     fi
 
-    for coins in "${othercoins[@]}"; do
+    for coins in "${!othercoins}"; do
         coin=($coins)
 
         seasonfilter=$timefilter2
@@ -156,7 +151,7 @@ outputstats ()
                 "$(timeSince $($coinexec getblock $($coinexec getbestblockhash) | jq .time))" \
                 "$($coinexec getnetworkinfo | jq .connections)" \
                 "$(ls -lh ~/${coin[3]}/wallet.dat | awk '{print $5}')" \
-                "$((time $coinexec listunspent) 2>&1 >/dev/null)"
+                "$( (time $coinexec listunspent) 2>&1 >/dev/null )"
     done
 
     if (( thirdpartycoins < 1 )); then
@@ -198,7 +193,7 @@ outputstats ()
                         "$(timeSince $($komodocli -ac_name=${coin[0]} getblock $($komodocli -ac_name=${coin[0]} getbestblockhash) | jq .time))" \
                         "$(echo $info | jq .connections)" \
                         "$(ls -lh ~/.komodo/${coin[0]}/wallet.dat  | awk '{print $5}')" \
-                        "$((time $komodocli -ac_name=${coin[0]} listunspent) 2>&1 >/dev/null)" \
+                        "$( (time $komodocli -ac_name=${coin[0]} listunspent) 2>&1 >/dev/null )" \
                         "$laststring"
 
                 if [[ ${coin[0]} != ${lastcoin[0]} ]]; then
