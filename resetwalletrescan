@@ -103,7 +103,7 @@ $coinexec -pubkey=$nn_pubkey &
 
 #wait for start
 i=0
-while ! $coincli getinfo >/dev/null 2>&1; do
+while ! $coincli getnetworkinfo >/dev/null 2>&1; do
    i=$((i+1))
    log "resetwalletrescan" "$coin - Waiting for daemon start ($i)" "red" "echo"
    sleep 1
