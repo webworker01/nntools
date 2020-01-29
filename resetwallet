@@ -116,8 +116,8 @@ if (( resettooldest < 1 )); then
 
 else
     #reset to oldest utxo
-    blockcount=$(komodo-cli $asset getblockcount)
-    oldestutxo=$(komodo-cli $asset listunspent | jq 'sort_by(.confirmations)[-1] | .rawconfirmations')
+    blockcount=$($komodocli $asset getblockcount)
+    oldestutxo=$($komodocli $asset listunspent | jq 'sort_by(.confirmations)[-1] | .rawconfirmations')
     scanfrom=$(( blockcount - oldestutxo ))
 fi
 

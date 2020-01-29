@@ -5,7 +5,7 @@
 scriptpath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 source $scriptpath/main
 
-name=$1
+name=${1^^}
 
 args=("$@")
 seed_ip1=`getent hosts zero.kolo.supernet.org | awk '{ print $1 }'`

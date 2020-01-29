@@ -21,7 +21,7 @@ fi
 #search
 for coins in "${!searchlist}"; do
     searchcoin=($coins)
-    if [[ "${searchcoin[4]}" == "rescan" ]] && [[ "$1" == "${searchcoin[0]}" ]]; then
+    if [[ "${searchcoin[4]}" == "rescan" ]] && [[ "${1^^}" == "${searchcoin[0]}" ]]; then
         eval $(echo coincli=${searchcoin[1]})
         eval $(echo coinexec=${searchcoin[2]})
         eval $(echo pidfile=${searchcoin[5]})
@@ -30,11 +30,11 @@ for coins in "${!searchlist}"; do
 done
 
 if [[ -z $coincli ]]; then
-    echo "$1 not found"
+    log "resetwalletrescan" "${1} does not exist in paths!" "red" "echo"
     exit 0
 fi
 
-coin=$1
+coin=${1^^}
 
 if [[ ! -z $btc_address && $coin == "BTC" ]]; then
     address=$btc_address

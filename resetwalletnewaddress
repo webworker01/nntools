@@ -21,7 +21,7 @@ fi
 #search
 for coins in "${!searchlist}"; do
     searchcoin=($coins)
-    if [[ "${searchcoin[4]}" == "newaddress" ]] && [[ "$1" == "${searchcoin[0]}" ]]; then
+    if [[ "${searchcoin[4]}" == "newaddress" ]] && [[ "${1^^}" == "${searchcoin[0]}" ]]; then
         eval $(echo coincli=${searchcoin[1]})
         eval $(echo coinexec=${searchcoin[2]})
         eval $(echo pidfile=${searchcoin[5]})
@@ -29,7 +29,12 @@ for coins in "${!searchlist}"; do
     fi
 done
 
-coin=$1
+if [[ -z $coincli ]]; then
+    log "resetwalletnewaddress" "${1} does not exist in paths!" "red" "echo"
+    exit 0
+fi
+
+coin=${1^^}
 
 confcheck=""
 splitqty=$otherutxoqty

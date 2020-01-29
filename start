@@ -5,35 +5,33 @@
 scriptpath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 source $scriptpath/main
 
-if (( thirdpartycoins < 1 )); then
-    if [[ -z "$1" || "$1" == "KMD" ]]; then
-        log "start" "Starting KMD"
-        $komodod -notary -pubkey=$nn_pubkey $addnodes -pid=$HOME/.komodo/komodod.pid -whitelistaddress=$nn_address -whitelistaddress=bDnbcXrZ4iMqfnybMgKjWvYosRzgVMToF8 -minrelaytxfee=0.000035 -opretmintxfee=0.004 &
-    fi
-
-    for coins in "${coinsfirst[@]}"; do
-        coin=($coins)
-        if [[ -z "$1" || "$1" == "${coin[0]}" ]]; then
-            cd $scriptpath/7776/
-            log "start" "Starting ${coin[0]}"
-            eval $(echo coinexec=${coin[2]})
-            $coinexec -pubkey=$nn_pubkey $addnodes &
-        fi
-    done
-
-    $scriptpath/assetchains $1
+if (( $thirdpartycoins < 1 )); then
+    searchlist="coinsfirst[@]"
 else
-    if [[ -z "$1" || "$1" == "KMD" ]]; then
-        log "start" "Starting KMD"
+    searchlist="coinsthird[@]"
+fi
+
+if [[ -z "$1" || "${1^^}" == "KMD" ]]; then
+    log "start" "Starting KMD"
+    if (( $thirdpartycoins < 1 )); then
+        $komodod -notary -pubkey=$nn_pubkey $addnodes -pid=$HOME/.komodo/komodod.pid -whitelistaddress=$nn_address -whitelistaddress=bDnbcXrZ4iMqfnybMgKjWvYosRzgVMToF8 -minrelaytxfee=0.000035 -opretmintxfee=0.004 &
+    else
         $komodod -pubkey=$nn_pubkey $addnodes -pid=$HOME/.komodo/komodod.pid -whitelistaddress=$nn_address -whitelistaddress=bDnbcXrZ4iMqfnybMgKjWvYosRzgVMToF8 -minrelaytxfee=0.000035 -opretmintxfee=0.004 &
     fi
+fi
 
-    for coins in "${coinsthird[@]}"; do
-        coin=($coins)
-        if [[ -z "$1" || "$1" == "${coin[0]}" ]]; then
-            log "start" "Starting ${coin[0]}"
-            eval $(echo coinexec=${coin[2]})
-            $coinexec -pubkey=$nn_pubkey $addnodes &
-        fi
-    done
+#search
+for coins in "${!searchlist}"; do
+    searchcoin=($coins)
+    coin=($coins)
+    if [[ -z "$1" || "${1^^}" == "${searchcoin[0]}" ]]; then
+        cd $scriptpath/7776/
+        log "start" "Starting ${searchcoin[0]}"
+        eval $(echo coinexec=${searchcoin[2]})
+        $coinexec -pubkey=$nn_pubkey $addnodes &
+    fi
+done
+
+if (( $thirdpartycoins < 1 )); then
+    $scriptpath/assetchains $1
 fi
