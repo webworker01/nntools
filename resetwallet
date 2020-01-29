@@ -119,7 +119,7 @@ if (( resettooldest < 1 )); then
         splitter=$($scriptpath/splitfunds $coin $acutxoqty)
     fi
     log "resetwallet" "$coin - splitter: $splitter"
-
+    sleep 10
 else
     #reset to oldest utxo
     blockcount=$($komodocli $asset getblockcount)
