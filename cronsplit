@@ -16,7 +16,7 @@ source $scriptpath/main
 utxoamt=0.00010000
 splitamount=10000
 
-skiplong=('VRSC' 'HUSH3')
+skiplong=('VRSC')
 
 doSplit() {
     local coin=$1
@@ -56,7 +56,6 @@ if [[ -z $1 ]]; then
         done
 
         doSplit "VRSC"
-        doSplit "HUSH3"
     fi
 else
     declare -a othercoins=()
