@@ -2,10 +2,10 @@
 #
 # Reset KMD way
 #
-# Usage: ./resetwallet <COINNAME> <resettooldest=1/0>
-# e.g.   ./resetwallet KMD 1
+# Usage: ./resetwallet <COINNAME> <resettype (optional) (1=resettooldest|2=zimport)>
+# e.g.   ./resetwallet KMD 2  will use the zimport reset method
 #
-# resettooldest=1 will not send any transactions and only delete wallet and rescan from the oldest tx in the wallet
+# resettooldest will not send any transactions and only delete wallet and rescan from the oldest tx in the wallet
 #
 # @author webworker01
 #
@@ -15,13 +15,13 @@ source ${scriptpath}/main
 if [[ ! -z $1 ]] && [[ $1 != "KMD" ]]; then
 
     #check it exists in coinlist
-    if [[ ! " ${coinlist[@]} " =~ " ${1} " ]]; then
-        log "resetwallet" "${1} does not exist in coinlist!" "red" "echo"
+    if [[ ! " ${coinlist[@]} " =~ " ${1^^} " ]] && [[ ${1^^} != "VRSC" ]]; then
+        log "resetwallet" "${1^^} does not exist in coinlist!" "red" "echo"
         exit 0
     fi
 
-    coin=$1
-    asset=" -ac_name=$1"
+    coin=${1^^}
+    asset=" -ac_name=${coin}"
     txfeeperkb=0
     datadir=""
     coinexec=""
@@ -29,7 +29,7 @@ if [[ ! -z $1 ]] && [[ $1 != "KMD" ]]; then
     #search for alt komodods
     for coins in "${coinsfirst[@]}"; do
         searchcoin=($coins)
-        if [[ "${searchcoin[4]}" == "kmd" ]] && [[ "$1" == "${searchcoin[0]}" ]]; then
+        if [[ "${searchcoin[4]}" == "kmd" ]] || [[ "${searchcoin[4]}" == "zimport" ]] && [[ "$1" == "${searchcoin[0]}" ]]; then
             eval $(echo coinexec=${searchcoin[2]})
             datadir="${HOME}/${searchcoin[3]}"
         fi
@@ -45,10 +45,16 @@ else
     coinexec=$komodod
 fi
 
-if [[ -z $2 ]] || [[ $2 != "0" ]]; then
+if [[ -z $2 ]] || [[ $2 != "1" ]]; then
     resettooldest=0
 else
     resettooldest=1
+fi
+
+if [[ -z $2 ]] || [[ $2 != "2" ]]; then
+    zimport=0
+else
+    zimport=1
 fi
 
 sapling=$(isSapling $coin)
@@ -121,6 +127,12 @@ else
     scanfrom=$(( blockcount - oldestutxo ))
 fi
 
+if (( zimport > 0 )); then
+    tempaddress=$(${komodocli} ${asset} z_getnewaddress)
+    tempkey=$(${komodocli} ${asset} z_exportkey $tempaddress)
+    log "resetwallet" "Temp Address: ${tempaddress} Key: ${tempkey}"
+fi
+
 log "resetwallet" "$coin - scanfrom: $scanfrom" "red" "echo"
 
 #Grab daemon args before killing
@@ -158,7 +170,12 @@ while ! $komodocli $asset getinfo >/dev/null 2>&1; do
 done
 
 #Import the keys in the new wallet
-importedaddress=$($komodocli $asset importprivkey $privkey "" true $scanfrom)
+if (( zimport < 1 )); then
+    importedaddress=$($komodocli $asset importprivkey $privkey "" true $scanfrom)
+else
+    importedaddress=$($komodocli $asset importprivkey $privkey "" false)
+    results=$(${komodocli} ${asset} z_importkey "${tempkey}" yes $scanfrom)
+fi
 log "resetwallet" "$coin - Imported address -> $importedaddress as height $scanfrom"
 
 newbalance=$($komodocli $asset getbalance)

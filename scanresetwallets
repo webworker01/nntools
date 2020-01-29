@@ -25,6 +25,10 @@ for coins in "${!searchlist}"; do
     coin=($coins)
     walletsize=$(ls -l ~/${coin[3]}/wallet.dat  | awk '{print $5}')
 
+    if [[ ${coin[0]} == "VRSC" ]]; then
+        monitorsizeother=$monitorsize
+    fi
+
     if (( $walletsize > $monitorsizeother )); then
         log "scanresetwallets" "${coin[0]} - $walletsize"
         case ${coin[4]} in
@@ -38,7 +42,7 @@ for coins in "${!searchlist}"; do
                 $scriptpath/resetwalletrescan ${coin[0]}
                 ;;
             zimport)
-                echo "zimport not implemented yet"
+                $scriptpath/resetwallet ${coin[0]} 2
                 ;;
         esac
     fi
