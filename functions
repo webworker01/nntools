@@ -48,36 +48,10 @@ log()
     fi
 }
 
-calcFee()
-{
-    local vins=$1
-    local vouts=$2
-    local scripttypein=$3
-    local scripttypeout=$4
-
-    if [[ $scripttypein == "p2pk" ]]; then
-        local vinmultiplier=114
-    else
-        local vinmultiplier=150
-    fi
-
-    if [[ $scripttypeout == "p2pk" ]]; then
-        local voutmultiplier=44
-    else
-        local voutmultiplier=35
-    fi
-
-    local size=$(bc -l <<< "${vins} * ${vinmultiplier} + ${vouts} * ${voutmultiplier} + 30")
-    local fee=$( printf "%.8f" $(bc -l <<< "${size} / 1000 * ${txfeeperkb}") )
-    # log "calcfee" "size: ${size} fee: ${fee}" "" "file"
-
-    echo "${fee}"
-}
-
 # @return (1|0)
 isSapling()
 {
-    local coin=$1
+    local coin=${1^^}
     if [[ ! ${sproutcoins[*]} =~ ${coin} ]]; then
         echo 1
     else
@@ -85,44 +59,23 @@ isSapling()
     fi
 }
 
-sendRaw()
+isValidCoin()
 {
-    local rawtx=$1
-    local acname=$2
+    local coin=${1^^}
 
-    if [[ ! -z $acname ]] && [[ $acname != "KMD" ]]; then
-        coin=$acname
-        asset=" -ac_name=${acname}"
+    if [[ ! -z $1 ]] && [[ $1 != "KMD" ]]; then
+
+        #check it exists in coinlist
+        if [[ ! " ${coinlist[@]} " =~ " ${1^^} " ]] && [[ ${1^^} != "VRSC" ]]; then
+            log "isValidCoin" "${1^^} does not exist in coinlist!" "red" "echo"
+            echo 0
+        else
+            echo 1
+        fi
     else
-        coin="KMD"
-        asset=""
+        echo
     fi
 
-    sapling=$(isSapling $coin)
-
-    if [[ ! -z $rawtx ]]; then
-        # nlocktime=$(printf "%08x" $(date +%s) | dd conv=swab 2> /dev/null | rev)
-        nlocktime="00000000"
-
-        if (( sapling > 0 )); then
-            txtail="000000000000000000000000000000"
-            hex=${rawtx::-38}${nlocktime}${txtail}
-        else
-            hex=${rawtx::-8}${nlocktime}
-        fi
-
-        signedtx=$($komodocli $asset signrawtransaction $hex | jq -r '.hex')
-
-        if [[ ! -z $signedtx ]]; then
-            rawtxid=$($komodocli $asset sendrawtransaction $signedtx)
-        else
-            rawtxid="failed no signed tx"
-        fi
-
-        echo "${rawtxid}"
-    else
-        echo "failed"
-    fi
 }
 
 timeSince ()

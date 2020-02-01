@@ -1,0 +1,153 @@
+#!/bin/bash
+# wallet functions file for nntools
+#
+# @author webworker01
+#
+
+sendRaw()
+{
+    local rawtx=$1
+    local acname=${2^^}
+
+    if [[ ! -z $acname ]] && [[ $acname != "KMD" ]]; then
+        coin=${acname}
+        asset=" -ac_name=${acname}"
+    else
+        coin="KMD"
+        asset=""
+    fi
+
+    sapling=$(isSapling $coin)
+
+    if [[ ! -z $rawtx ]]; then
+        # nlocktime=$(printf "%08x" $(date +%s) | dd conv=swab 2> /dev/null | rev)
+        nlocktime="00000000"
+
+        if (( sapling > 0 )); then
+            txtail="000000000000000000000000000000"
+            hex=${rawtx::-38}${nlocktime}${txtail}
+        else
+            hex=${rawtx::-8}${nlocktime}
+        fi
+
+        signedtx=$($komodocli $asset signrawtransaction $hex | jq -r '.hex')
+
+        if [[ ! -z $signedtx ]]; then
+            rawtxid=$($komodocli $asset sendrawtransaction $signedtx)
+        else
+            rawtxid="failed no signed tx"
+        fi
+
+        echo "${rawtxid}"
+    else
+        echo "failed"
+    fi
+}
+
+calcFee()
+{
+    local vins=$1
+    local vouts=$2
+    local scripttypein=$3
+    local scripttypeout=$4
+
+    if [[ $scripttypein == "p2pk" ]]; then
+        local vinmultiplier=114
+    else
+        local vinmultiplier=150
+    fi
+
+    if [[ $scripttypeout == "p2pk" ]]; then
+        local voutmultiplier=44
+    else
+        local voutmultiplier=35
+    fi
+
+    local size=$(bc -l <<< "${vins} * ${vinmultiplier} + ${vouts} * ${voutmultiplier} + 30")
+    local fee=$( printf "%.8f" $(bc -l <<< "${size} / 1000 * ${txfeeperkb}") )
+    # log "calcfee" "size: ${size} fee: ${fee}" "" "file"
+
+    echo "${fee}"
+}
+
+#
+# Send up to 400 UTXOs at a time to $nn_address
+# @param acname Specify the coin name
+#
+consolidateUTXOs ()
+{
+    local acname=${1^^}
+    local exclude_amount=${2}
+
+    number_regex='^[0-9]+([.][0-9]+)?$'
+
+    if [[ ${acname} != "KMD" ]]; then
+        coin=${acname}
+        asset=" -ac_name=${acname}"
+        txfeeperkb=0
+    else
+        coin="KMD"
+        asset=""
+        txfeeperkb=$txfeeperkb
+    fi
+
+    if [[ -z $exclude_amount ]]; then
+        filter_amount=0
+        exclude_amount=0
+    #check amount is a number
+    elif [[ ! -z $exclude_amount ]] && ! [[ $exclude_amount =~ $number_regex ]] ; then
+        log "consolidate" "${acname} - exclude_amount must be a number, got ${exclude_amount}" "red" "file"
+        exit 0
+    else
+        filter_amount=1
+        exclude_amount=$exclude_amount
+    fi
+
+    unspent=$($komodocli $asset listunspent)
+    if (( ${filter_amount} > 0 )); then
+        consolidateutxo=$(jq --arg checkaddr $nn_address --arg exclude_amount $exclude_amount '[.[] | select (.amount!=($exclude_amount|tonumber) and .address==$checkaddr and .spendable==true)] | sort_by(-.amount)[0:399]' <<< $unspent)
+    else
+        consolidateutxo=$(jq --arg checkaddr $nn_address '[.[] | select (.address==$checkaddr and .spendable==true)] | sort_by(-.amount)[0:399]' <<< $unspent)
+    fi
+    consolidatethese=$(jq -r '[.[] | {"txid":.txid, "vout":.vout}] | tostring' <<< $consolidateutxo)
+    consolidatetheselength=$(jq -r '. | length' <<< $consolidateutxo)
+    consolidateamount=$(jq -r '[.[].amount] | add' <<< $consolidateutxo)
+
+    txfee=$(calcFee ${consolidatetheselength} 1 "p2pkh" "p2pkh")
+
+    if [[ "$consolidateamount" != "null" ]]; then
+        consolidateamountfixed=$( printf "%.8f" $(bc -l <<< "(${consolidateamount}-${txfee})") )
+
+        if (( $(echo "$consolidateamountfixed > 0" | bc -l) )); then
+
+            rawtxresult=$($komodocli $asset createrawtransaction ${consolidatethese} '''{ "'$nn_address'": '$consolidateamountfixed' }''')
+            rawtxid=$(sendRaw ${rawtxresult} ${coin})
+
+            log "consolidate" "${coin} - Sent $consolidateamount to $nn_address TXID: $rawtxid" "green" "file"
+            echo $rawtxid
+        fi
+    fi
+}
+
+waitForConfirm()
+{
+    local acname=${1^^}
+    local txid=${2}
+
+    if [[ ${acname} != "KMD" ]]; then
+        asset=" -ac_name=${acname}"
+        txfeeperkb=0
+    else
+        asset=""
+        txfeeperkb=${txfeeperkb}
+    fi
+
+    i=0
+    confirmations=0
+    while [ "$confirmations" -eq "0" ]; do
+        sleep 10
+        confirmations=$(${komodocli} ${asset} gettransaction ${txid} | jq .confirmations)
+        i=$((i+1))
+        log "waitForConfirm" "consolidate - waiting for confirmation ${confirmations} (${i}) - ${txid}" "red" "echo"
+    done
+}

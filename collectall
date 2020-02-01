@@ -40,16 +40,8 @@ unspent_amount=$($komodocli $asset listunspent | jq --arg checkaddr $nn_address 
 log "collectall" "unspent_amount: $unspent_amount"
 c=0
 while (( unspent_amount > 1)); do
-    txid=$(./consolidate $1 $2)
-
-    i=0
-    confirmations=0
-    while [ "$confirmations" -eq "0" ]; do
-        sleep 10
-        confirmations=$($komodocli $asset gettransaction $txid | jq .confirmations)
-        i=$((i+1))
-        log "collectall" "consolidate - waiting for confirmation $confirmations ($i) - ${txid}"  "red" "echo"
-    done
+    txid=$(consolidateUTXOs ${coin} ${exclude_amount})
+    waitForConfirm ${coin} ${txid}
 
     unspent_amount=$($komodocli $asset listunspent | jq --arg checkaddr $nn_address --arg exclude_amount $exclude_amount '[.[] | select(.amount!=$exclude_amount and .address==$checkaddr and .spendable==true)] | length')
     log "collectall" "Consolidate TX: $txid New unspent_amount: $unspent_amount"

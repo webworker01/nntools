@@ -11,6 +11,7 @@ source ${scriptpath}/config
 source ${scriptpath}/coinlist
 source ${scriptpath}/paths
 source ${scriptpath}/functions
+source ${scriptpath}/functions-wallet
 
 #defaults
 addnodes=${addnodes:="-addnode=seed.komodostats.com -addnode=seed.webworker.sh"}
