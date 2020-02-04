@@ -72,7 +72,11 @@ if (( resettooldest < 1 )); then
     unspent=$($komodocli $asset listunspent | jq '[.[] | select(.spendable==true)]')
     if [[ $coin == "KMD" ]]; then
         interest=$(jq -r '[.[].interest] | add' <<< $unspent)
-        interest=$( printf "%.8f" $interest )
+        if [[ "$interest" != "null" ]]; then
+            interest=$( printf "%.8f" $interest )
+        else
+            interest=0
+        fi
     else
         interest=0
     fi
