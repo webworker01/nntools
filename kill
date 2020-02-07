@@ -12,6 +12,6 @@ setupCoinVars $1
 
 pid=$(< ${pidfile})
 
-log "kill" "Killing ${1^^} pid ${pid}"
+log "kill" "Killing ${coin} pid ${pid}"
 
 pkill -9 -F ${pidfile}
