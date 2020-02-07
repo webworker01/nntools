@@ -12,38 +12,8 @@
 scriptpath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 source ${scriptpath}/main
 
-if [[ ! -z $1 ]] && [[ $1 != "KMD" ]]; then
-
-    #check it exists in coinlist
-    if [[ ! " ${coinlist[@]} " =~ " ${1^^} " ]] && [[ ${1^^} != "VRSC" ]]; then
-        log "resetwallet" "${1^^} does not exist in coinlist!" "red" "echo"
-        exit 0
-    fi
-
-    coin=${1^^}
-    asset=" -ac_name=${coin}"
-    txfeeperkb=0
-    datadir=""
-    coinexec=""
-
-    #search for alt komodods
-    for coins in "${coinsfirst[@]}"; do
-        searchcoin=($coins)
-        if [[ "${searchcoin[4]}" == "kmd" ]] || [[ "${searchcoin[4]}" == "zimport" ]] && [[ "$1" == "${searchcoin[0]}" ]]; then
-            eval $(echo coinexec=${searchcoin[2]})
-            datadir="${HOME}/${searchcoin[3]}"
-        fi
-    done
-
-    coinexec=${coinexec:=$komodod}
-    datadir=${datadir:="$HOME/.komodo/$coin"}
-else
-    coin="KMD"
-    asset=""
-    datadir="$HOME/.komodo"
-    txfeeperkb=$txfeeperkb
-    coinexec=$komodod
-fi
+# @see functions
+setupCoinVars $1
 
 if [[ -z $2 ]] || [[ $2 != "1" ]]; then
     resettooldest=0
@@ -58,8 +28,6 @@ else
 fi
 
 sapling=$(isSapling $coin)
-
-pidfile="$datadir/komodod.pid"
 
 privkey=$($komodocli $asset dumpprivkey $nn_address)
 

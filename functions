@@ -105,3 +105,45 @@ timeSince ()
         fi
     fi
 }
+
+# Setup commonly needed variables for working with a coin daemon
+# Pass in the coin name or it will assume kmd
+setupCoinVars ()
+{
+    $coin={$1^^}
+
+    if [[ ! -z $1 ]] && [[ $1 != "KMD" ]]; then
+
+        #check it exists in coinlist
+        if [[ ! " ${coinlist[@]} " =~ " ${1^^} " ]] && [[ ${1^^} != "VRSC" ]]; then
+            log "resetwallet" "${1^^} does not exist in coinlist!" "red" "echo"
+            exit 0
+        fi
+
+        coin=${1^^}
+        asset=" -ac_name=${coin}"
+        txfeeperkb=0
+        datadir=""
+        coinexec=""
+
+        #search for alt komodods
+        for coins in "${coinsfirst[@]}"; do
+            searchcoin=($coins)
+            if [[ "${searchcoin[4]}" == "kmd" ]] || [[ "${searchcoin[4]}" == "zimport" ]] && [[ "$1" == "${searchcoin[0]}" ]]; then
+                eval $(echo coinexec=${searchcoin[2]})
+                datadir="${HOME}/${searchcoin[3]}"
+            fi
+        done
+
+        coinexec=${coinexec:=$komodod}
+        datadir=${datadir:="$HOME/.komodo/$coin"}
+    else
+        coin="KMD"
+        asset=""
+        datadir="$HOME/.komodo"
+        txfeeperkb=$txfeeperkb
+        coinexec=$komodod
+    fi
+
+    pidfile="$datadir/komodod.pid"
+}
