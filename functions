@@ -110,7 +110,7 @@ timeSince ()
 # Pass in the coin name or it will assume kmd
 setupCoinVars ()
 {
-    $coin={$1^^}
+    $coin=${1^^}
 
     if [[ ! -z $1 ]] && [[ $1 != "KMD" ]]; then
 
