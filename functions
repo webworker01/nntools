@@ -110,17 +110,16 @@ timeSince ()
 # Pass in the coin name or it will assume kmd
 setupCoinVars ()
 {
-    $coin=${1^^}
+    coin=${1^^}
 
-    if [[ ! -z $1 ]] && [[ $1 != "KMD" ]]; then
+    if [[ ! -z $coin ]] && [[ $coin != "KMD" ]]; then
 
         #check it exists in coinlist
-        if [[ ! " ${coinlist[@]} " =~ " ${1^^} " ]] && [[ ${1^^} != "VRSC" ]]; then
-            log "resetwallet" "${1^^} does not exist in coinlist!" "red" "echo"
+        if [[ ! " ${coinlist[@]} " =~ " ${coin} " ]] && [[ ${coin} != "VRSC" ]]; then
+            log "resetwallet" "${coin} does not exist in coinlist!" "red" "echo"
             exit 0
         fi
 
-        coin=${1^^}
         asset=" -ac_name=${coin}"
         txfeeperkb=0
         datadir=""

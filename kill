@@ -10,4 +10,8 @@ source $scriptpath/main
 # @see functions
 setupCoinVars $1
 
+pid=$(< ${pidfile})
+
+log "kill" "Killing ${1^^} pid ${pid}"
+
 pkill -9 -F ${pidfile}
