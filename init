@@ -140,6 +140,7 @@ EOF
     ./zcutil/build.sh -j$(expr $(nproc) - 1)
 
     #DPOW CHAIN
+    cd $HOME
     git clone https://github.com/jl777/komodo.git --branch DEX --single-branch dexkomodo
     cd ~/dexkomodo
     ./zcutil/build.sh -j$(expr $(nproc) - 1)
