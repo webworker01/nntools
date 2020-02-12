@@ -109,14 +109,42 @@ listen=0
 listenonion=0
 onlynet=ipv4
 deprecatedrpc=estimatefee
+
+blocknotify=notarizer BTC bitcoin-cli %s
 EOF
     chmod 600 $HOME/.bitcoin/bitcoin.conf
+
+    #DEX.conf
+    randusername=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
+    randpassword=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
+    cd $HOME
+    mkdir -p $HOME/.komodo/DEX
+    cat <<EOF > $HOME/.komodo/DEX/DEX.conf
+rpcuser=user$randusername
+rpcpassword=pass$randpassword
+rpcport=11890
+server=1
+txindex=1
+rpcworkqueue=256
+rpcbind=127.0.0.1
+rpcallowip=127.0.0.1
+
+blocknotify=notarizer DEX "" %s
+EOF
+    chmod 600 $HOME/.komodo/DEX/DEX.conf
 
     #VERUS
     cd $HOME
     git clone https://github.com/VerusCoin/VerusCoin.git --branch v0.6.0-7 --single-branch
     cd VerusCoin && git checkout 249191886b59929575953425656d4a31328758eb
     ./zcutil/build.sh -j$(expr $(nproc) - 1)
+
+    #DPOW CHAIN
+    git clone https://github.com/jl777/komodo.git --branch DEX --single-branch dexkomodo
+    cd ~/dexkomodo
+    ./zcutil/build.sh -j$(expr $(nproc) - 1)
+    cd ~/dexkomodo/src/
+    sudo gcc -o /usr/bin/notarizer cc/dapps/notarizer.c -lm
 else
     #CHIPS
     cd $HOME
