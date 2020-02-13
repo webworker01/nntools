@@ -16,6 +16,7 @@ source $scriptpath/main
 utxoamt=0.00010000
 splitamount=10000
 
+skipshort=('DPOW')
 skiplong=('VRSC')
 
 doSplit() {
@@ -50,7 +51,7 @@ if [[ -z $1 ]]; then
         for coins in "${coinlist[@]}"; do
             coin=($coins)
 
-            if [[ ! ${ignoreacs[*]} =~ ${coin[0]} ]]; then
+            if [[ ! ${ignoreacs[*]} =~ ${coin[0]} && ${skiplong[*]} =~ ${coin[0]} ]]; then
                 doSplit ${coin[0]}
             fi
         done
