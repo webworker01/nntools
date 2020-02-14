@@ -3,7 +3,7 @@
 #
 # Add to ~/.komodo/komodo.conf:
 #
-# blocknotify=/home/komodo/minerfixer %s
+# blocknotify=/home/komodo/nntools/minerfixer %s
 #
 # @author webworker01
 #
