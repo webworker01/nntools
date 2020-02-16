@@ -8,7 +8,7 @@ scriptpath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 source $scriptpath/main
 
 # @see functions
-setupCoinVars $1
+setupCoinVars $1 "kill"
 
 pid=$(< ${pidfile})
 

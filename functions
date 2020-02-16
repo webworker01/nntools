@@ -111,12 +111,13 @@ timeSince ()
 setupCoinVars ()
 {
     coin=${1^^}
+    logfrom=${2}
 
     if [[ ! -z $coin ]] && [[ $coin != "KMD" ]]; then
 
         #check it exists in coinlist
-        if [[ ! " ${coinlist[@]} " =~ " ${coin} " ]] && [[ ${coin} != "VRSC" ]]; then
-            log "resetwallet" "${coin} does not exist in coinlist!" "red" "echo"
+        if [[ ! " ${coinlist[@]} " =~ " ${coin} " ]] && [[ ! " ${komodolike[@]} " =~ " ${coin} " ]]; then
+            log $logfrom "${coin} does not exist in coinlist!" "red" "echo"
             exit 0
         fi
 
