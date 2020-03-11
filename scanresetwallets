@@ -2,7 +2,6 @@
 #
 # Scan and reset wallets over size limit
 #
-# @todo 3rd party wallets
 # @author webworker01
 #
 scriptpath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
@@ -50,15 +49,12 @@ done
 
 #check acs
 if (( $thirdpartycoins < 1 )); then
-    # while [[ ! -z $monitorsize ]]; do
-        for coins in "${coinlist[@]}"; do
-            coin=($coins)
-            walletsize=$(ls -l ~/.komodo/${coin[0]}/wallet.dat  | awk '{print $5}')
-            if (( $walletsize > $monitorsize )); then
-                log "scanresetwallets" "${coin[0]} - $walletsize"
-                $scriptpath/resetwallet ${coin[0]}
-            fi
-        done
-        # sleep $sleepytime
-    # done
+    for coins in "${coinlist[@]}"; do
+        coin=($coins)
+        walletsize=$(ls -l ~/.komodo/${coin[0]}/wallet.dat  | awk '{print $5}')
+        if (( $walletsize > $monitorsize )); then
+            log "scanresetwallets" "${coin[0]} - $walletsize"
+            $scriptpath/resetwallet ${coin[0]}
+        fi
+    done
 fi
