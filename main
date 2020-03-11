@@ -6,6 +6,12 @@
 #
 scriptpath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
+#exit if no config
+if [[ ! -f "${scriptpath}/config" ]]; then
+    echo "You must setup a config file. See config.example"
+    exit 1
+fi
+
 #imports
 source ${scriptpath}/config
 source ${scriptpath}/coinlist
