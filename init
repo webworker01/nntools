@@ -271,6 +271,7 @@ EOF
     git clone https://github.com/MyHush/hush3
     cd hush3 && git checkout v3.3.1
     ./zcutil/build.sh -j$(expr $(nproc) - 1)
+    echo "pubkey=$nn_pubkey" > $HOME/hush3/src/pubkey.txt
 fi
 
 echo

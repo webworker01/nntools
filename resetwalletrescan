@@ -72,7 +72,7 @@ while [ "$confirmations" -eq "0" ]; do
     fi
     i=$(($i+1))
     ${coincli} sendrawtransaction $(${coincli} getrawtransaction ${txid}) > /dev/null
-    log "resetwalletrescan" "sendbalance - waiting for confirmation $confirmations ($i) - ${txid}"  "red" "echo"
+    log "resetwalletrescan" "${coin} sendbalance - waiting for confirmation $confirmations ($i) - ${txid}"  "red" "echo"
 done
 blockhash=$($coincli gettransaction $txid | jq -r .blockhash)
 scanfrom=$($coincli getblock $blockhash | jq .height)
@@ -89,7 +89,7 @@ $coincli stop
 i=0
 while [ -f $pidfile ]; do
    i=$((i+1))
-   log "resetwalletrescan" "Waiting for daemon $coin stop ($i)" "red" "echo"
+   log "resetwalletrescan" "Waiting for daemon ${coin} stop ($i)" "red" "echo"
    sleep 1
 done
 sleep 15
@@ -105,7 +105,7 @@ $coinexec -pubkey=$nn_pubkey &
 i=0
 while ! $coincli getnetworkinfo >/dev/null 2>&1; do
    i=$((i+1))
-   log "resetwalletrescan" "$coin - Waiting for daemon start ($i)" "red" "echo"
+   log "resetwalletrescan" "${coin} - Waiting for daemon start ($i)" "red" "echo"
    sleep 1
 done
 

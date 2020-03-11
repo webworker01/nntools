@@ -59,7 +59,7 @@ privkey=$($coincli dumpprivkey $address)
 
 tempaddress=$($coincli getnewaddress)
 tempkey=$($coincli dumpprivkey $tempaddress)
-log "resetwalletnewaddress" "Temp Address: ${tempaddress} Key: ${tempkey}"
+log "resetwalletnewaddress" "${coin} Temp Address: ${tempaddress} Key: ${tempkey}"
 
 #send balance to self
 balance=$($coincli getbalance)
@@ -77,7 +77,7 @@ while [ "$confirmations" -eq "0" ]; do
     fi
     i=$(($i+1))
     ${coincli} sendrawtransaction $(${coincli} getrawtransaction ${txid}) > /dev/null
-    log "resetwalletnewaddress" "sendbalance - waiting for confirmation $confirmations ($i) - ${txid}"  "red" "echo"
+    log "resetwalletnewaddress" "${coin} sendbalance - waiting for confirmation $confirmations ($i) - ${txid}"  "red" "echo"
 done
 
 #stop daemon
@@ -86,7 +86,7 @@ $coincli stop
 i=0
 while [ -f $pidfile ]; do
    i=$((i+1))
-   log "resetwalletnewaddress" "$coin - Waiting for daemon stop ($i)" "red" "echo"
+   log "resetwalletnewaddress" "${coin} - Waiting for daemon stop ($i)" "red" "echo"
    sleep 1
 done
 sleep 15
@@ -102,7 +102,7 @@ $coinexec -pubkey=$nn_pubkey &
 i=0
 while ! $coincli getinfo >/dev/null 2>&1; do
    i=$((i+1))
-   log "resetwalletnewaddress" "$coin - Waiting for daemon start ($i)" "red" "echo"
+   log "resetwalletnewaddress" "${coin} - Waiting for daemon start ($i)" "red" "echo"
    sleep 1
 done
 
@@ -130,7 +130,7 @@ while [ "$confirmations" -eq "0" ]; do
     fi
     i=$(($i+1))
     ${coincli} sendrawtransaction $(${coincli} getrawtransaction ${txid}) > /dev/null
-    log "resetwalletnewaddress" "sendbalance - waiting for confirmation $confirmations ($i) - ${txid}"  "red" "echo"
+    log "resetwalletnewaddress" "${coin} sendbalance - waiting for confirmation $confirmations ($i) - ${txid}"  "red" "echo"
 done
 
 #split funds
@@ -138,4 +138,4 @@ splitter=$(curl --url "http://127.0.0.1:$iguanaport" --data "{\"coin\":\"${coin}
 log "resetwalletnewaddress" "${coin} - utxos: $splitqty - $splitter"
 
 newbalance=$($coincli getbalance)
-log "resetwalletnewaddress" "${coin} - Done! Balance $newbalance"
+log "resetwalletnewaddress" "${coin} Done! Balance: $newbalance"
