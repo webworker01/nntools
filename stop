@@ -1,21 +1,41 @@
 #!/bin/bash
 #
+# Stops coin daemons
+#
 # @author webworker01
 #
 scriptpath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 source $scriptpath/main
 
-pkill -15 komodod
-pkill -15 iguana
-
-if (( thirdpartycoins < 1 )); then
-    pkill -15 bitcoind
-    pkill -15 verusd
+if (( $thirdpartycoins < 1 )); then
+    searchlist="coinsfirst[@]"
 else
-    for coins in "${coinsthird[@]}"; do
+    searchlist="coinsthird[@]"
+fi
+
+if [[ -z "$1" || "${1^^}" == "KMD" ]]; then
+    log "start" "stopping KMD"
+    pkill -15 komodod
+fi
+
+#search
+for coins in "${!searchlist}"; do
+    searchcoin=($coins)
+    coin=($coins)
+    if [[ -z "$1" || "${1^^}" == "${searchcoin[0]}" ]]; then
+        log "stop" "Stopping ${searchcoin[0]}"
+        eval $(echo coincli=${searchcoin[1]})
+        $coincli stop &
+    fi
+done
+
+if (( $thirdpartycoins < 1 )); then
+    for coins in "${coinlist[@]}"; do
         coin=($coins)
-        echo "Stopping ${coin[0]}"
-        eval $(echo coinexec=${coin[1]})
-        $coinexec stop &
+
+        if [[ -z "$1" || "${1^^}" == "${coin[0]}" ]]; then
+            log "stop" "Stopping ${coin[0]}"
+            $komodocli -ac_name=${1^^} stop &
+        fi
     done
 fi
