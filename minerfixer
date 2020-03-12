@@ -47,9 +47,15 @@ if [[ "$lastgen" != "null" ]]; then
             log "minerfixer" " [[ Block found! ]]" "green" "echo"
         fi
 
-    #Default to do nothing and assume mining
+    # No change, just verify mining
     else
-        log "minerfixer" "mining.." "green" "echo"
+        mining=$($komodocli getmininginfo | jq -r .generate)
+        if [[ "${mining}" == "false" ]]; then
+            log "minerfixer" "Should have been mining but wasn't - setgenerate true" "red"
+            $komodocli setgenerate true 1
+        else
+            log "minerfixer" "mining.." "green" "echo"
+        fi
     fi
 else
     log "minerfixer" "could not get last mined tx! setgenerate true"
