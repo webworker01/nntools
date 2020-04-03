@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Stops coin daemons
+# Stops all or a specific coin daemon
 #
 # @author webworker01
 #

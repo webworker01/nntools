@@ -13,6 +13,8 @@ source $scriptpath/main
 #KMD DPOW P2P
 notarizer KMD "" %s
 
+max_no_blocks=192
+
 lastgen=$($komodocli listtransactions "*" 777 | jq '[.[] | select(.generated==true)] | .[-1]')
 if [[ "$lastgen" != "null" ]]; then
     confirmations=$(jq .confirmations <<< $lastgen)
@@ -47,15 +49,16 @@ if [[ "$lastgen" != "null" ]]; then
             log "minerfixer" " [[ Block found! ]]" "green" "echo"
         fi
 
-    # No change, just verify mining
-    else
+    # If we're past $max_no_blocks since last block found, double check that mining is enabled.
+    elif (( rawconfirmations > max_no_blocks )); then
         mining=$($komodocli getmininginfo | jq -r .generate)
         if [[ "${mining}" == "false" ]]; then
-            log "minerfixer" "Should have been mining but wasn't - setgenerate true" "red"
+            log "minerfixer" "Should have been mining but wasn't - ${rawconfirmations} > ${max_no_blocks} - setgenerate true" "red"
             $komodocli setgenerate true 1
-        else
-            log "minerfixer" "mining.." "green" "echo"
         fi
+    # No change, just verify mining
+    else
+        log "minerfixer" "mining.." "green" "echo"
     fi
 else
     log "minerfixer" "could not get last mined tx! setgenerate true"
