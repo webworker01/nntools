@@ -253,7 +253,7 @@ rpcallowip=127.0.0.1
 listen=0
 listenonion=0
 onlynet=ipv4
-maxconnections=16
+maxconnections=8
 EOF
     chmod 600 $HOME/.gincoincore/gincoin.conf
 
@@ -272,6 +272,43 @@ EOF
     cd hush3 && git checkout v3.3.1
     ./zcutil/build.sh -j$(expr $(nproc) - 1)
     echo "pubkey=$nn_pubkey" > $HOME/hush3/src/pubkey.txt
+
+    #AYA
+    cd $HOME
+    git clone https://github.com/sillyghost/AYAv2
+    cd AYAv2
+    git checkout 7c8498d
+    $scriptpath/rebuildaya
+
+    mkdir -p ~/.aryacoin
+
+    #aryacoin.conf
+    randusername=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
+    randpassword=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
+    cd $HOME
+    mkdir -p $HOME/.aryacoin
+    cat <<EOF > $HOME/.aryacoin/aryacoin.conf
+rpcuser=user$randusername
+rpcpassword=pass$randpassword
+txindex=1
+server=1
+daemon=1
+litemode=1
+rpcworkqueue=256
+rpcbind=127.0.0.1
+rpcallowip=127.0.0.1
+listen=0
+listenonion=0
+onlynet=ipv4
+maxconnections=8
+EOF
+    chmod 600 $HOME/.aryacoin/aryacoin.conf
+
+    #Marmara
+    cd $HOME
+    git clone https://github.com/marmarachain/Marmara-v.1.0.git
+    cd Marmara-v.1.0 && git checkout master
+    ./zcutil/build.sh -j$(expr $(nproc) - 1)
 fi
 
 echo
