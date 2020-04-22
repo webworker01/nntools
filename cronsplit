@@ -78,7 +78,7 @@ else
             continue
         fi
 
-        if [[ ${coin[0]} == "GAME" ]] || [[ ${coin[0]} == "EMC2" ]]; then
+        if [[ ${coin[0]} == "GAME" ]] || [[ ${coin[0]} == "EMC2" ]] || [[ ${coin[0]} == "AYA" ]]; then
             coinsutxoamount=0.00100000
             coinsplitamount=100000
         else
