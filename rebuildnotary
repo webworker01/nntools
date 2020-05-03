@@ -1,6 +1,6 @@
 #!/bin/bash
 cd $HOME/dPoW/
-rm -rf agents/
+rm -rf ./agents ./iguana/*.o
 cd $HOME/dPoW/iguana
 git pull
 cd secp256k1; ./m_unix; cd ..

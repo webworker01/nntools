@@ -7,7 +7,7 @@ source $scriptpath/main
 
 freqten=('RFOX VRSC')
 freqtwo=('KMDICE')
-sleeptime=1
+sleeptime=3
 
 if [[ ! -z $1 ]]; then
     case "$1" in
