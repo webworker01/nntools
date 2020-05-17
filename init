@@ -120,8 +120,9 @@ EOF
 
     #VERUS
     cd $HOME
-    git clone https://github.com/VerusCoin/VerusCoin.git --branch v0.6.0-7 --single-branch
-    cd VerusCoin && git checkout 249191886b59929575953425656d4a31328758eb
+    # git clone https://github.com/VerusCoin/VerusCoin.git --branch v0.6.4-3 --single-branch
+    git clone https://github.com/VerusCoin/VerusCoin.git
+    cd VerusCoin && git checkout 391c403814d25434b75cd3a82e1d79dfeb8ab0eb
     ./zcutil/build.sh -j$(expr $(nproc) - 1)
 else
     #CHIPS
