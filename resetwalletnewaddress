@@ -1,0 +1,143 @@
+#!/bin/bash
+#
+# Reset wallet using lukechild's new address method
+#
+# @author webworker01
+#
+scriptpath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $scriptpath/main
+
+if [[ -z $1 ]]; then
+    echo "Usage: ./resetwalletnewaddress <coin (GAME|EMC2|GIN)>"
+    exit 0
+fi
+
+if (( $thirdpartycoins < 1 )); then
+    searchlist="coinsfirst[@]"
+else
+    searchlist="coinsthird[@]"
+fi
+
+#search
+for coins in "${!searchlist}"; do
+    searchcoin=($coins)
+    if [[ "${searchcoin[4]}" == "newaddress" ]] && [[ "${1^^}" == "${searchcoin[0]}" ]]; then
+        eval $(echo coincli=${searchcoin[1]})
+        eval $(echo coinexec=${searchcoin[2]})
+        eval $(echo pidfile=${searchcoin[5]})
+        datadir="${HOME}/${searchcoin[3]}"
+    fi
+done
+
+if [[ -z $coincli ]]; then
+    log "resetwalletnewaddress" "${1} does not exist in paths!" "red" "echo"
+    exit 0
+fi
+
+coin=${1^^}
+
+confcheck=""
+splitqty=$otherutxoqty
+if [[ ! -z $game_address && $coin == "GAME" ]]; then
+    address=$game_address
+elif [[ ! -z $emc2_address && $coin == "EMC2" ]]; then
+    address=$emc2_address
+elif [[ ! -z $gin_address && $coin == "GIN" ]]; then
+    address=$gin_address
+elif [[ ! -z $aya_address && $coin == "AYA" ]]; then
+    address=$aya_address
+else
+    echo "can't find address for $coin"
+    exit 0
+fi
+
+pidfile="$datadir/$pidfile"
+
+utxoamt=0.00010000
+splitamount=10000
+confcheck=".rawconfirmations"
+
+privkey=$($coincli dumpprivkey $address)
+
+tempaddress=$($coincli getnewaddress)
+tempkey=$($coincli dumpprivkey $tempaddress)
+log "resetwalletnewaddress" "${coin} Temp Address: ${tempaddress} Key: ${tempkey}"
+
+#send balance to self
+balance=$($coincli getbalance)
+txid=$($coincli sendtoaddress $tempaddress $balance "" "" true)
+log "resetwalletnewaddress" "${coin} balance $balance sent to temp $tempaddress - txid : $txid"
+
+#wait for confirmation
+i=0
+confirmations=0
+while [ "$confirmations" -eq "0" ]; do
+    sleep 10
+    confirmations=$(eval "${coincli} gettransaction ${txid} | jq ${confcheck}")
+    if [[ "$confirmations" == "null" ]]; then
+        confirmations=0
+    fi
+    i=$(($i+1))
+    ${coincli} sendrawtransaction $(${coincli} getrawtransaction ${txid}) > /dev/null
+    log "resetwalletnewaddress" "${coin} sendbalance - waiting for confirmation $confirmations ($i) - ${txid}"  "red" "echo"
+done
+
+#stop daemon
+$coincli stop
+
+i=0
+while [ -f $pidfile ]; do
+   i=$((i+1))
+   log "resetwalletnewaddress" "${coin} - Waiting for daemon stop ($i)" "red" "echo"
+   sleep 1
+done
+sleep 15
+
+#mv wallet
+mv $datadir/wallet.dat $datadir/wallet.dat.old
+
+#start daemon
+log "resetwalletnewaddress" "Restart daemon ${coinexec}"
+$coinexec -pubkey=$nn_pubkey &
+
+#wait for start
+i=0
+while ! $coincli getinfo >/dev/null 2>&1; do
+   i=$((i+1))
+   log "resetwalletnewaddress" "${coin} - Waiting for daemon start ($i)" "red" "echo"
+   sleep 1
+done
+
+#import temp key with scan
+importedtempaddress=$($coincli importprivkey $tempkey)
+log "resetwalletnewaddress" "${coin} - Imported temp address -> $importedtempaddress"
+
+#import key without scan
+importedaddress=$($coincli importprivkey $privkey "" false)
+log "resetwalletnewaddress" "${coin} - Imported address -> $importedaddress"
+
+#send balance to self
+balance=$($coincli getbalance)
+txid=$($coincli sendtoaddress $address $balance "" "" true)
+log "resetwalletnewaddress" "${coin} balance $balance sent to main $address - txid : $txid"
+
+#wait for confirmation
+i=0
+confirmations=0
+while [ "$confirmations" -eq "0" ]; do
+    sleep 10
+    confirmations=$(eval "${coincli} gettransaction ${txid} | jq ${confcheck}")
+    if [[ "$confirmations" == "null" ]]; then
+        confirmations=0
+    fi
+    i=$(($i+1))
+    ${coincli} sendrawtransaction $(${coincli} getrawtransaction ${txid}) > /dev/null
+    log "resetwalletnewaddress" "${coin} sendbalance - waiting for confirmation $confirmations ($i) - ${txid}"  "red" "echo"
+done
+
+#split funds
+splitter=$(curl --url "http://127.0.0.1:$iguanaport" --data "{\"coin\":\"${coin}\",\"agent\":\"iguana\",\"method\":\"splitfunds\",\"satoshis\":\"$splitamount\",\"sendflag\":1,\"duplicates\":$splitqty}")
+log "resetwalletnewaddress" "${coin} - utxos: $splitqty - $splitter"
+
+newbalance=$($coincli getbalance)
+log "resetwalletnewaddress" "${coin} Done! Balance: $newbalance"

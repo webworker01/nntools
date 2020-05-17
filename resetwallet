@@ -1,39 +1,33 @@
 #!/bin/bash
 #
-# Usage: ./resetwallet <COINNAME> <sapling=1/0> <resettooldest=1/0>
-# e.g.   ./resetwallet KMD 1 1
-# e.g.   ./resetwallet OOT 0
+# Reset KMD way
 #
-# resettooldest=1 will not send any transactions and only delete wallet and rescan from the oldest tx in the wallet
+# Usage: ./resetwallet <COINNAME> <resettype (optional) (1=resettooldest|2=zimport)>
+# e.g.   ./resetwallet KMD 2  will use the zimport reset method
+#
+# resettooldest will not send any transactions and only delete wallet and rescan from the oldest tx in the wallet
 #
 # @author webworker01
 #
 scriptpath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 source ${scriptpath}/main
 
-if [[ ! -z $1 ]] && [[ $1 != "KMD" ]]; then
-    coin=$1
-    asset=" -ac_name=$1"
-    datadir="$HOME/.komodo/$coin"
-else
-    coin="KMD"
-    asset=""
-    datadir="$HOME/.komodo"
-fi
+# @see functions
+setupCoinVars $1 "resetwallet"
 
-if [[ ! -z $2 ]] && [[ $2 != "1" ]]; then
-    sapling=0
-else
-    sapling=1
-fi
-
-if [[ -z $3 ]] || [[ $3 != "0" ]]; then
+if [[ -z $2 ]] || [[ $2 != "1" ]]; then
     resettooldest=0
 else
     resettooldest=1
 fi
 
-pidfile="$datadir/komodod.pid"
+if [[ -z $2 ]] || [[ $2 != "2" ]]; then
+    zimport=0
+else
+    zimport=1
+fi
+
+sapling=$(isSapling $coin)
 
 privkey=$($komodocli $asset dumpprivkey $nn_address)
 
@@ -46,16 +40,22 @@ if (( resettooldest < 1 )); then
     unspent=$($komodocli $asset listunspent | jq '[.[] | select(.spendable==true)]')
     if [[ $coin == "KMD" ]]; then
         interest=$(jq -r '[.[].interest] | add' <<< $unspent)
-        interest=$( printf "%.8f" $interest )
+        if [[ "$interest" != "null" ]]; then
+            interest=$( printf "%.8f" $interest )
+        else
+            interest=0
+        fi
     else
         interest=0
     fi
     consolidatethese=$(jq -rc '[.[] | {"txid":.txid, "vout":.vout}]' <<< $unspent)
+    consolidatetheselength=$(jq -r '. | length' <<< $unspent)
+    consolidatethesetxfee=$(calcFee ${consolidatetheselength} 1 "p2pkh" "p2pkh")
     consolidateamount=$(jq -r '[.[].amount] | add' <<< $unspent)
-    consolidateamountfixed=$( printf "%.8f" $(bc -l <<< "($consolidateamount+$interest)") )
+    consolidateamountfixed=$( printf "%.8f" $(bc -l <<< "(${consolidateamount}+${interest}-${consolidatethesetxfee})") )
     rawtxresult=$($komodocli $asset createrawtransaction ${consolidatethese} '''{ "'$nn_address'": '$consolidateamountfixed' }''')
-    txid=$(sendRaw ${rawtxresult} ${coin} ${sapling})
-    log "resetwallet" "$coin - balance sent $consolidateamountfixed - interest: $interest  - txid : $txid"
+    txid=$(sendRaw ${rawtxresult} ${coin})
+    log "resetwallet" "${coin} - balance sent $consolidateamountfixed - interest: $interest  - txid : $txid"
 
     i=0
     confirmations=0
@@ -63,7 +63,8 @@ if (( resettooldest < 1 )); then
         sleep 10
         confirmations=$($komodocli $asset gettransaction $txid | jq .confirmations)
         i=$((i+1))
-        log "resetwallet" "$coin - sendbalance - waiting for confirmation $confirmations ($i) - ${txid}"  "red" "echo"
+        ${komodocli} ${asset} sendrawtransaction $($komodocli $asset getrawtransaction ${txid}) > /dev/null
+        log "resetwallet" "${coin} - sendbalance - waiting for confirmation $confirmations ($i) - ${txid}"  "red" "echo"
     done
     blockhash=$($komodocli $asset gettransaction $txid | jq -r .blockhash)
     scanfrom=$($komodocli $asset getblock $blockhash | jq .height)
@@ -71,14 +72,15 @@ if (( resettooldest < 1 )); then
     #send feeder tx
     if [[ $coin == "KMD" ]]; then
         txid2=$($komodocli sendtoaddress $nn_address 5)
-        log "resetwallet" "$coin - send feeder UTXO of 5: $txid2"
+        log "resetwallet" "${coin} - send feeder UTXO of 5: $txid2"
         i=0
         confirmations=0
         while [ "$confirmations" -eq "0" ]; do
             sleep 10
             confirmations=$($komodocli gettransaction $txid2 | jq .confirmations)
             i=$((i+1))
-            log "resetwallet" "$coin - send feeder waiting for confirmation $confirmations ($i) - ${txid2}" "red" "echo"
+            ${komodocli} ${asset} sendrawtransaction $($komodocli $asset getrawtransaction ${txid2}) > /dev/null
+            log "resetwallet" "${coin} - send feeder waiting for confirmation $confirmations ($i) - ${txid2}" "red" "echo"
         done
     fi
 
@@ -86,18 +88,24 @@ if (( resettooldest < 1 )); then
     if [[ $coin == "KMD" ]]; then
         splitter=$($scriptpath/splitfunds $coin $kmdutxoqty)
     else
-        splitter=$($scriptpath/splitfunds $coin $acutxoqty $sapling)
+        splitter=$($scriptpath/splitfunds $coin $acutxoqty)
     fi
-    log "resetwallet" "$coin - splitter: $splitter"
-
+    log "resetwallet" "${coin} - splitter: $splitter"
+    sleep 10
 else
     #reset to oldest utxo
-    blockcount=$(komodo-cli $asset getblockcount)
-    oldestutxo=$(komodo-cli $asset listunspent | jq 'sort_by(.confirmations)[-1] | .rawconfirmations')
+    blockcount=$($komodocli $asset getblockcount)
+    oldestutxo=$($komodocli $asset listunspent | jq 'sort_by(.confirmations)[-1] | .rawconfirmations')
     scanfrom=$(( blockcount - oldestutxo ))
 fi
 
-log "resetwallet" "$coin - scanfrom: $scanfrom" "red" "echo"
+if (( zimport > 0 )); then
+    tempaddress=$(${komodocli} ${asset} z_getnewaddress)
+    tempkey=$(${komodocli} ${asset} z_exportkey $tempaddress)
+    log "resetwallet" "${coin} Temp Address: ${tempaddress} Key: ${tempkey}"
+fi
+
+log "resetwallet" "${coin} - scanfrom: $scanfrom" "red" "echo"
 
 #Grab daemon args before killing
 if [[ $coin == "KMD" ]]; then
@@ -106,36 +114,41 @@ else
     daemon_args=$(ps -fC komodod | grep -- "-pubkey=${nn_pubkey}" | grep -- "-ac_name=${coin}" | grep -Po "komodod .*" | sed 's/komodod //g' | sed -e 's/-reindex//g' | sed -e 's/-rescan//g')
 fi
 
-log "resetwallet" "$coin - killing daemon - scanfrom: $scanfrom - restart command: $komodod $daemon_args"
+log "resetwallet" "${coin} - killing daemon - scanfrom: $scanfrom - restart command: $coinexec $daemon_args"
 
 $komodocli $asset stop
 
 i=0
 while [ -f $pidfile ]; do
    i=$((i+1))
-   log "resetwallet" "$coin - Waiting for daemon stop ($i)" "red" "echo"
+   log "resetwallet" "${coin} - Waiting for daemon stop ($i)" "red" "echo"
    sleep 1
 done
 sleep 15
 mv $datadir/wallet.dat $datadir/wallet.dat.old
 
 #restart the daemon
-log "resetwallet" "$coin - Restart daemon $komodod $daemon_args"
+log "resetwallet" "${coin} - Restart daemon $coinexec $daemon_args"
 
 cd $scriptpath/7776/
-$komodod $daemon_args &
+$coinexec $daemon_args &
 cd $scriptpath
 
 i=0
 while ! $komodocli $asset getinfo >/dev/null 2>&1; do
    i=$((i+1))
-   log "resetwallet" "$coin - Waiting for daemon start ($i)" "red" "echo"
+   log "resetwallet" "${coin} - Waiting for daemon start ($i)" "red" "echo"
    sleep 1
 done
 
 #Import the keys in the new wallet
-importedaddress=$($komodocli $asset importprivkey $privkey "" true $scanfrom)
-log "resetwallet" "$coin - Imported address -> $importedaddress as height $scanfrom"
+if (( zimport < 1 )); then
+    importedaddress=$($komodocli $asset importprivkey $privkey "" true $scanfrom)
+else
+    importedaddress=$($komodocli $asset importprivkey $privkey "" false)
+    results=$(${komodocli} ${asset} z_importkey "${tempkey}" yes $scanfrom)
+fi
+log "resetwallet" "${coin} - Imported address -> $importedaddress as height $scanfrom"
 
 newbalance=$($komodocli $asset getbalance)
-log "resetwallet" "$coin - Done! Balance $newbalance"
+log "resetwallet" "${coin} - Done! Balance $newbalance"

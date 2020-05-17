@@ -16,16 +16,8 @@ source $scriptpath/main
 utxoamt=0.00010000
 splitamount=10000
 
-skiplong=('VRSC' 'HUSH3')
-
-kmdutxos=$($komodocli listunspent | jq --arg amt "$utxoamt" '[.[] | select(.amount==($amt|tonumber))] | length')
-if (( kmdutxos < kmdutxoqty )); then
-    echo "KMD utxos: $kmdutxos"
-
-    splitter=$($scriptpath/splitfunds KMD $kmdutxoqty)
-
-    log "cronsplit" "KMD - utxos: $kmdutxos - $splitter"
-fi
+skipshort=('DPOW')
+skiplong=('VRSC DPOW')
 
 doSplit() {
     local coin=$1
@@ -46,17 +38,25 @@ doSplit() {
 
 #no params in cli indicates just the short list of kmd specific coins
 if [[ -z $1 ]]; then
+    kmdutxos=$($komodocli listunspent | jq --arg amt "$utxoamt" '[.[] | select(.amount==($amt|tonumber))] | length')
+    if (( kmdutxos < kmdutxoqty )); then
+        echo "KMD utxos: $kmdutxos"
+
+        splitter=$($scriptpath/splitfunds KMD $kmdutxoqty)
+
+        log "cronsplit" "KMD - utxos: $kmdutxos - $splitter"
+    fi
+
     if (( thirdpartycoins < 1 )); then
         for coins in "${coinlist[@]}"; do
             coin=($coins)
 
-            if [[ ! ${ignoreacs[*]} =~ ${coin[0]} ]]; then
+            if [[ ! ${ignoreacs[*]} =~ ${coin[0]} ]] && [[ ! ${skipshort[*]} =~ ${coin[0]} ]]; then
                 doSplit ${coin[0]}
             fi
         done
 
         doSplit "VRSC"
-        doSplit "HUSH3"
     fi
 else
     declare -a othercoins=()
@@ -78,7 +78,7 @@ else
             continue
         fi
 
-        if [[ ${coin[0]} == "GAME" ]] || [[ ${coin[0]} == "EMC2" ]]; then
+        if [[ ${coin[0]} == "GAME" ]] || [[ ${coin[0]} == "EMC2" ]] || [[ ${coin[0]} == "AYA" ]]; then
             coinsutxoamount=0.00100000
             coinsplitamount=100000
         else

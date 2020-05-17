@@ -22,8 +22,8 @@ fi
 if (( nosudo > 0 )); then
     #dependencies
     sudo apt-get update && sudo apt-get upgrade -y
-    sudo apt-get install build-essential pkg-config libc6-dev m4 g++-multilib autoconf libtool libncurses-dev unzip git python zlib1g-dev wget bsdmainutils automake libboost-all-dev libssl-dev libprotobuf-dev protobuf-compiler libgtest-dev libqt4-dev libqrencode-dev libdb++-dev ntp ntpdate software-properties-common libevent-dev curl libcurl4-gnutls-dev cmake clang libsodium-dev jq htop bc dc -y
-
+    # sudo apt-get install build-essential pkg-config libc6-dev m4 g++-multilib autoconf libtool libncurses-dev unzip git python zlib1g-dev wget bsdmainutils automake libboost-all-dev libssl-dev libprotobuf-dev protobuf-compiler libgtest-dev libqt4-dev libqrencode-dev libdb++-dev ntp ntpdate software-properties-common libevent-dev curl libcurl4-gnutls-dev cmake clang libsodium-dev jq htop bc dc -y
+    sudo apt-get install build-essential pkg-config libc6-dev m4 g++-multilib autoconf libtool ncurses-dev python-zmq zlib1g-dev wget curl bsdmainutils automake cmake clang libsodium-dev libcurl4-gnutls-dev libssl-dev git unzip python jq htop bc dc -y
     #nanomsg
     cd $HOME
     git clone https://github.com/nanomsg/nanomsg
@@ -52,7 +52,7 @@ randusername=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
 randpassword=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
 cd $HOME
 
-if (( thirdpartycoins > 0 )); then
+if (( thirdpartycoins < 1 )); then
     blocknotify="blocknotify=$HOME/nntools/minerfixer %s"
 fi
 
@@ -109,14 +109,29 @@ listen=0
 listenonion=0
 onlynet=ipv4
 deprecatedrpc=estimatefee
+
+blocknotify=notarizer BTC bitcoin-cli %s
 EOF
     chmod 600 $HOME/.bitcoin/bitcoin.conf
 
-    #HUSH3
+    #DEX.conf
+    randusername=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
+    randpassword=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
     cd $HOME
-    git clone https://github.com/KomodoPlatform/komodo --branch hush3 --single-branch hush3
-    cd hush3 && git checkout cc35198f1da23a617caf95ed087033d8dfb8ce89
-    ./zcutil/build.sh -j$(expr $(nproc) - 1)
+    mkdir -p $HOME/.komodo/DEX
+    cat <<EOF > $HOME/.komodo/DEX/DEX.conf
+rpcuser=user$randusername
+rpcpassword=pass$randpassword
+rpcport=11890
+server=1
+txindex=1
+rpcworkqueue=256
+rpcbind=127.0.0.1
+rpcallowip=127.0.0.1
+
+blocknotify=notarizer DEX "" %s
+EOF
+    chmod 600 $HOME/.komodo/DEX/DEX.conf
 
     #VERUS
     cd $HOME
@@ -124,6 +139,17 @@ EOF
     git clone https://github.com/VerusCoin/VerusCoin.git
     cd VerusCoin && git checkout 391c403814d25434b75cd3a82e1d79dfeb8ab0eb
     ./zcutil/build.sh -j$(expr $(nproc) - 1)
+
+    #DPOW CHAIN
+    cd $HOME
+    git clone https://github.com/jl777/komodo.git --branch jl777 dexkomodo
+    cd ~/dexkomodo
+    git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
+    ./zcutil/build.sh -j$(expr $(nproc) - 1)
+    cd ~/dexkomodo/src/
+    sudo gcc -o /usr/bin/notarizer cc/dapps/notarizer.c -lm
+    sudo mkdir /usr/local/notarizer
+    sudo cp ~/dexkomodo/src/cc/dapps/pubkeys /usr/local/notarizer/
 else
     #CHIPS
     cd $HOME
@@ -228,7 +254,7 @@ rpcallowip=127.0.0.1
 listen=0
 listenonion=0
 onlynet=ipv4
-maxconnections=16
+maxconnections=8
 EOF
     chmod 600 $HOME/.gincoincore/gincoin.conf
 
@@ -238,6 +264,52 @@ EOF
     # cd VerusCoin
     # git checkout master
     # ./zcutil/build.sh -j$(nproc)
+
+    #HUSH3
+    cd $HOME
+    # git clone https://github.com/KomodoPlatform/komodo --branch hush3 --single-branch hush3
+    # cd hush3 && git checkout cc35198f1da23a617caf95ed087033d8dfb8ce89
+    git clone https://github.com/MyHush/hush3
+    cd hush3 && git checkout v3.3.1
+    ./zcutil/build.sh -j$(expr $(nproc) - 1)
+    echo "pubkey=$nn_pubkey" > $HOME/hush3/src/pubkey.txt
+
+    #AYA
+    cd $HOME
+    git clone https://github.com/sillyghost/AYAv2
+    cd AYAv2
+    git checkout 7c8498d
+    $scriptpath/rebuildaya
+
+    mkdir -p ~/.aryacoin
+
+    #aryacoin.conf
+    randusername=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
+    randpassword=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
+    cd $HOME
+    mkdir -p $HOME/.aryacoin
+    cat <<EOF > $HOME/.aryacoin/aryacoin.conf
+rpcuser=user$randusername
+rpcpassword=pass$randpassword
+txindex=1
+server=1
+daemon=1
+litemode=1
+rpcworkqueue=256
+rpcbind=127.0.0.1
+rpcallowip=127.0.0.1
+listen=0
+listenonion=0
+onlynet=ipv4
+maxconnections=8
+EOF
+    chmod 600 $HOME/.aryacoin/aryacoin.conf
+
+    #Marmara
+    cd $HOME
+    git clone https://github.com/marmarachain/Marmara-v.1.0.git
+    cd Marmara-v.1.0 && git checkout master
+    ./zcutil/build.sh -j$(expr $(nproc) - 1)
 fi
 
 echo

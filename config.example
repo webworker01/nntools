@@ -29,6 +29,12 @@ nn_pubkey=
 #Enter your notary node IPv4 address
 nn_ipaddress=
 
+#Enter your notary node handle e.g. webworker01_NA
+nn_handle=
+
+#If on 1p server, enter your 3p key here
+nn_3p_pubkey=
+
 #Date format for logging
 datetime=$(date '+%Y-%m-%d %H:%M:%S')
 
@@ -52,8 +58,13 @@ btcutxoqty=200
 #Lower threshold for third party coin utxos
 otherutxoqty=50
 
+#Standard tx fee amount
+txfeeperkb=0.000035
+
 #size to monitor for in bytes
 monitorsize=20000000
+monitorsizekmd=20000000
+monitorsizeother=20000000
 
 #You can modify this list of ACs to exclude or comment out the line to show all
 ignoreacs=('VOTE2018' 'VOTE2019' 'BEER' 'PIZZA')
@@ -72,3 +83,11 @@ dpowseeds=('95.213.238.100' '77.75.121.138' '103.6.12.105' '139.99.209.214')
 
 #which notaryid to use as reference node when checking masks (0 to 63)
 referencenode=7
+
+#additional address entries
+btc_address=
+chips_address=
+game_address=
+emc2_address=
+gin_address=
+aya_address=

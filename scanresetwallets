@@ -1,0 +1,60 @@
+#!/bin/bash
+#
+# Scan and reset wallets over size limit
+#
+# @author webworker01
+#
+scriptpath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $scriptpath/main
+
+#check kmd
+walletsize=$(ls -l ~/.komodo/wallet.dat  | awk '{print $5}')
+if (( $walletsize > $monitorsizekmd )); then
+    log "scanresetwallets" "KMD - $walletsize"
+    $scriptpath/resetwallet "KMD"
+fi
+
+if (( $thirdpartycoins < 1 )); then
+    searchlist="coinsfirst[@]"
+else
+    searchlist="coinsthird[@]"
+fi
+
+for coins in "${!searchlist}"; do
+    coin=($coins)
+    walletsize=$(ls -l ~/${coin[3]}/wallet.dat  | awk '{print $5}')
+
+    if [[ ${coin[0]} == "VRSC" ]]; then
+        monitorsizeother=$monitorsize
+    fi
+
+    if (( $walletsize > $monitorsizeother )); then
+        log "scanresetwallets" "${coin[0]} - $walletsize"
+        case ${coin[4]} in
+            kmd)
+                $scriptpath/resetwallet ${coin[0]}
+                ;;
+            newaddress)
+                $scriptpath/resetwalletnewaddress ${coin[0]}
+                ;;
+            rescan)
+                $scriptpath/resetwalletrescan ${coin[0]}
+                ;;
+            zimport)
+                $scriptpath/resetwallet ${coin[0]} 2
+                ;;
+        esac
+    fi
+done
+
+#check acs
+if (( $thirdpartycoins < 1 )); then
+    for coins in "${coinlist[@]}"; do
+        coin=($coins)
+        walletsize=$(ls -l ~/.komodo/${coin[0]}/wallet.dat  | awk '{print $5}')
+        if (( $walletsize > $monitorsize )); then
+            log "scanresetwallets" "${coin[0]} - $walletsize"
+            $scriptpath/resetwallet ${coin[0]}
+        fi
+    done
+fi

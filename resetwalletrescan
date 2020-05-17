@@ -1,0 +1,123 @@
+#!/bin/bash
+#
+# Reset wallet using rescanblockchain method
+#
+# @author webworker01
+#
+scriptpath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $scriptpath/main
+
+if [[ -z $1 ]]; then
+    echo "Usage: ./resetwalletrescan <coin (BTC|CHIPS)>"
+    exit 0
+fi
+
+if (( $thirdpartycoins < 1 )); then
+    searchlist="coinsfirst[@]"
+else
+    searchlist="coinsthird[@]"
+fi
+
+#search
+for coins in "${!searchlist}"; do
+    searchcoin=($coins)
+    if [[ "${searchcoin[4]}" == "rescan" ]] && [[ "${1^^}" == "${searchcoin[0]}" ]]; then
+        eval $(echo coincli=${searchcoin[1]})
+        eval $(echo coinexec=${searchcoin[2]})
+        eval $(echo pidfile=${searchcoin[5]})
+        datadir="${HOME}/${searchcoin[3]}"
+    fi
+done
+
+if [[ -z $coincli ]]; then
+    log "resetwalletrescan" "${1} does not exist in paths!" "red" "echo"
+    exit 0
+fi
+
+coin=${1^^}
+
+if [[ ! -z $btc_address && $coin == "BTC" ]]; then
+    address=$btc_address
+    splitqty=$btcutxoqty
+    confcheck=".confirmations"
+elif [[ ! -z $chips_address && $coin == "CHIPS" ]]; then
+    address=$chips_address
+    splitqty=$otherutxoqty
+    confcheck=".rawconfirmations"
+else
+    echo "can't find address for $coin"
+    exit 0
+fi
+
+pidfile="$datadir/$pidfile"
+
+utxoamt=0.00010000
+splitamount=10000
+
+privkey=$($coincli dumpprivkey $address)
+
+#send balance to self
+balance=$($coincli getbalance)
+txid=$($coincli sendtoaddress $address $balance "" "" true)
+log "resetwalletrescan" "${coin} balance sent $balance - txid : $txid"
+
+#get block height of tx
+i=0
+confirmations=0
+while [ "$confirmations" -eq "0" ]; do
+    sleep 10
+    confirmations=$(eval "${coincli} gettransaction ${txid} | jq ${confcheck}")
+    if [[ "$confirmations" == "null" ]]; then
+        confirmations=0
+    fi
+    i=$(($i+1))
+    ${coincli} sendrawtransaction $(${coincli} getrawtransaction ${txid}) > /dev/null
+    log "resetwalletrescan" "${coin} sendbalance - waiting for confirmation $confirmations ($i) - ${txid}"  "red" "echo"
+done
+blockhash=$($coincli gettransaction $txid | jq -r .blockhash)
+scanfrom=$($coincli getblock $blockhash | jq .height)
+
+#split funds
+splitter=$(curl --url "http://127.0.0.1:$iguanaport" --data "{\"coin\":\"${coin}\",\"agent\":\"iguana\",\"method\":\"splitfunds\",\"satoshis\":\"$splitamount\",\"sendflag\":1,\"duplicates\":$splitqty}")
+log "resetwalletrescan" "${coin} - utxos: $splitqty - $splitter"
+
+sleep 10
+
+#stop daemon
+$coincli stop
+
+i=0
+while [ -f $pidfile ]; do
+   i=$((i+1))
+   log "resetwalletrescan" "Waiting for daemon ${coin} stop ($i)" "red" "echo"
+   sleep 1
+done
+sleep 15
+
+#mv wallet
+mv $datadir/wallet.dat $datadir/wallet.dat.old
+
+#start daemon
+log "resetwalletrescan" "Restart daemon ${coinexec}"
+$coinexec -pubkey=$nn_pubkey &
+
+#wait for start
+i=0
+while ! $coincli getnetworkinfo >/dev/null 2>&1; do
+   i=$((i+1))
+   log "resetwalletrescan" "${coin} - Waiting for daemon start ($i)" "red" "echo"
+   sleep 1
+done
+
+#import key without scan
+importedaddress=$($coincli importprivkey $privkey "" false)
+log "resetwalletrescan" "${coin} - Imported  address -> $importedaddress"
+
+#use rescanblockchain ("start_height")
+$coincli rescanblockchain $scanfrom
+log "resetwalletrescan" "${coin} - Start rescan from height $scanfrom"
+
+sleep 15
+
+newbalance=$($coincli getbalance)
+log "resetwalletrescan" "${coin}- Done! Balance $newbalance"

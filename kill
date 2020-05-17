@@ -1,0 +1,17 @@
+#!/bin/bash
+#
+# Look up the process id of a komodod and KILL (pkill -9)
+#
+# @author webworker01
+#
+scriptpath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $scriptpath/main
+
+# @see functions
+setupCoinVars $1 "kill"
+
+pid=$(< ${pidfile})
+
+log "kill" "Killing ${coin} pid ${pid}"
+
+pkill -9 -F ${pidfile}

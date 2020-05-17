@@ -3,12 +3,17 @@
 #
 # Add to ~/.komodo/komodo.conf:
 #
-# blocknotify=/home/komodo/minerfixer %s
+# blocknotify=/home/komodo/nntools/minerfixer %s
 #
 # @author webworker01
 #
 scriptpath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 source $scriptpath/main
+
+#KMD DPOW P2P
+notarizer KMD "" %s
+
+max_no_blocks=192
 
 lastgen=$($komodocli listtransactions "*" 777 | jq '[.[] | select(.generated==true)] | .[-1]')
 if [[ "$lastgen" != "null" ]]; then
@@ -44,7 +49,14 @@ if [[ "$lastgen" != "null" ]]; then
             log "minerfixer" " [[ Block found! ]]" "green" "echo"
         fi
 
-    #Default to do nothing and assume mining
+    # If we're past $max_no_blocks since last block found, double check that mining is enabled.
+    elif (( rawconfirmations > max_no_blocks )); then
+        mining=$($komodocli getmininginfo | jq -r .generate)
+        if [[ "${mining}" == "false" ]]; then
+            log "minerfixer" "Should have been mining but wasn't - ${rawconfirmations} > ${max_no_blocks} - setgenerate true" "red"
+            $komodocli setgenerate true 1
+        fi
+    # No change, just verify mining
     else
         log "minerfixer" "mining.." "green" "echo"
     fi

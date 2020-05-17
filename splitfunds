@@ -3,9 +3,8 @@
 # Local split version by webworker01
 # Original version by Decker (c) 2018 <https://github.com/DeckerSU/komodo_scripts/blob/master/split_nn_sapling.sh>
 #
-# Usage: ./splitfunds <COINNAME> <numutxos> <sapling=1/0>
+# Usage: ./splitfunds <COINNAME> <numutxos>
 # e.g.   ./splitfunds KMD 50
-# e.g.   ./splitfunds OOT 50 0
 #
 # @author webworker01
 # @author DeckerSU
@@ -27,12 +26,14 @@ decodeBase58() {
     while read line; do echo -n ${line/\\/}; done
 }
 
-if [[ ! -z $1 ]] && [[ $1 != "KMD" ]]; then
-    coin=$1
+if [[ ! -z $1 ]] && [[ ${1^^} != "KMD" ]]; then
+    coin=${1^^}
     asset=" -ac_name=$1"
+    txfeeperkb=0
 else
     coin="KMD"
     asset=""
+    txfeeperkb=$txfeeperkb
 fi
 
 SPLIT_COUNT=$2
@@ -46,12 +47,7 @@ else
     SPLIT_COUNT=50
 fi
 
-if [[ ! -z $3 ]] && [[ $3 != "1" ]]; then
-    sapling=0
-else
-    sapling=1
-fi
-
+sapling=$(isSapling $coin)
 SPLIT_VALUE=0.0001
 SPLIT_VALUE_SATOSHI=10000
 SPLIT_TOTAL=$(jq -n "$SPLIT_VALUE*$SPLIT_COUNT")
@@ -94,7 +90,9 @@ if [[ $utxo != "null" ]]; then
     outbits=$(eval printf "%0.s$outbits" {1..$SPLIT_COUNT})
     rawtx=$rawtx$outbits
 
-    change=$( printf "%.8f" $(bc -l <<< "($amount-$SPLIT_TOTAL)") )
+    txfee=$(calcFee 1 $((SPLIT_COUNT+1)) "p2pkh" "p2pk")
+
+    change=$( printf "%.8f" $(bc -l <<< "(${amount}-${SPLIT_TOTAL}-${txfee})") )
     change=$( sed 's/^0*//' <<< ${change//./} )
     change=$( printf "%016x" $change | dd conv=swab 2> /dev/null | rev )
     rawtx=$rawtx$change

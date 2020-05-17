@@ -48,47 +48,34 @@ log()
     fi
 }
 
-sendRaw()
+# @return (1|0)
+isSapling()
 {
-    local rawtx=$1
-    local acname=$2
-
-    if [[ ! -z $acname ]] && [[ $acname != "KMD" ]]; then
-        asset=" -ac_name=${acname}"
+    local coin=${1^^}
+    if [[ ! ${sproutcoins[*]} =~ ${coin} ]]; then
+        echo 1
     else
-        asset=""
+        echo 0
     fi
+}
 
-    if [[ ! -z $3 ]] && [[ $3 != "1" ]]; then
-        sapling=0
-    else
-        sapling=1
-    fi
+isValidCoin()
+{
+    local coin=${1^^}
 
-    if [[ ! -z $rawtx ]]; then
-        # nlocktime=$(printf "%08x" $(date +%s) | dd conv=swab 2> /dev/null | rev)
-        nlocktime="00000000"
+    if [[ ! -z $1 ]] && [[ $1 != "KMD" ]]; then
 
-        hex=${rawtx::-8}$nlocktime
-
-        if (( sapling > 0 )); then
-            rawtx=$rawtx"000000000000000000000000000000" # sapling end of tx
-            txtail=000000000000000000000000000000
-            hex=${hex::-38}${nlocktime}${txtail}
-        fi
-
-        signedtx=$($komodocli $asset signrawtransaction $hex | jq -r '.hex')
-
-        if [[ ! -z $signedtx ]]; then
-            rawtxid=$($komodocli $asset sendrawtransaction $signedtx)
+        #check it exists in coinlist
+        if [[ ! " ${coinlist[@]} " =~ " ${1^^} " ]] && [[ ${1^^} != "VRSC" ]]; then
+            log "isValidCoin" "${1^^} does not exist in coinlist!" "red" "echo"
+            echo 0
         else
-            rawtxid="failed no signed tx"
+            echo 1
         fi
-
-        echo "${rawtxid}"
     else
-        echo "failed"
+        echo
     fi
+
 }
 
 timeSince ()
@@ -117,4 +104,46 @@ timeSince ()
             echo -n "${s}s"
         fi
     fi
+}
+
+# Setup commonly needed variables for working with a coin daemon
+# Pass in the coin name or it will assume kmd
+setupCoinVars ()
+{
+    coin=${1^^}
+    logfrom=${2}
+
+    if [[ ! -z $coin ]] && [[ $coin != "KMD" ]]; then
+
+        #check it exists in coinlist
+        if [[ ! " ${coinlist[@]} " =~ " ${coin} " ]] && [[ ! " ${komodolike[@]} " =~ " ${coin} " ]]; then
+            log $logfrom "${coin} does not exist in coinlist!" "red" "echo"
+            exit 0
+        fi
+
+        asset=" -ac_name=${coin}"
+        txfeeperkb=0
+        datadir=""
+        coinexec=""
+
+        #search for alt komodods
+        for coins in "${coinsfirst[@]}"; do
+            searchcoin=($coins)
+            if [[ "${searchcoin[4]}" == "kmd" ]] || [[ "${searchcoin[4]}" == "zimport" ]] && [[ "$1" == "${searchcoin[0]}" ]]; then
+                eval $(echo coinexec=${searchcoin[2]})
+                datadir="${HOME}/${searchcoin[3]}"
+            fi
+        done
+
+        coinexec=${coinexec:=$komodod}
+        datadir=${datadir:="$HOME/.komodo/$coin"}
+    else
+        coin="KMD"
+        asset=""
+        datadir="$HOME/.komodo"
+        txfeeperkb=$txfeeperkb
+        coinexec=$komodod
+    fi
+
+    pidfile="$datadir/komodod.pid"
 }

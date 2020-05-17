@@ -4,22 +4,32 @@
 # @author webworker01
 #
 
+komodolike=('VRSC' 'HUSH3' 'MCL')
+
 #declare non komodo clis - set the full path accessible as the second part of each string, the 3rd entry is the name of the data dir for the coin and assumes they are in $HOME
 hushcli="$HOME/hush3/src/komodo-cli -ac_name=HUSH3"
 hushd="$HOME/hush3/src/komodod -ac_name=HUSH3 -ac_sapling=1 -ac_reward=0,1125000000,562500000 -ac_halving=129,340000,840000 -ac_end=128,340000,5422111 -ac_eras=3 -ac_blocktime=150 -ac_cc=2 -ac_ccenable=228,234,235,236,241 -ac_founders=1 -ac_supply=6178674 -ac_perc=11111111 -clientname=GoldenSandtrout -addnode=188.165.212.101 -addnode=136.243.227.142 -addnode=5.9.224.250 -ac_cclib=hush3 -ac_script=76a9145eb10cf64f2bab1b457f1f25e658526155928fac88ac -pid=${HOME}/.komodo/HUSH3/komodod.pid"
 verusd="$HOME/VerusCoin/src/verusd -pid=${HOME}/.komodo/VRSC/komodod.pid"
+dpowcli="$HOME/dexkomodo/src/komodo-cli -ac_name=DPOW"
+dpowd="$HOME/dexkomodo/src/komodod  -ac_name=DPOW -dexp2p=2 -addnode=136.243.58.134 -pubkey=${nn_3p_pubkey} -handle=${nn_handle}"
+marmaracli="$HOME/Marmara-v.1.0/src/komodo-cli -ac_name=MCL"
+marmarad="$HOME/Marmara-v.1.0/src/komodod -ac_name=MCL -ac_supply=2000000 -ac_cc=2 -addnode=37.148.210.158 -addnode=37.148.212.36 -addressindex=1 -spentindex=1 -ac_marmara=1 -ac_staked=75 -ac_reward=3000000000 -pid=${HOME}/.komodo/HUSH3/komodod.pid"
+
 coinsfirst=(
-'BTC $HOME/bitcoin/src/bitcoin-cli $HOME/bitcoin/src/bitcoind .bitcoin'
-'HUSH3 $hushcli $hushd .komodo/HUSH3'
-'VRSC $HOME/VerusCoin/src/verus $verusd .komodo/VRSC'
+'BTC $HOME/bitcoin/src/bitcoin-cli $HOME/bitcoin/src/bitcoind .bitcoin rescan bitcoind.pid'
+'VRSC $HOME/VerusCoin/src/verus $verusd .komodo/VRSC zimport komodod.pid'
+'DPOW $dpowcli $dpowd .komodo/DPOW kmd komodod.pid'
 )
 
 coinsthird=(
-'CHIPS $HOME/chips3/src/chips-cli $HOME/chips3/src/chipsd .chips'
-'GAME $HOME/GameCredits/src/gamecredits-cli $HOME/GameCredits/src/gamecreditsd .gamecredits'
-'EMC2 $HOME/einsteinium/src/einsteinium-cli $HOME/einsteinium/src/einsteiniumd .einsteinium'
-'GIN $HOME/gincoin-core/src/gincoin-cli $HOME/gincoin-core/src/gincoind .gincoincore'
+'CHIPS $HOME/chips3/src/chips-cli $HOME/chips3/src/chipsd .chips rescan chipsd.pid'
+'GAME $HOME/GameCredits/src/gamecredits-cli $HOME/GameCredits/src/gamecreditsd .gamecredits newaddress gamecredits.pid'
+'EMC2 $HOME/einsteinium/src/einsteinium-cli $HOME/einsteinium/src/einsteiniumd .einsteinium newaddress einsteinium.pid'
+'GIN $HOME/gincoin-core/src/gincoin-cli $HOME/gincoin-core/src/gincoind .gincoincore newaddress gincoind.pid'
+'HUSH3 $hushcli $hushd .komodo/HUSH3 kmd komodod.pid'
 # 'VRSC $HOME/VerusCoin/src/verus $HOME/VerusCoin/src/verusd .komodo/VRSC'
+'AYA $HOME/AYAv2/src/aryacoin-cli $HOME/AYAv2/src/aryacoind .aryacoin newaddress aryacoin.pid'
+'MCL $marmaracli $marmarad .komodo/MCL kmd komodod.pid'
 )
 
 #for git checking - path and remote branch
