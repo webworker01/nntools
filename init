@@ -130,16 +130,6 @@ blocknotify=notarizer DEX "" %s
 EOF
     chmod 600 $HOME/.komodo/DEX/DEX.conf
 
-    #DPOW CHAIN
-    cd $HOME
-    git clone https://github.com/jl777/komodo.git --branch jl777 dexkomodo
-    cd ~/dexkomodo
-    git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
-    ./zcutil/build.sh -j$(expr $(nproc) - 1)
-    cd ~/dexkomodo/src/
-    sudo gcc -o /usr/bin/notarizer cc/dapps/notarizer.c -lm
-    sudo mkdir /usr/local/notarizer
-    sudo cp ~/dexkomodo/src/cc/dapps/pubkeys /usr/local/notarizer/
 else
     #CHIPS
     cd $HOME
