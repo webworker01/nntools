@@ -11,7 +11,7 @@ sudo ufw allow 22    comment 'SSH'
 sudo ufw allow 7770  comment 'KMD'
 if (( thirdpartycoins < 1 )); then
     #sudo ufw allow 8333  comment 'BTC'
-    sudo ufw allow 17775 comment 'Iguana Notary Main'
+    sudo ufw allow 17773 comment 'Iguana Notary Main'
 
     for coins in "${coinlist[@]}"; do
         coin=($coins)
@@ -23,7 +23,7 @@ if (( thirdpartycoins < 1 )); then
         fi
     done
 else
-    sudo ufw allow 17776 comment 'Iguana Notary Third Party'
+    sudo ufw allow 17774 comment 'Iguana Notary Third Party'
     sudo ufw allow 57777 comment 'CHIPS'
     #sudo ufw allow 40002 comment 'GAME'
     #sudo ufw allow 41878 comment 'EMC2'
