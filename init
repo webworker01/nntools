@@ -36,9 +36,8 @@ fi
 
 #komodo
 cd $HOME
-git clone https://github.com/KomodoPlatform/komodo -b master --single-branch
-cd komodo
-git checkout beta
+git clone https://github.com/KomodoPlatform/komodo
+cd komodo && git checkout e159b4e7a40d3886519401c4074e957a1f9d42ba
 $scriptpath/rebuildkomodo
 $HOME/komodo/zcutil/fetch-params.sh
 
@@ -109,8 +108,6 @@ listen=0
 listenonion=0
 onlynet=ipv4
 deprecatedrpc=estimatefee
-
-blocknotify=notarizer BTC bitcoin-cli %s
 EOF
     chmod 600 $HOME/.bitcoin/bitcoin.conf
 
@@ -133,13 +130,6 @@ blocknotify=notarizer DEX "" %s
 EOF
     chmod 600 $HOME/.komodo/DEX/DEX.conf
 
-    #VERUS
-    cd $HOME
-    # git clone https://github.com/VerusCoin/VerusCoin.git --branch v0.6.4-3 --single-branch
-    git clone https://github.com/VerusCoin/VerusCoin.git
-    cd VerusCoin && git checkout 391c403814d25434b75cd3a82e1d79dfeb8ab0eb
-    ./zcutil/build.sh -j$(expr $(nproc) - 1)
-
     #DPOW CHAIN
     cd $HOME
     git clone https://github.com/jl777/komodo.git --branch jl777 dexkomodo
@@ -155,7 +145,7 @@ else
     cd $HOME
     git clone https://github.com/jl777/chips3
     cd chips3
-    git checkout dev
+    git checkout 31d59f9d8fa4a8e00dd474ef0561a5b174056d86
     $scriptpath/rebuildchips
 
     #chips.conf
@@ -206,7 +196,7 @@ EOF
     cd ~
     git clone https://github.com/emc2foundation/einsteinium
     cd einsteinium
-    git checkout master
+    git checkout 70d7dc2b94e0b275f026ae51fda2a23725929bfd
     $scriptpath/rebuildemc2
 
     #einsteinium.conf
@@ -259,11 +249,10 @@ EOF
     chmod 600 $HOME/.gincoincore/gincoin.conf
 
     #VRSC
-    # cd $HOME
-    # git clone https://github.com/VerusCoin/VerusCoin
-    # cd VerusCoin
-    # git checkout master
-    # ./zcutil/build.sh -j$(nproc)
+    cd $HOME
+    git clone https://github.com/VerusCoin/VerusCoin
+    cd VerusCoin && git checkout 9d4787b057409668819b73c784697ebe2e6cdb54
+    ./zcutil/build.sh -j$(nproc)
 
     #HUSH3
     cd $HOME
@@ -278,7 +267,7 @@ EOF
     cd $HOME
     git clone https://github.com/sillyghost/AYAv2
     cd AYAv2
-    git checkout 7c8498d
+    git checkout fd94422aff2886919dc963d85c313df4dfb0d770
     $scriptpath/rebuildaya
 
     mkdir -p ~/.aryacoin
@@ -306,10 +295,10 @@ EOF
     chmod 600 $HOME/.aryacoin/aryacoin.conf
 
     #Marmara
-    cd $HOME
-    git clone https://github.com/marmarachain/Marmara-v.1.0.git
-    cd Marmara-v.1.0 && git checkout master
-    ./zcutil/build.sh -j$(expr $(nproc) - 1)
+    # cd $HOME
+    # git clone https://github.com/marmarachain/Marmara-v.1.0.git
+    # cd Marmara-v.1.0 && git checkout master
+    # ./zcutil/build.sh -j$(expr $(nproc) - 1)
 fi
 
 echo

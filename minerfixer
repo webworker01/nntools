@@ -10,9 +10,6 @@
 scriptpath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 source $scriptpath/main
 
-#KMD DPOW P2P
-notarizer KMD "" %s
-
 max_no_blocks=192
 
 lastgen=$($komodocli listtransactions "*" 777 | jq '[.[] | select(.generated==true)] | .[-1]')
