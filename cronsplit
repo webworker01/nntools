@@ -56,7 +56,7 @@ if [[ -z $1 ]]; then
             fi
         done
 
-        doSplit "VRSC"
+        # doSplit "VRSC"
     fi
 else
     declare -a othercoins=()
