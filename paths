@@ -17,19 +17,19 @@ marmarad="$HOME/Marmara-v.1.0/src/komodod -ac_name=MCL -ac_supply=2000000 -ac_cc
 
 coinsfirst=(
 'BTC $HOME/bitcoin/src/bitcoin-cli $HOME/bitcoin/src/bitcoind .bitcoin rescan bitcoind.pid'
-'VRSC $HOME/VerusCoin/src/verus $verusd .komodo/VRSC zimport komodod.pid'
-'DPOW $dpowcli $dpowd .komodo/DPOW kmd komodod.pid'
+#'VRSC $HOME/VerusCoin/src/verus $verusd .komodo/VRSC zimport komodod.pid'
+#'DPOW $dpowcli $dpowd .komodo/DPOW kmd komodod.pid'
 )
 
 coinsthird=(
 'CHIPS $HOME/chips3/src/chips-cli $HOME/chips3/src/chipsd .chips rescan chipsd.pid'
-'GAME $HOME/GameCredits/src/gamecredits-cli $HOME/GameCredits/src/gamecreditsd .gamecredits newaddress gamecredits.pid'
+#'GAME $HOME/GameCredits/src/gamecredits-cli $HOME/GameCredits/src/gamecreditsd .gamecredits newaddress gamecredits.pid'
 'EMC2 $HOME/einsteinium/src/einsteinium-cli $HOME/einsteinium/src/einsteiniumd .einsteinium newaddress einsteinium.pid'
-'GIN $HOME/gincoin-core/src/gincoin-cli $HOME/gincoin-core/src/gincoind .gincoincore newaddress gincoind.pid'
-'HUSH3 $hushcli $hushd .komodo/HUSH3 kmd komodod.pid'
+#'GIN $HOME/gincoin-core/src/gincoin-cli $HOME/gincoin-core/src/gincoind .gincoincore newaddress gincoind.pid'
+#'HUSH3 $hushcli $hushd .komodo/HUSH3 kmd komodod.pid'
 # 'VRSC $HOME/VerusCoin/src/verus $HOME/VerusCoin/src/verusd .komodo/VRSC'
 'AYA $HOME/AYAv2/src/aryacoin-cli $HOME/AYAv2/src/aryacoind .aryacoin newaddress aryacoin.pid'
-'MCL $marmaracli $marmarad .komodo/MCL kmd komodod.pid'
+#'MCL $marmaracli $marmarad .komodo/MCL kmd komodod.pid'
 )
 
 #for git checking - path and remote branch
