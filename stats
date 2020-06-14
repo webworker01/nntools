@@ -125,6 +125,10 @@ outputstats ()
                 coinsutxoamount=0.00100000
                 coinsntraddr=EfCkxbDFSn4X1VKMzyckyHaXLf4ithTGoM
                 ;;
+            AYA)
+                coinsutxoamount=0.001000000
+                coinsntraddr=Adpj7WENLyRkq9vVknHa82rf3cVHjYvzCG
+                ;;
             *)
                 coinsutxoamount=$utxoamt
                 coinsntraddr=$kmdntrzaddr
