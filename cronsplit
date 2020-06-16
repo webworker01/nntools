@@ -100,8 +100,11 @@ else
         otherutxo=$($coincli listunspent | jq --arg amt "$coinsutxoamount" '[.[] | select(.amount==($amt|tonumber))] | length')
         if (( otherutxo < otherutxoqty )); then
             echo "${coin[0]} utxos: $otherutxo"
-            splitter=$(curl --url "http://127.0.0.1:$iguanaport" --data "{\"coin\":\"${coin[0]}\",\"agent\":\"iguana\",\"method\":\"splitfunds\",\"satoshis\":\"$coinsplitamount\",\"sendflag\":1,\"duplicates\":$otherutxoqty}")
-            log "cronsplit" "${coin[0]} - utxos: $otherutxo - $splitter"
+            raw_tx=$(curl -r --url "http://127.0.0.1:$iguanaport" --data "{\"coin\":\"${coin[0]}\",\"agent\":\"iguana\",\"method\":\"splitfunds\",\"satoshis\":\"$coinsplitamount\",\"sendflag\":1,\"duplicates\":$otherutxoqty}" | jq -r .result)
+            signed_tx=$(bitcoin-cli signrawtransaction ${raw_tx} | jq -r .hex)
+            txid=$($coincli sendrawtransaction ${signed_tx})
+
+            log "cronsplit" "${coin[0]} - utxos: ${otherutxo} - ${txid}"
         fi
     done
 fi
