@@ -26,7 +26,7 @@ coinsthird=(
 #'GAME $HOME/GameCredits/src/gamecredits-cli $HOME/GameCredits/src/gamecreditsd .gamecredits newaddress gamecredits.pid'
 'EMC2 $HOME/einsteinium/src/einsteinium-cli $HOME/einsteinium/src/einsteiniumd .einsteinium newaddress einsteinium.pid'
 #'GIN $HOME/gincoin-core/src/gincoin-cli $HOME/gincoin-core/src/gincoind .gincoincore newaddress gincoind.pid'
-#'HUSH3 $hushcli $hushd .komodo/HUSH3 kmd komodod.pid'
+'HUSH3 $hushcli $hushd .komodo/HUSH3 kmd komodod.pid'
 'VRSC $HOME/VerusCoin/src/verus $verusd .komodo/VRSC zimport komodod.pid'
 'AYA $HOME/AYAv2/src/aryacoin-cli $HOME/AYAv2/src/aryacoind .aryacoin newaddress aryacoin.pid'
 #'MCL $marmaracli $marmarad .komodo/MCL kmd komodod.pid'
