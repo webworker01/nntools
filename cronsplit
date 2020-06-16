@@ -55,8 +55,10 @@ if [[ -z $1 ]]; then
                 doSplit ${coin[0]}
             fi
         done
-
-        # doSplit "VRSC"
+    else
+        if [[ ${komodolike[*]} =~ ${coin[0]} ]]; then
+            doSplit ${coin[0]}
+        fi
     fi
 else
     declare -a othercoins=()
@@ -74,7 +76,7 @@ else
     for coins in "${othercoins[@]}"; do
         coin=($coins)
 
-        if [[ ${skiplong[*]} =~ ${coin[0]} ]]; then
+        if [[ ${skiplong[*]} =~ ${coin[0]} ]] || [[ ${komodolike[*]} =~ ${coin[0]} ]]; then
             continue
         fi
 

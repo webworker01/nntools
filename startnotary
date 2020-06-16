@@ -66,7 +66,7 @@ else
 fi
 
 log "startnotary" "Done adding coins to iguana, please wait to start dPoW..." "green" "echo"
-sleep 20
+sleep 30
 
 log "startnotary" "Starting dPoW"
 ${scriptpath}/dpow
