@@ -243,10 +243,8 @@ EOF
 
     #HUSH3
     cd $HOME
-    # git clone https://github.com/KomodoPlatform/komodo --branch hush3 --single-branch hush3
-    # cd hush3 && git checkout cc35198f1da23a617caf95ed087033d8dfb8ce89
-    git clone https://github.com/MyHush/hush3
-    cd hush3 && git checkout v3.3.1
+    git clone https://github.com/MyHush/hush3 --branch dev -single-branch hush3
+    cd hush3 && git checkout 7f7876d2084daebc89b1914c870fa407c4fbef4e
     ./zcutil/build.sh -j$(expr $(nproc) - 1)
     echo "pubkey=$nn_pubkey" > $HOME/hush3/src/pubkey.txt
 
