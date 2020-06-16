@@ -56,9 +56,12 @@ if [[ -z $1 ]]; then
             fi
         done
     else
-        if [[ ${komodolike[*]} =~ ${coin[0]} ]]; then
-            doSplit ${coin[0]}
-        fi
+        for coins in "${coinsthird[@]}"; do
+            coin=($coins)
+            if [[ ${komodolike[*]} =~ ${coin[0]} ]]; then
+                doSplit ${coin[0]}
+            fi
+        done
     fi
 else
     declare -a othercoins=()
