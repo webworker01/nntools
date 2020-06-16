@@ -17,7 +17,7 @@ utxoamt=0.00010000
 splitamount=10000
 
 skipshort=('DPOW')
-skiplong=('VRSC DPOW')
+skiplong=('DPOW')
 
 doSplit() {
     local coin=$1
