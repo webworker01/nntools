@@ -239,7 +239,7 @@ EOF
     #VRSC
     cd $HOME
     git clone https://github.com/VerusCoin/VerusCoin
-    cd VerusCoin && git checkout 9d4787b057409668819b73c784697ebe2e6cdb54
+    cd VerusCoin && git checkout 5611c0a8ee95d143372f6d9708b42d14022c5692
     ./zcutil/build.sh -j$(nproc)
 
     #HUSH3
