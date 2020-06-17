@@ -149,6 +149,7 @@ daemon=1
 rpcworkqueue=256
 rpcbind=127.0.0.1
 rpcallowip=127.0.0.1
+deprecatedrpc=signrawtransaction
 EOF
     chmod 600 $HOME/.chips/chips.conf
 

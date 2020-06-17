@@ -97,14 +97,26 @@ else
 
         eval $(echo coincli=${coin[1]})
 
-        otherutxo=$($coincli listunspent | jq --arg amt "$coinsutxoamount" '[.[] | select(.amount==($amt|tonumber))] | length')
+        otherutxo=$(${coincli} listunspent | jq --arg amt "$coinsutxoamount" '[.[] | select(.amount==($amt|tonumber))] | length')
         if (( otherutxo < otherutxoqty )); then
             echo "${coin[0]} utxos: $otherutxo"
-            raw_tx=$(curl -r --url "http://127.0.0.1:$iguanaport" --data "{\"coin\":\"${coin[0]}\",\"agent\":\"iguana\",\"method\":\"splitfunds\",\"satoshis\":\"$coinsplitamount\",\"sendflag\":1,\"duplicates\":$otherutxoqty}" | jq -r .result)
-            signed_tx=$(bitcoin-cli signrawtransaction ${raw_tx} | jq -r .hex)
-            txid=$($coincli sendrawtransaction ${signed_tx})
+            raw_tx=$(curl -s --url "http://127.0.0.1:$iguanaport" --data "{\"coin\":\"${coin[0]}\",\"agent\":\"iguana\",\"method\":\"splitfunds\",\"satoshis\":\"$coinsplitamount\",\"sendflag\":1,\"duplicates\":$otherutxoqty}")
+            raw_tx=$(jq -r .result <<< $raw_tx)
 
-            log "cronsplit" "${coin[0]} - utxos: ${otherutxo} - ${txid}"
+            if [[ ! -z $raw_tx ]]; then
+                signed_tx=$(${coincli} signrawtransaction ${raw_tx})
+                signed_tx=$(jq -r .hex <<< $signed_tx)
+
+                if [[ ! -z $signed_tx ]]; then
+
+                    txid=$(${coincli} sendrawtransaction ${signed_tx})
+
+                    if [[ ! -z $txid ]]; then
+                        log "cronsplit" "${coin[0]} - utxos: ${otherutxo} - ${txid}"
+                    fi
+                fi
+            fi
         fi
+
     done
 fi
