@@ -32,9 +32,6 @@ nn_ipaddress=
 #Enter your notary node handle e.g. webworker01_NA
 nn_handle=
 
-#If on 1p server, enter your 3p key here
-nn_3p_pubkey=
-
 #Date format for logging
 datetime=$(date '+%Y-%m-%d %H:%M:%S')
 
