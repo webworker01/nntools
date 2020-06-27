@@ -281,10 +281,10 @@ EOF
     chmod 600 $HOME/.aryacoin/aryacoin.conf
 
     #Marmara
-    # cd $HOME
-    # git clone https://github.com/marmarachain/Marmara-v.1.0.git
-    # cd Marmara-v.1.0 && git checkout master
-    # ./zcutil/build.sh -j$(expr $(nproc) - 1)
+    cd $HOME
+    git clone https://github.com/marmarachain/Marmara-v.1.0.git
+    cd Marmara-v.1.0 && git checkout 03dd780
+    ./zcutil/build.sh -j$(expr $(nproc) - 1)
 fi
 
 echo
