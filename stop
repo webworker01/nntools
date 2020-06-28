@@ -16,9 +16,16 @@ fi
 if [[ -z "$1" ]]; then
     log "start" "stopping all"
     $komodocli stop &
+    for coins in "${!searchlist}"; do
+        searchcoin=($coins)
+        log "stop" "Stopping ${searchcoin[0]}"
+        eval $(echo coincli=${searchcoin[1]})
+        $coincli stop &
+    done
 elif [[ "${1^^}" == "KMD" ]]; then
     log "start" "stopping all"
     pkill -15 komodod
+
 else
     #search
     for coins in "${!searchlist}"; do
