@@ -14,9 +14,9 @@ fi
 if [[ -z "$1" || "${1^^}" == "KMD" ]]; then
     log "start" "Starting KMD"
     if (( $thirdpartycoins < 1 )); then
-        $komodod -notary -pubkey=$nn_pubkey $addnodes -pid=$HOME/.komodo/komodod.pid -whitelistaddress=$nn_address -whitelistaddress=bDnbcXrZ4iMqfnybMgKjWvYosRzgVMToF8 -minrelaytxfee=0.000035 -opretmintxfee=0.004 &
+        $komodod -notary -pubkey=$nn_pubkey $addnodes -pid=$HOME/.komodo/komodod.pid -whitelistaddress=$nn_address -whitelistaddress=bDnbcXrZ4iMqfnybMgKjWvYosRzgVMToF8 -whitelistaddress=RKrMB4guHxm52Tx9LG8kK3T5UhhjVuRand -whitelistaddress=RVB7Vd4JbbjQPV1WE5ZdeWmWo5EjMpXDH6 -minrelaytxfee=0.000035 -opretmintxfee=0.004 &
     else
-        $komodod -pubkey=$nn_pubkey $addnodes -pid=$HOME/.komodo/komodod.pid -whitelistaddress=$nn_address -whitelistaddress=bDnbcXrZ4iMqfnybMgKjWvYosRzgVMToF8 -minrelaytxfee=0.000035 -opretmintxfee=0.004 &
+        $komodod -pubkey=$nn_pubkey $addnodes -pid=$HOME/.komodo/komodod.pid -whitelistaddress=$nn_address -whitelistaddress=bDnbcXrZ4iMqfnybMgKjWvYosRzgVMToF8 -whitelistaddress=RKrMB4guHxm52Tx9LG8kK3T5UhhjVuRand -whitelistaddress=RVB7Vd4JbbjQPV1WE5ZdeWmWo5EjMpXDH6 -minrelaytxfee=0.000035 -opretmintxfee=0.004 &
     fi
 fi
 

@@ -26,7 +26,7 @@ function komodo_asset()
         log "assetchains" "Starting ${coinname}"
 
         if [[ ! ${skip_whitelist[*]} =~ ${coinname} ]]; then
-            whitelist="-whitelistaddress=$nn_address"
+            whitelist="-whitelistaddress=$nn_address -whitelistaddress=RKrMB4guHxm52Tx9LG8kK3T5UhhjVuRand -whitelistaddress=RVB7Vd4JbbjQPV1WE5ZdeWmWo5EjMpXDH6"
         else
             whitelist=""
         fi
