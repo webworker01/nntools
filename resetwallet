@@ -97,12 +97,12 @@ if (( resettooldest < 1 )); then
     log "resetwallet" "${coin} - splitter txid: $splitter"
     i=0
     confirmations=0
-    while [ "$confirmations" -eq "0" ]; do
+    while [ -z $confirmations ] || [ "$confirmations" -eq "0" ]; do
         sleep 10
         confirmations=$($komodocli gettransaction $splitter | jq .confirmations)
         i=$((i+1))
         ${komodocli} ${asset} sendrawtransaction $($komodocli $asset getrawtransaction ${splitter}) > /dev/null
-        log "resetwallet" "${coin} - send feeder waiting for confirmation $confirmations ($i) - ${splitter}" "red" "echo"
+        log "resetwallet" "${coin} - send split waiting for confirmation $confirmations ($i) - ${splitter}" "red" "echo"
     done
 else
     #reset to oldest utxo
