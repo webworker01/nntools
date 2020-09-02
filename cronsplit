@@ -32,7 +32,7 @@ doSplit() {
             echo "${coin} utxos sprout: $acutxo"
             splitter=$($scriptpath/splitfunds ${coin} $acutxoqty 0)
         fi
-        log "cronsplit" "${coin} - utxos: $acutxo - $splitter"
+        log "cronsplit" "${coin} - utxos: $acutxo - txid: $splitter"
     fi
 }
 

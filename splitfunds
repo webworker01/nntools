@@ -111,9 +111,9 @@ if [[ $utxo != "null" ]]; then
 
     if [[ ! -z $signedtx ]]; then
         txid=$($komodocli $asset sendrawtransaction $signedtx)
-        echo "Split $sapling $SPLIT_TOTAL TXID: $txid"
+        echo $txid
     else
-        echo "Split $sapling $SPLIT_TOTAL failed"
+        echo "Error! Failed signing tx :(("
     fi
 else
   echo -e "Error! No UTXOs to split :(("

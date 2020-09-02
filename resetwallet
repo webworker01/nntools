@@ -90,8 +90,20 @@ if (( resettooldest < 1 )); then
     else
         splitter=$($scriptpath/splitfunds $coin $acutxoqty)
     fi
-    log "resetwallet" "${coin} - splitter: $splitter"
-    sleep 10
+    if [[ $splitter == "Error! Failed signing tx :((" ]] || [[ $splitter == "Error! No UTXOs to split :((" ]]; then
+        log "resetwallet" "${coin} - splitter: $splitter"
+        exit 1
+    fi
+    log "resetwallet" "${coin} - splitter txid: $splitter"
+    i=0
+    confirmations=0
+    while [ "$confirmations" -eq "0" ]; do
+        sleep 10
+        confirmations=$($komodocli gettransaction $splitter | jq .confirmations)
+        i=$((i+1))
+        ${komodocli} ${asset} sendrawtransaction $($komodocli $asset getrawtransaction ${splitter}) > /dev/null
+        log "resetwallet" "${coin} - send feeder waiting for confirmation $confirmations ($i) - ${splitter}" "red" "echo"
+    done
 else
     #reset to oldest utxo
     blockcount=$($komodocli $asset getblockcount)
