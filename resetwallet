@@ -101,7 +101,7 @@ if (( resettooldest < 1 )); then
     confirmations=0
     while [ -z $confirmations ] || [ "$confirmations" == "null" ] || [ "$confirmations" -eq "0" ]; do
         sleep 10
-        confirmations=$($komodocli getrawtransaction $splitter 1 | jq .confirmations)
+        confirmations=$(${komodocli} ${asset} getrawtransaction $splitter 1 | jq .confirmations)
         i=$((i+1))
         ${komodocli} ${asset} sendrawtransaction $($komodocli $asset getrawtransaction ${splitter}) > /dev/null
         log "resetwallet" "${coin} - send split - waiting for confirmation $confirmations ($i) - ${splitter}" "red" "echo"
