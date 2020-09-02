@@ -59,7 +59,7 @@ if (( resettooldest < 1 )); then
 
     i=0
     confirmations=0
-    while [ "$confirmations" -eq "0" ]; do
+    while [ -z $confirmations ] || [ "$confirmations" -eq "0" ]; do
         sleep 10
         confirmations=$($komodocli $asset getrawtransaction $txid 1 | jq .confirmations)
         i=$((i+1))
@@ -75,7 +75,7 @@ if (( resettooldest < 1 )); then
         log "resetwallet" "${coin} - send feeder UTXO of 5: $txid2"
         i=0
         confirmations=0
-        while [ "$confirmations" -eq "0" ]; do
+        while [ -z $confirmations ] || [ "$confirmations" -eq "0" ]; do
             sleep 10
             confirmations=$($komodocli getrawtransaction $txid2 1 | jq .confirmations)
             i=$((i+1))
