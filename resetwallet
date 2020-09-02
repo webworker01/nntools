@@ -80,7 +80,7 @@ if (( resettooldest < 1 )); then
             confirmations=$($komodocli gettransaction $txid2 | jq .confirmations)
             i=$((i+1))
             ${komodocli} ${asset} sendrawtransaction $($komodocli $asset getrawtransaction ${txid2}) > /dev/null
-            log "resetwallet" "${coin} - send feeder waiting for confirmation $confirmations ($i) - ${txid2}" "red" "echo"
+            log "resetwallet" "${coin} - send feeder - waiting for confirmation $confirmations ($i) - ${txid2}" "red" "echo"
         done
     fi
 
@@ -102,7 +102,7 @@ if (( resettooldest < 1 )); then
         confirmations=$($komodocli gettransaction $splitter | jq .confirmations)
         i=$((i+1))
         ${komodocli} ${asset} sendrawtransaction $($komodocli $asset getrawtransaction ${splitter}) > /dev/null
-        log "resetwallet" "${coin} - send split waiting for confirmation $confirmations ($i) - ${splitter}" "red" "echo"
+        log "resetwallet" "${coin} - send split - waiting for confirmation $confirmations ($i) - ${splitter}" "red" "echo"
     done
 else
     #reset to oldest utxo
