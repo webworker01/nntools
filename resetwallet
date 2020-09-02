@@ -84,6 +84,8 @@ if (( resettooldest < 1 )); then
         done
     fi
 
+    sleep 10
+
     #split utxos
     if [[ $coin == "KMD" ]]; then
         splitter=$($scriptpath/splitfunds $coin $kmdutxoqty)
