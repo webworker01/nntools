@@ -59,14 +59,14 @@ if (( resettooldest < 1 )); then
 
     i=0
     confirmations=0
-    while [ -z $confirmations ] || [ "$confirmations" == "null" ] || [ "$confirmations" -eq "0" ]; do
+    while [ "$confirmations" -eq "0" ]; do
         sleep 10
-        confirmations=$($komodocli $asset getrawtransaction $txid 1 | jq .confirmations)
+        confirmations=$($komodocli $asset gettransaction $txid | jq .confirmations)
         i=$((i+1))
         ${komodocli} ${asset} sendrawtransaction $($komodocli $asset getrawtransaction ${txid}) > /dev/null
         log "resetwallet" "${coin} - sendbalance - waiting for confirmation $confirmations ($i) - ${txid}"  "red" "echo"
     done
-    blockhash=$($komodocli $asset getrawtransaction $txid | jq -r .blockhash)
+    blockhash=$($komodocli $asset gettransaction $txid | jq -r .blockhash)
     scanfrom=$($komodocli $asset getblock $blockhash | jq .height)
 
     #send feeder tx
@@ -75,9 +75,9 @@ if (( resettooldest < 1 )); then
         log "resetwallet" "${coin} - send feeder UTXO of 5: $txid2"
         i=0
         confirmations=0
-        while [ -z $confirmations ] || [ "$confirmations" == "null" ] || [ "$confirmations" -eq "0" ]; do
+        while [ "$confirmations" -eq "0" ]; do
             sleep 10
-            confirmations=$($komodocli getrawtransaction $txid2 1 | jq .confirmations)
+            confirmations=$($komodocli gettransaction $txid2 | jq .confirmations)
             i=$((i+1))
             ${komodocli} ${asset} sendrawtransaction $($komodocli $asset getrawtransaction ${txid2}) > /dev/null
             log "resetwallet" "${coin} - send feeder - waiting for confirmation $confirmations ($i) - ${txid2}" "red" "echo"
