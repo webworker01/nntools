@@ -146,4 +146,5 @@ setupCoinVars ()
     fi
 
     pidfile="$datadir/komodod.pid"
+    processid=$(<${pidfile})
 }

@@ -133,7 +133,7 @@ log "resetwallet" "${coin} - killing daemon - scanfrom: $scanfrom - restart comm
 $komodocli $asset stop
 
 i=0
-while [ -f $pidfile ]; do
+while ps -p $processid > /dev/null; do
    i=$((i+1))
    log "resetwallet" "${coin} - Waiting for daemon stop ($i)" "red" "echo"
    sleep 1
