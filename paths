@@ -30,6 +30,7 @@ coinsthird=(
 'VRSC $HOME/VerusCoin/src/verus $verusd .komodo/VRSC zimport komodod.pid'
 'AYA $HOME/AYAv2/src/aryacoin-cli $HOME/AYAv2/src/aryacoind .aryacoin newaddress aryacoin.pid'
 'MCL $marmaracli $marmarad .komodo/MCL kmd komodod.pid'
+'GLEECBTC $HOME/GleecBTC-FullNode-Win-Mac-Linux/src/gleecbtc-cli $HOME/GleecBTC-FullNode-Win-Mac-Linux/src/gleecbtcd .gleecbtc rescan gleecbtcd.pid'
 )
 
 #for git checking - path and remote branch
