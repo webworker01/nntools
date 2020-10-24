@@ -1,5 +1,30 @@
 #!/bin/bash
-source config
-name=${1^^}
+scriptpath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $scriptpath/main
 
-$komodocli -ac_name=$name $2 $3 $4 $5 $6 $7 $8 $9
+if (( $thirdpartycoins < 1 )); then
+    searchlist="coinsfirst[@]"
+else
+    searchlist="coinsthird[@]"
+fi
+
+#search smartchains
+if (( $thirdpartycoins < 1 )); then
+  for coins in "${coinlist[@]}"; do
+      coin=($coins)
+      if [[ -z "$1" || "${1^^}" == "${coin[0]}" ]] && [[ ! ${ignoreacs[*]} =~ ${coin[0]} ]]; then
+          $komodocli -ac_name=${coin[0]} "$@"
+      fi
+  done
+fi
+
+#search other coins
+for coins in "${!searchlist}"; do
+    searchcoin=($coins)
+    coin=($coins)
+    if [[ -z "$1" || "${1^^}" == "${searchcoin[0]}" ]]; then
+        eval $(echo coincli=${searchcoin[1]})
+        $coincli $2 $3 $4 $5 $6 $7 $8 $9
+    fi
+done
+
