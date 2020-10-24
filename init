@@ -286,6 +286,13 @@ EOF
     git clone https://github.com/marmarachain/Marmara-v.1.0.git
     cd Marmara-v.1.0 && git checkout 03dd780
     ./zcutil/build.sh -j$(expr $(nproc) - 1)
+
+    #GleecBTC
+    cd $HOME
+    git clone https://github.com/KomodoPlatform/GleecBTC-FullNode-Win-Mac-Linux.git
+    cd GleecBTC-FullNode-Win-Mac-Linux
+    git checkout b4ffcc9
+    $scriptpath/rebuildgleecbtc
 fi
 
 echo
