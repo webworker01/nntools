@@ -293,6 +293,24 @@ EOF
     cd GleecBTC-FullNode-Win-Mac-Linux
     git checkout b4ffcc9
     $scriptpath/rebuildgleecbtc
+
+    #gleecbtc.conf
+    randusername=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
+    randpassword=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
+    cd $HOME
+    mkdir -p $HOME/.gleecbtc
+    cat <<EOF > $HOME/.gleecbtc/gleecbtc.conf
+rpcuser=user$randusername
+rpcpassword=pass$randpassword
+txindex=1
+server=1
+daemon=1
+rpcworkqueue=256
+rpcbind=127.0.0.1
+rpcallowip=127.0.0.1
+deprecatedrpc=signrawtransaction
+EOF
+    chmod 600 $HOME/.gleecbtc/gleecbtc.conf
 fi
 
 echo
