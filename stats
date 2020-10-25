@@ -102,6 +102,7 @@ outputstats ()
 
         #expand coinexec
         eval $(echo coinexec=${coin[1]})
+        coinwalletpath="~/${coin[3]}/wallet.dat"
 
         case ${coin[0]} in
             BTC)
@@ -124,6 +125,11 @@ outputstats ()
             AYA)
                 coinsutxoamount=0.001000000
                 coinsntraddr=Adpj7WENLyRkq9vVknHa82rf3cVHjYvzCG
+                ;;
+            GLEECBTC)
+                coinsutxoamount=$utxoamt
+                coinsntraddr=$kmdntrzaddr
+                coinwalletpath="~/${coin[3]}/wallets/wallet.dat"
                 ;;
             *)
                 coinsutxoamount=$utxoamt
@@ -155,7 +161,7 @@ outputstats ()
                 "$($coinexec getblockchaininfo | jq .blocks)" \
                 "$(timeSince $($coinexec getblock $($coinexec getbestblockhash) | jq .time))" \
                 "$($coinexec getnetworkinfo | jq .connections)" \
-                "$(ls -lh ~/${coin[3]}/wallet.dat | awk '{print $5}')" \
+                "$(ls -lh ${coinwalletpath} | awk '{print $5}')" \
                 "$wallettime"
     done
 
