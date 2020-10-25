@@ -55,7 +55,7 @@ else
         # log "dpow" "Start GAME Freq Default"
         # curl --url "http://127.0.0.1:${iguanaport}" --data "{\"agent\":\"iguana\",\"method\":\"dpow\",\"symbol\":\"GAME\",\"freq\":5,\"pubkey\":\"${nn_pubkey}\"}"
         sleep $sleeptime
-        log "dpow" "Start EMC2 Freq Default"
+        log "dpow" "Start EMC2 Freq 5"
         curl --url "http://127.0.0.1:${iguanaport}" --data "{\"agent\":\"iguana\",\"method\":\"dpow\",\"symbol\":\"EMC2\",\"freq\":5,\"pubkey\":\"${nn_pubkey}\"}"
         sleep $sleeptime
         # log "dpow" "Start GIN Freq Default"
@@ -69,5 +69,7 @@ else
         curl --url "http://127.0.0.1:${iguanaport}" --data "{\"agent\":\"iguana\",\"method\":\"dpow\",\"symbol\":\"AYA\",\"pubkey\":\"${nn_pubkey}\"}"
         log "dpow" "Start MCL Freq Default"
         curl --url "http://127.0.0.1:${iguanaport}" --data "{\"agent\":\"iguana\",\"method\":\"dpow\",\"symbol\":\"MCL\",\"pubkey\":\"${nn_pubkey}\"}"
+        log "dpow" "Start GLEEC Freq 5"
+        curl --url "http://127.0.0.1:${iguanaport}" --data "{\"agent\":\"iguana\",\"method\":\"dpow\",\"symbol\":\"GLEEC\",\"freq\":5,\"pubkey\":\"${nn_pubkey}\"}"
     fi
 fi
