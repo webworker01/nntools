@@ -31,6 +31,6 @@ if (( thirdpartycoins < 1 )); then
             clean ${coin[0]}
         fi
     done
-else
-    clean "HUSH3"
+# else
+#     clean "HUSH3"
 fi
