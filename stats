@@ -102,7 +102,7 @@ outputstats ()
 
         #expand coinexec
         eval $(echo coinexec=${coin[1]})
-        coinwalletpath="~/${coin[3]}/wallet.dat"
+        coinwalletpath="${HOME}/${coin[3]}/wallet.dat"
 
         case ${coin[0]} in
             BTC)
@@ -129,7 +129,7 @@ outputstats ()
             GLEECBTC)
                 coinsutxoamount=$utxoamt
                 coinsntraddr=$kmdntrzaddr
-                coinwalletpath="~/${coin[3]}/wallets/wallet.dat"
+                coinwalletpath="${HOME}/${coin[3]}/wallets/wallet.dat"
                 ;;
             *)
                 coinsutxoamount=$utxoamt
@@ -161,7 +161,7 @@ outputstats ()
                 "$($coinexec getblockchaininfo | jq .blocks)" \
                 "$(timeSince $($coinexec getblock $($coinexec getbestblockhash) | jq .time))" \
                 "$($coinexec getnetworkinfo | jq .connections)" \
-                "$(ls -lh ${coinwalletpath} | awk '{print $5}')" \
+                "$(ls -lh ~/${coin[3]}/wallet.dat | awk '{print $5}')" \
                 "$wallettime"
     done
 
