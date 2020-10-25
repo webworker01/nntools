@@ -104,7 +104,11 @@ else
             raw_tx=$(jq -r .result <<< $raw_tx)
 
             if [[ ! -z $raw_tx ]]; then
-                signed_tx=$(${coincli} signrawtransaction ${raw_tx})
+                if [[ "GLEEC" == ${coin[0]} ]]; then
+                    signed_tx=$(${coincli} signrawtransactionwithwallet ${raw_tx})
+                else
+                    signed_tx=$(${coincli} signrawtransaction ${raw_tx})
+                fi
                 signed_tx=$(jq -r .hex <<< $signed_tx)
 
                 if [[ ! -z $signed_tx ]]; then
