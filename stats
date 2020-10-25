@@ -129,7 +129,6 @@ outputstats ()
             GLEEC)
                 coinsutxoamount=$utxoamt
                 coinsntraddr=$kmdntrzaddr
-                coinwalletpath="${HOME}/${coin[3]}/wallets/wallet.dat"
                 ;;
             *)
                 coinsutxoamount=$utxoamt
