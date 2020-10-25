@@ -161,7 +161,7 @@ outputstats ()
                 "$($coinexec getblockchaininfo | jq .blocks)" \
                 "$(timeSince $($coinexec getblock $($coinexec getbestblockhash) | jq .time))" \
                 "$($coinexec getnetworkinfo | jq .connections)" \
-                "$(ls -lh ~/${coin[3]}/wallet.dat | awk '{print $5}')" \
+                "$(ls -lh ${coinwalletpath} | awk '{print $5}')" \
                 "$wallettime"
     done
 
