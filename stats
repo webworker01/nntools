@@ -137,13 +137,11 @@ outputstats ()
                 ;;
         esac
 
-        coinstxinfo=$($coinexec listtransactions "" $txscanamount)
+        coinstxinfo=$($coinexec listtransactions "*" $txscanamount)
         coinslastntrztime=$(echo $coinstxinfo | jq -r --arg address "$coinsntraddr" '[.[] | select(.address==$address)] | sort_by(.time) | last | "\(.time)"')
         coinsntrzd=$(echo $coinstxinfo | jq --arg address "$coinsntraddr" --arg timefilter $seasonfilter '[.[] | select(.time>=($timefilter|tonumber) and .address==$address and .category=="send")] | length')
         otherutxo=$($coinexec listunspent | jq --arg amt "$coinsutxoamount" '[.[] | select(.amount==($amt|tonumber))] | length')
-        if [[ ! -z $coinsntrzd ]]; then
-            totalntrzd=$(( $totalntrzd + $coinsntrzd ))
-        fi
+        totalntrzd=$(( $totalntrzd + $coinsntrzd ))
         repo=(${repos[${coin[0]}]})
         wallettime=$( (time $coinexec listunspent) 2>&1 >/dev/null )
         balance=$($coinexec getbalance)
