@@ -252,9 +252,10 @@ EOF
 
     #AYA
     cd $HOME
-    git clone https://github.com/sillyghost/AYAv2
+    git clone https://github.com/KomodoPlatform/AYAv2
     cd AYAv2
-    git checkout fd94422aff2886919dc963d85c313df4dfb0d770
+    git pull
+    git checkout 3d03bdf
     $scriptpath/rebuildaya
 
     mkdir -p ~/.aryacoin
