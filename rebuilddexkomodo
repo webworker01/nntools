@@ -1,5 +1,0 @@
-#!/bin/bash
-
-cd ~/dexkomodo/src/
-git pull
-sudo gcc -o /usr/bin/notarizer cc/dapps/notarizer.c -lm

@@ -111,23 +111,6 @@ deprecatedrpc=estimatefee
 EOF
     chmod 600 $HOME/.bitcoin/bitcoin.conf
 
-    #DEX.conf
-    randusername=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
-    randpassword=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
-    cd $HOME
-    mkdir -p $HOME/.komodo/DEX
-    cat <<EOF > $HOME/.komodo/DEX/DEX.conf
-rpcuser=user$randusername
-rpcpassword=pass$randpassword
-rpcport=11890
-server=1
-txindex=1
-rpcworkqueue=256
-rpcbind=127.0.0.1
-rpcallowip=127.0.0.1
-EOF
-    chmod 600 $HOME/.komodo/DEX/DEX.conf
-
 else
     #CHIPS
     cd $HOME
@@ -153,33 +136,6 @@ rpcallowip=127.0.0.1
 deprecatedrpc=signrawtransaction
 EOF
     chmod 600 $HOME/.chips/chips.conf
-
-    #GAME
-    cd $HOME
-    git clone https://github.com/gamecredits-project/GameCredits
-    cd GameCredits
-    git checkout master
-    $scriptpath/rebuildgame
-
-    #gamecredits.conf
-    randusername=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
-    randpassword=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
-    cd $HOME
-    mkdir -p $HOME/.gamecredits
-    cat <<EOF > $HOME/.gamecredits/gamecredits.conf
-rpcuser=user$randusername
-rpcpassword=pass$randpassword
-txindex=1
-server=1
-daemon=1
-rpcworkqueue=256
-rpcbind=127.0.0.1
-rpcallowip=127.0.0.1
-listen=0
-listenonion=0
-onlynet=ipv4
-EOF
-    chmod 600 $HOME/.gamecredits/gamecredits.conf
 
     #EMC2
     cd ~
@@ -208,47 +164,11 @@ onlynet=ipv4
 EOF
     chmod 600 $HOME/.einsteinium/einsteinium.conf
 
-    #GIN
-    cd $HOME
-    git clone https://github.com/GIN-coin/gincoin-core
-    cd gincoin-core
-    git checkout master
-    $scriptpath/rebuildgin
-
-    #gincoin.conf
-    randusername=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
-    randpassword=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
-    cd $HOME
-    mkdir -p $HOME/.gincoincore
-    cat <<EOF > $HOME/.gincoincore/gincoin.conf
-rpcuser=user$randusername
-rpcpassword=pass$randpassword
-txindex=1
-server=1
-daemon=1
-litemode=1
-rpcworkqueue=256
-rpcbind=127.0.0.1
-rpcallowip=127.0.0.1
-listen=0
-listenonion=0
-onlynet=ipv4
-maxconnections=8
-EOF
-    chmod 600 $HOME/.gincoincore/gincoin.conf
-
     #VRSC
     cd $HOME
     git clone https://github.com/VerusCoin/VerusCoin
     cd VerusCoin && git checkout 5611c0a8ee95d143372f6d9708b42d14022c5692
     ./zcutil/build.sh -j$(nproc)
-
-    # #HUSH3
-    # cd $HOME
-    # git clone https://github.com/MyHush/hush3 --branch dev --single-branch hush3
-    # cd hush3 && git checkout 7f7876d2084daebc89b1914c870fa407c4fbef4e
-    # ./zcutil/build.sh -j$(expr $(nproc) - 1)
-    # echo "pubkey=$nn_pubkey" > $HOME/hush3/src/pubkey.txt
 
     #AYA
     cd $HOME
@@ -316,6 +236,35 @@ listenonion=0
 onlynet=ipv4
 EOF
     chmod 600 $HOME/.gleecbtc/gleecbtc.conf
+
+    #PowerBlockCoin
+    cd $HOME
+    git clone https://github.com/pbcllc/powerblockcoin-core
+    cd powerblockcoin-core
+    git checkout 51f456a
+    $scriptpath/rebuildpbc
+
+    #powerblockcoin.conf
+    randusername=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
+    randpassword=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
+    cd $HOME
+    mkdir -p $HOME/.powerblockcoin
+    cat <<EOF > $HOME/.powerblockcoin/powerblockcoin.conf
+rpcuser=user$randusername
+rpcpassword=pass$randpassword
+txindex=1
+server=1
+daemon=1
+rpcworkqueue=256
+rpcbind=127.0.0.1
+rpcallowip=127.0.0.1
+deprecatedrpc=signrawtransaction
+rpcport=18332
+listen=0
+listenonion=0
+onlynet=ipv4
+EOF
+    chmod 600 $HOME/.gleecbtc/powerblockcoin.conf
 fi
 
 echo
