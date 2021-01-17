@@ -13,7 +13,7 @@ if (( $thirdpartycoins < 1 )); then
   for coins in "${coinlist[@]}"; do
       coin=($coins)
       if [[ -z "$1" || "${1^^}" == "${coin[0]}" ]] && [[ ! ${ignoreacs[*]} =~ ${coin[0]} ]]; then
-          $komodocli -ac_name=${coin[0]} "$@"
+          $komodocli -ac_name=${coin[0]} $2 $3 $4 $5 $6 $7 $8 $9
       fi
   done
 fi
