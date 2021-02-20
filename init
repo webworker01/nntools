@@ -167,7 +167,7 @@ EOF
     #VRSC
     cd $HOME
     git clone https://github.com/VerusCoin/VerusCoin
-    cd VerusCoin && git checkout 3fde9bf
+    cd VerusCoin && git checkout d3cffbe
     ./zcutil/build.sh -j$(expr $(nproc) - 1)
 
     #AYA
