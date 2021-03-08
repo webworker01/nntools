@@ -81,7 +81,7 @@ komodo_asset -ac_name=PIRATE -ac_supply=0 -ac_reward=25600000000 -ac_halving=777
 # komodo_asset -ac_name=PRLPAY -ac_supply=500000000
 #komodo_asset -ac_name=PTX -ac_supply=12000000 -ac_reward=1500000000 -ac_staked=50 -ac_end=12000000 -addnode=142.11.199.63
 komodo_asset -ac_name=REVS -ac_supply=1300000
-komodo_asset -ac_name=RFOX -ac_supply=1000000000 -ac_reward=100000000
+# komodo_asset -ac_name=RFOX -ac_supply=1000000000 -ac_reward=100000000
 komodo_asset -ac_name=RICK -ac_supply=90000000000 -ac_reward=100000000 -ac_cc=3 -ac_staked=10 -addnode=95.217.44.58 -addnode=138.201.136.145
 komodo_asset -ac_name=STBL -ac_supply=50000000 -ac_cc=1 -ac_public=1 -ac_adaptivepow=1 -ac_end=1 -addnode=142.93.173.53 -addnode=68.183.74.250
 komodo_asset -ac_name=SUPERNET -ac_supply=816061

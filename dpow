@@ -5,7 +5,7 @@
 scriptpath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 source $scriptpath/main
 
-freqten=('RFOX VRSC')
+freqten=('VRSC')
 freqtwo=('KMDICE')
 sleeptime=3
 
@@ -15,7 +15,7 @@ if [[ ! -z $1 ]]; then
             log "dpow" "Start ${1} Freq 5"
             curl --url "http://127.0.0.1:${iguanaport}" --data "{\"agent\":\"iguana\",\"method\":\"dpow\",\"symbol\":\"GAME\",\"freq\":5,\"pubkey\":\"${nn_pubkey}\"}"
             ;;
-        RFOX|VRSC)
+        VRSC)
             log "dpow" "Start ${1} Freq 10"
             curl --url "http://127.0.0.1:${iguanaport}" --data "{\"agent\":\"iguana\",\"method\":\"dpow\",\"symbol\":\"$1\",\"freq\":10,\"pubkey\":\"${nn_pubkey}\"}"
             ;;
