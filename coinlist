@@ -8,6 +8,7 @@ coinlist=(
 'COQUICASH'
 'CRYPTO'
 'DEX'
+'GLEEC'
 'HODL'
 'ILN'
 'JUMBLR'
@@ -24,6 +25,7 @@ coinlist=(
 'RICK'
 'SUPERNET'
 'THC'
+'VOTE2021'
 'WLC21'
 'ZILLA'
 )
