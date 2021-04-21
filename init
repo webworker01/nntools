@@ -108,6 +108,7 @@ listen=0
 listenonion=0
 onlynet=ipv4
 deprecatedrpc=estimatefee
+maxmempool=500
 EOF
     chmod 600 $HOME/.bitcoin/bitcoin.conf
 
