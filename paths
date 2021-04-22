@@ -13,6 +13,7 @@ marmarad="$HOME/Marmara-v.1.0/src/komodod -ac_name=MCL -ac_supply=2000000 -ac_cc
 
 coinsfirst=(
 'BTC $HOME/bitcoin/src/bitcoin-cli $HOME/bitcoin/src/bitcoind .bitcoin rescan bitcoind.pid'
+'LTC $HOME/litecoin/src/litecoin-cli $HOME/litecoin/src/litecoind .litecoin rescan litecoind.pid'
 )
 
 coinsthird=(

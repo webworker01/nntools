@@ -112,6 +112,31 @@ maxmempool=500
 EOF
     chmod 600 $HOME/.bitcoin/bitcoin.conf
 
+    #litecoin
+    git clone https://github.com/litecoin-project/litecoin.git -b 0.16 --single-branch
+
+#litecoin.conf
+    randusername=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
+    randpassword=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
+    cd $HOME
+    mkdir -p $HOME/.litecoin
+    cat <<EOF > $HOME/.litecoin/litecoin.conf
+rpcuser=user$randusername
+rpcpassword=pass$randpassword
+txindex=1
+server=1
+daemon=1
+rpcworkqueue=256
+rpcbind=127.0.0.1
+rpcallowip=127.0.0.1
+listen=0
+listenonion=0
+onlynet=ipv4
+# deprecatedrpc=estimatefee
+# maxmempool=500
+EOF
+    chmod 600 $HOME/.litecoin/litecoin.conf
+
 else
     #CHIPS
     cd $HOME

@@ -48,6 +48,7 @@ checkRepo () {
 utxoamt=0.00010000
 ntrzdamt=-0.00083600
 btcntrzaddr=1P3rU1Nk1pmc2BiWC8dEy9bZa1ZbMp5jfg
+ltcntrzaddr=LhGojDga6V1fGzQfNGcYFAfKnDvsWeuAsP
 kmdntrzaddr=RXL3YXG2ceaB6C5hfJcN4fvmLH2C34knhA
 #Only count KMD->BTC after this timestamp (block 814000)
 #timefilter=1525032458
@@ -108,6 +109,11 @@ outputstats ()
             BTC)
                 coinsutxoamount=$utxoamt
                 coinsntraddr=$btcntrzaddr
+                seasonfilter=$timefilter
+                ;;
+            LTC)
+                coinsutxoamount=$utxoamt
+                coinsntraddr=$ltcntrzaddr
                 seasonfilter=$timefilter
                 ;;
             GAME)
