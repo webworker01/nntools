@@ -113,6 +113,7 @@ EOF
     chmod 600 $HOME/.bitcoin/bitcoin.conf
 
     #litecoin
+    cd $HOME
     git clone https://github.com/litecoin-project/litecoin.git -b 0.16 --single-branch
 
 #litecoin.conf
