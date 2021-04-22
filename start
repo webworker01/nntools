@@ -19,7 +19,7 @@ if [[ -z "$1" || "${1^^}" == "KMD" ]]; then
 
     log "start" "Starting KMD"
     if (( $thirdpartycoins < 1 )); then
-        $komodod -notary -pubkey=$nn_pubkey $addnodes -pid=$HOME/.komodo/komodod.pid  ${whitelist} -minrelaytxfee=0.000035 -opretmintxfee=0.004 &
+        $komodod -notary -pubkey=$nn_pubkey $addnodes -notary=".litecoin/litecoin.conf" -pid=$HOME/.komodo/komodod.pid  ${whitelist} -minrelaytxfee=0.000035 -opretmintxfee=0.004 &
     else
         $komodod -pubkey=$nn_pubkey $addnodes -pid=$HOME/.komodo/komodod.pid ${whitelist} -minrelaytxfee=0.000035 -opretmintxfee=0.004 &
     fi

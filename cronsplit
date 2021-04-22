@@ -95,6 +95,10 @@ else
             otherutxoqty=$btcutxoqty
         fi
 
+        if [[ ${coin[0]} == "LTC" ]]; then
+            otherutxoqty=$ltcutxoqty
+        fi
+
         eval $(echo coincli=${coin[1]})
 
         otherutxo=$(${coincli} listunspent | jq --arg amt "$coinsutxoamount" '[.[] | select(.amount==($amt|tonumber))] | length')

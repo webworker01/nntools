@@ -130,6 +130,7 @@ daemon=1
 rpcworkqueue=256
 rpcbind=127.0.0.1
 rpcallowip=127.0.0.1
+rpcport=9332
 listen=0
 listenonion=0
 onlynet=ipv4
