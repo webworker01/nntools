@@ -37,8 +37,10 @@ if (( thirdpartycoins < 1 )); then
     log "startnotary" "Unlocking wallet"
     ./wp_${iguanaport}
 
-    log "startnotary" "Adding BTC"
-    ./coins/btc_${iguanaport}
+    # log "startnotary" "Adding BTC"
+    # ./coins/btc_${iguanaport}
+    log "startnotary" "Adding LTC"
+    ./coins/ltc_${iguanaport}
 
     for coins in "${coinlist[@]}"; do
         coin=($coins)
