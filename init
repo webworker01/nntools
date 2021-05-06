@@ -272,12 +272,19 @@ EOF
     git checkout 51f456a
     $scriptpath/rebuildpbc
 
-    #powerblockcoin.conf
+    #SFUSD
+    cd $HOME
+    git clone https://github.com/pbcllc/sfusd-core
+    cd sfusd-core
+    git checkout 7c4f40b
+    $scriptpath/rebuildsfusd
+
+    #sfusd.conf
     randusername=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
     randpassword=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
     cd $HOME
-    mkdir -p $HOME/.powerblockcoin
-    cat <<EOF > $HOME/.powerblockcoin/powerblockcoin.conf
+    mkdir -p $HOME/.smartusd
+    cat <<EOF > $HOME/.smartusd/smartusd.conf
 rpcuser=user$randusername
 rpcpassword=pass$randpassword
 txindex=1
@@ -291,8 +298,7 @@ listen=0
 listenonion=0
 onlynet=ipv4
 EOF
-    chmod 600 $HOME/.powerblockcoin/powerblockcoin.conf
+    chmod 600 $HOME/.smartusd/smartusd.conf
 fi
-
 echo
 echo "Done! You must create wp_7776 or wp_7779 file https://docs.komodoplatform.com/notary/setup-Komodo-Notary-Node.html#create-wp-7776 and import your private keys"

@@ -23,7 +23,7 @@ coinsthird=(
 'AYA $HOME/AYAv2/src/aryacoin-cli $HOME/AYAv2/src/aryacoind .aryacoin newaddress aryacoin.pid'
 'MCL $marmaracli $marmarad .komodo/MCL kmd komodod.pid'
 'GLEEC $HOME/GleecBTC-FullNode-Win-Mac-Linux/src/gleecbtc-cli $HOME/GleecBTC-FullNode-Win-Mac-Linux/src/gleecbtcd .gleecbtc rescan gleecbtcd.pid'
-'PBC $HOME/powerblockcoin-core/src/powerblockcoin-cli $HOME/powerblockcoin-core/src/powerblockcoind .powerblockcoin rescan powerblockcoind.pid'
+'SFUSD $HOME/sfusd-core/src/smartusd-cli $HOME/sfusd-core/src/smartusdd .smartusd rescan smartusdd.pid'
 )
 
 #for git checking - path and remote branch
