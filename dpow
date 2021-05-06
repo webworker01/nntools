@@ -54,14 +54,14 @@ else
         log "dpow" "Start EMC2 Freq 5"
         curl --url "http://127.0.0.1:${iguanaport}" --data "{\"agent\":\"iguana\",\"method\":\"dpow\",\"symbol\":\"EMC2\",\"freq\":5,\"pubkey\":\"${nn_pubkey}\"}"
         sleep $sleeptime
-        log "dpow" "Start VRSC Freq Default"
-        curl --url "http://127.0.0.1:${iguanaport}" --data "{\"agent\":\"iguana\",\"method\":\"dpow\",\"symbol\":\"VRSC\",\"freq\":10,\"pubkey\":\"${nn_pubkey}\"}"
-        sleep $sleeptime
         log "dpow" "Start AYA Freq Default"
-        curl --url "http://127.0.0.1:${iguanaport}" --data "{\"agent\":\"iguana\",\"method\":\"dpow\",\"symbol\":\"AYA\",\"pubkey\":\"${nn_pubkey}\"}"
+        curl --url "http://127.0.0.1:${iguanaport}" --data "{\"agent\":\"iguana\",\"method\":\"dpow\",\"symbol\":\"AYA\",\"freq\":5,\"pubkey\":\"${nn_pubkey}\"}"
         sleep $sleeptime
         log "dpow" "Start MCL Freq Default"
         curl --url "http://127.0.0.1:${iguanaport}" --data "{\"agent\":\"iguana\",\"method\":\"dpow\",\"symbol\":\"MCL\",\"pubkey\":\"${nn_pubkey}\"}"
+        sleep $sleeptime
+        log "dpow" "Start VRSC Freq Default"
+        curl --url "http://127.0.0.1:${iguanaport}" --data "{\"agent\":\"iguana\",\"method\":\"dpow\",\"symbol\":\"VRSC\",\"pubkey\":\"${nn_pubkey}\"}"
         sleep $sleeptime
         log "dpow" "Start GLEEC Freq Default"
         curl --url "http://127.0.0.1:${iguanaport}" --data "{\"agent\":\"iguana\",\"method\":\"dpow\",\"symbol\":\"GLEEC\",\"pubkey\":\"${nn_pubkey}\"}"
