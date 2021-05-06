@@ -265,13 +265,6 @@ onlynet=ipv4
 EOF
     chmod 600 $HOME/.gleecbtc/gleecbtc.conf
 
-    #PowerBlockCoin
-    cd $HOME
-    git clone https://github.com/pbcllc/powerblockcoin-core
-    cd powerblockcoin-core
-    git checkout 51f456a
-    $scriptpath/rebuildpbc
-
     #SFUSD
     cd $HOME
     git clone https://github.com/pbcllc/sfusd-core
