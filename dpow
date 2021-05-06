@@ -66,7 +66,7 @@ else
         log "dpow" "Start GLEEC Freq Default"
         curl --url "http://127.0.0.1:${iguanaport}" --data "{\"agent\":\"iguana\",\"method\":\"dpow\",\"symbol\":\"GLEEC\",\"pubkey\":\"${nn_pubkey}\"}"
         sleep $sleeptime
-        log "dpow" "Start PBC Freq Default"
-        curl --url "http://127.0.0.1:${iguanaport}" --data "{\"agent\":\"iguana\",\"method\":\"dpow\",\"symbol\":\"PBC\",\"pubkey\":\"${nn_pubkey}\"}"
+        log "dpow" "Start SFUSD Freq Default"
+        curl --url "http://127.0.0.1:${iguanaport}" --data "{\"agent\":\"iguana\",\"method\":\"dpow\",\"symbol\":\"SFUSD\",\"pubkey\":\"${nn_pubkey}\"}"
     fi
 fi
