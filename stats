@@ -139,6 +139,10 @@ outputstats ()
                     coinwalletpath="${HOME}/${coin[3]}/wallets/wallet.dat"
                 fi
                 ;;
+            SFUSD)
+                coinsutxoamount=$utxoamt
+                coinsntraddr=SjLrVr9tkBxoYVVxjZcKX3k8Dno2A28YD7
+                ;;
             *)
                 coinsutxoamount=$utxoamt
                 coinsntraddr=$kmdntrzaddr
