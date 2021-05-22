@@ -36,7 +36,8 @@ fi
 #komodo
 cd $HOME
 git clone https://github.com/KomodoPlatform/komodo
-cd komodo && git checkout e159b4e7a40d3886519401c4074e957a1f9d42ba
+#cd komodo && git checkout e159b4e7a40d3886519401c4074e957a1f9d42ba
+cd komodo
 $scriptpath/rebuildkomodo
 $HOME/komodo/zcutil/fetch-params.sh
 
