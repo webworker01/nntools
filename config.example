@@ -87,7 +87,7 @@ ltc_address=
 
 #3rd party server
 chips_address=
-game_address=
 emc2_address=
-gin_address=
 aya_address=
+gleec_address=
+sfusd_address=
