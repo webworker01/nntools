@@ -52,7 +52,7 @@ acutxoqty=50
 #Lower threshold for BTC utxos
 btcutxoqty=200
 
-#Lower threshold for BTC utxos
+#Lower threshold for LTC utxos
 ltcutxoqty=50
 
 #Lower threshold for third party coin utxos
