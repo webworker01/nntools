@@ -91,9 +91,9 @@ else
             coinsplitamount=$splitamount
         fi
 
-        if [[ ${coin[0]} == "BTC" ]]; then
-            otherutxoqty=$btcutxoqty
-        fi
+        # if [[ ${coin[0]} == "BTC" ]]; then
+        #     otherutxoqty=$btcutxoqty
+        # fi
 
         if [[ ${coin[0]} == "LTC" ]]; then
             otherutxoqty=$ltcutxoqty

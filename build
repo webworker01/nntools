@@ -1,21 +1,21 @@
 #!/bin/bash
 #
-# One rebuild script to rule them all
+# One build script to rule them all
 #
 # The challenge: Old versions of non komodo coins need old versions of BerkeleyDB and Boost
 # Annoyance in previous method: We build bdb for every single coin.. they should all be able to build from the same dependency
 #
 # Most bitcoin based coins will follow the same build steps
 #
-# Usage: ./rebuild <coinname>
-# e.g.: ./rebuild LTC
+# Usage: ./build <coinname>
+# e.g.: ./build LTC
 #
 # @author webworker01
 #
 
 
 if [[ -z $1 ]]; then
-    echo "Usage: rebuild <coinname>"
+    echo "Usage: build <coinname>"
     exit 0
 else
     coinname=${1^^}
