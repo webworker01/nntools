@@ -39,7 +39,7 @@ cd $HOME
 git clone https://github.com/KomodoPlatform/komodo
 #cd komodo && git checkout e159b4e7a40d3886519401c4074e957a1f9d42ba
 cd komodo
-$scriptpath/rebuildkomodo
+$scriptpath/build kmd
 # $HOME/komodo/zcutil/fetch-params.sh
 $HOME/komodo/zcutil/fetch-params-alt.sh
 
@@ -85,7 +85,7 @@ if (( thirdpartycoins < 1 )); then
     #litecoin
     cd $HOME
     git clone https://github.com/litecoin-project/litecoin.git -b 0.16 --single-branch
-    $scriptpath/rebuild ltc
+    $scriptpath/build ltc
 
     #litecoin.conf
     randusername=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
@@ -116,7 +116,7 @@ else
     git clone https://github.com/jl777/chips3
     cd chips3
     git checkout 31d59f9d8fa4a8e00dd474ef0561a5b174056d86
-    $scriptpath/rebuildchips
+    $scriptpath/build chips
 
     #chips.conf
     randusername=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
@@ -141,7 +141,7 @@ EOF
     git clone https://github.com/emc2foundation/einsteinium
     cd einsteinium
     git checkout 70d7dc2b94e0b275f026ae51fda2a23725929bfd
-    $scriptpath/rebuildemc2
+    $scriptpath/build emc2
 
     #einsteinium.conf
     randusername=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
@@ -175,7 +175,7 @@ EOF
     cd AYAv2
     git pull
     git checkout 3d03bdf
-    $scriptpath/rebuildaya
+    $scriptpath/build aya
 
     mkdir -p ~/.aryacoin
 
@@ -212,7 +212,7 @@ EOF
     git clone https://github.com/KomodoPlatform/GleecBTC-FullNode-Win-Mac-Linux.git
     cd GleecBTC-FullNode-Win-Mac-Linux
     git checkout b4ffcc9
-    $scriptpath/rebuildgleecbtc
+    $scriptpath/build gleec
 
     #gleecbtc.conf
     randusername=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
@@ -241,7 +241,7 @@ EOF
     git clone https://github.com/pbcllc/sfusd-core
     cd sfusd-core
     git checkout 7c4f40b
-    $scriptpath/rebuildsfusd
+    $scriptpath/build sfusd
 
     #sfusd.conf
     randusername=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
