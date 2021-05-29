@@ -14,15 +14,16 @@ source $scriptpath/main
 scriptpath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 if [[ ! -z $1 ]]; then
-    nosudo=0
+    usesudo=0
 else
-    nosudo=1
+    usesudo=1
 fi
 
-if (( nosudo > 0 )); then
+if (( usesudo > 0 )); then
     #dependencies
     sudo apt-get update && sudo apt-get upgrade -y
-    sudo apt-get install libevent-dev libboost-system-dev libboost-filesystem-dev libboost-chrono-dev libboost-program-options-dev libboost-test-dev libboost-thread-dev build-essential pkg-config libc6-dev m4 g++-multilib autoconf libtool ncurses-dev python-zmq zlib1g-dev wget curl bsdmainutils automake cmake clang libsodium-dev libcurl4-gnutls-dev libssl-dev git unzip python jq htop -y
+    sudo apt-get install libevent-dev build-essential pkg-config libc6-dev m4 g++-multilib autoconf libtool ncurses-dev zlib1g-dev wget curl bsdmainutils automake cmake clang libsodium-dev libcurl4-gnutls-dev libssl-dev git unzip python python3 python3-zmq jq htop -y
+
     #nanomsg
     cd $HOME
     git clone https://github.com/nanomsg/nanomsg
@@ -39,9 +40,10 @@ git clone https://github.com/KomodoPlatform/komodo
 #cd komodo && git checkout e159b4e7a40d3886519401c4074e957a1f9d42ba
 cd komodo
 $scriptpath/rebuildkomodo
-$HOME/komodo/zcutil/fetch-params.sh
+# $HOME/komodo/zcutil/fetch-params.sh
+$HOME/komodo/zcutil/fetch-params-alt.sh
 
-if (( nosudo > 0 )); then
+if (( usesudo > 0 )); then
     sudo ln -sf /home/$USER/komodo/src/komodo-cli /usr/local/bin/komodo-cli
     sudo ln -sf /home/$USER/komodo/src/komodod /usr/local/bin/komodod
 fi
@@ -80,44 +82,12 @@ cd dPoW
 cp $HOME/komodo/src/pubkey.txt $HOME/dPoW/iguana/pubkey.txt
 
 if (( thirdpartycoins < 1 )); then
-    #bitcoin
-    cd $HOME
-    git clone https://github.com/bitcoin/bitcoin
-    cd bitcoin
-    git checkout 0.16
-    $scriptpath/rebuildbitcoin
-    if (( nosudo > 0 )); then
-        sudo ln -sf /home/$USER/bitcoin/src/bitcoin-cli /usr/local/bin/bitcoin-cli
-        sudo ln -sf /home/$USER/bitcoin/src/bitcoind /usr/local/bin/bitcoind
-    fi
-
-    #bitcoin.conf
-    randusername=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
-    randpassword=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
-    cd $HOME
-    mkdir -p $HOME/.bitcoin
-    cat <<EOF > $HOME/.bitcoin/bitcoin.conf
-rpcuser=user$randusername
-rpcpassword=pass$randpassword
-txindex=1
-server=1
-daemon=1
-rpcworkqueue=256
-rpcbind=127.0.0.1
-rpcallowip=127.0.0.1
-listen=0
-listenonion=0
-onlynet=ipv4
-deprecatedrpc=estimatefee
-maxmempool=500
-EOF
-    chmod 600 $HOME/.bitcoin/bitcoin.conf
-
     #litecoin
     cd $HOME
     git clone https://github.com/litecoin-project/litecoin.git -b 0.16 --single-branch
+    $scriptpath/rebuild ltc
 
-#litecoin.conf
+    #litecoin.conf
     randusername=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
     randpassword=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
     cd $HOME

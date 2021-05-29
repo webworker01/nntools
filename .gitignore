@@ -1,1 +1,3 @@
 config
+boostcheck
+!boostcheck.cpp

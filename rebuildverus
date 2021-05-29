@@ -1,5 +1,0 @@
-#!/bin/bash
-cd ~/VerusCoin
-#git pull
-make clean
-./zcutil/build.sh -j$(nproc)

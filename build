@@ -1,0 +1,146 @@
+#!/bin/bash
+#
+# One rebuild script to rule them all
+#
+# The challenge: Old versions of non komodo coins need old versions of BerkeleyDB and Boost
+# Annoyance in previous method: We build bdb for every single coin.. they should all be able to build from the same dependency
+#
+# Most bitcoin based coins will follow the same build steps
+#
+# Usage: ./rebuild <coinname>
+# e.g.: ./rebuild LTC
+#
+# @author webworker01
+#
+
+
+if [[ -z $1 ]]; then
+    echo "Usage: rebuild <coinname>"
+    exit 0
+else
+    coinname=${1^^}
+fi
+
+#for git checking - path and remote branch
+declare -A bitcoinbased=(
+[BTC]="$HOME/bitcoin"
+[LTC]="$HOME/litecoin"
+[CHIPS]="$HOME/chips3"
+[AYA]="$HOME/AYAv2"
+[EMC2]="$HOME/einsteinium"
+[GLEEC]="$HOME/GleecBTC-FullNode-Win-Mac-Linux"
+[SFUSD]="$HOME/sfusd-core"
+)
+
+declare -A komodobased=(
+[KMD]="$HOME/komodo"
+[VRSC]="$HOME/VerusCoin"
+[MCL]="$HOME/Marmara-v.1.0"
+)
+
+bdb_PATH="${HOME}/berkeleydb48"
+
+# Functions
+berkeleydb48 () {
+    if [[ ! -f "${bdb_PATH}/include/db_cxx.h" || ! -f "${bdb_PATH}/lib/libdb_cxx-4.8.a" ]]; then
+
+        mkdir -p $bdb_PATH
+        wget -N 'http://download.oracle.com/berkeley-db/db-4.8.30.NC.tar.gz'
+        echo '12edc0df75bf9abd7f82f821795bcee50f42cb2e5f76a6a281b85732798364ef db-4.8.30.NC.tar.gz' | sha256sum -c
+        tar -xzvf db-4.8.30.NC.tar.gz
+
+        cat <<-EOL >atomic-builtin-test.cpp
+            #include <stdint.h>
+            #include "atomic.h"
+
+            int main() {
+            db_atomic_t *p; atomic_value_t oldval; atomic_value_t newval;
+            __atomic_compare_exchange(p, oldval, newval);
+            return 0;
+            }
+EOL
+        if g++ atomic-builtin-test.cpp -I./db-4.8.30.NC/dbinc -DHAVE_ATOMIC_SUPPORT -DHAVE_ATOMIC_X86_GCC_ASSEMBLY -o atomic-builtin-test 2>/dev/null; then
+            echo "No changes to bdb source are needed ..."
+            rm atomic-builtin-test 2>/dev/null
+        else
+            echo "Updating atomic.h file ..."
+            sed -i 's/__atomic_compare_exchange/__atomic_compare_exchange_db/g' db-4.8.30.NC/dbinc/atomic.h
+        fi
+
+        cd db-4.8.30.NC/build_unix/
+        ../dist/configure -enable-cxx -disable-shared -with-pic -prefix=$bdb_PATH
+
+        make install
+
+        #clean up
+        rm atomic-builtin-test.cpp
+        rm db-4.8.30.NC.tar.gz
+        rm -rf db-4.8.30.NC
+    else
+        echo "BerkeleyDB 4.8 detected in ${bdb_PATH}"
+    fi
+}
+
+boost165 () {
+    #check if boost 1.65.1 already installed
+    cd $HOME/nntools
+    make boostcheck
+
+    boostversion=$(./boostcheck)
+
+    if [[ "${boostversion}" != "1_65_1" ]]; then
+        echo "wrong boost version, installing 1_65_1"
+
+        #remove apt installed versions
+        sudo apt-get -y --purge remove libboost-all-dev libboost-doc libboost-dev
+        #remove source installed versions
+        sudo rm -f /usr/lib/libboost_*
+        sudo rm -f /usr/local/lib/libboost_*
+        cd /usr/local/include && sudo rm -rf boost
+
+        #build from source if not
+        cd $HOME
+        wget http://downloads.sourceforge.net/project/boost/boost/1.65.1/boost_1_65_1.tar.gz
+        tar -zxvf boost_1_65_1.tar.gz
+        cd boost_1_65_1
+        ./bootstrap.sh
+        sudo ./b2 --with=all -j$(nproc) install
+        cd $HOME
+        rm boost_1_65_1.tar.gz
+    else
+        echo "Valid Boost Version Installed: ${boostversion}"
+    fi
+}
+
+buildBitcoinBased () {
+    git pull
+    make clean
+    ./autogen.sh
+    ./configure LDFLAGS="-L${bdb_PATH}/lib/" CPPFLAGS="-I${bdb_PATH}/include/" --with-gui=no --disable-tests --disable-bench --without-miniupnpc --enable-experimental-asm --enable-static --disable-shared
+    make -j$(nproc)
+}
+
+if [[ -v "bitcoinbased[${coinname}]" ]]; then
+    echo "bitcoin based build"
+    pathdata=(${bitcoinbased[${coinname}]})
+
+    berkeleydb48
+    boost165
+
+    cd ${pathdata[0]}
+    buildBitcoinBased
+
+elif [[ -v "komodobased[${coinname}]" ]]; then
+    echo "komodo based build"
+
+    pathdata=(${bitcoinbased[${coinname}]})
+    cd ${pathdata[0]}
+
+    git pull
+    make clean
+    ./zcutil/build.sh -j$(nproc)
+
+else
+    echo "invalid coin specified"
+fi
+
