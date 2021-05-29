@@ -87,6 +87,7 @@ boost165 () {
     make boostcheck
 
     boostversion=$(./boostcheck)
+    rm boostcheck
 
     if [[ "${boostversion}" != "1_65_1" ]]; then
         echo "wrong boost version, installing 1_65_1"
