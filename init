@@ -37,11 +37,11 @@ if (( usesudo > 5 )); then
 fi
 
 #komodo
-# cd $HOME
-# git clone https://github.com/KomodoPlatform/komodo
-# cd komodo
-# $scriptpath/build kmd
-# $HOME/komodo/zcutil/fetch-params-alt.sh
+cd $HOME
+git clone https://github.com/KomodoPlatform/komodo
+cd komodo
+$scriptpath/build kmd
+$HOME/komodo/zcutil/fetch-params-alt.sh
 
 if (( usesudo > 0 )); then
     sudo ln -sf /home/$USER/komodo/src/komodo-cli /usr/local/bin/komodo-cli
