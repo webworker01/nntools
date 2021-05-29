@@ -139,10 +139,9 @@ if [[ -v "bitcoinbased[${coinname}]" ]]; then
 
 elif [[ -v "komodobased[${coinname}]" ]]; then
     echo "${coinname} - komodo based build"
-
     pathdata=(${komodobased[${coinname}]})
-    cd ${pathdata[0]}
 
+    cd ${pathdata[0]}
     buildKomodoBased
 
 else
