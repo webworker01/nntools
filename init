@@ -8,14 +8,14 @@
 # @see https://docs.komodoplatform.com/notary/setup-Komodo-Notary-Node.html#create-wp-7776
 # @author webworker01
 #
-set -euxo pipefail
+set -exo pipefail
 
 scriptpath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 source $scriptpath/main
 
 scriptpath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
-if [[ ! -z $1 ]]; then
+if [[ ! -v $1 ]]; then
     usesudo=0
 else
     usesudo=1
