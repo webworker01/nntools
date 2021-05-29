@@ -73,6 +73,7 @@ EOL
         make install
 
         #clean up
+        cd $HOME
         rm atomic-builtin-test.cpp
         rm db-4.8.30.NC.tar.gz
         rm -rf db-4.8.30.NC
@@ -93,7 +94,8 @@ boost165 () {
         echo "wrong boost version, installing 1_65_1"
 
         #remove apt installed versions
-        sudo apt-get -y --purge remove libboost-all-dev libboost-doc libboost-dev
+        sudo apt-get -y --purge remove libboost-all-dev libboost-doc libboost-dev libboost-system-dev libboost-filesystem-dev libboost-chrono-dev libboost-program-options-dev libboost-test-dev libboost-thread-dev
+        sudo apt autoremove
         #remove source installed versions
         sudo rm -f /usr/lib/libboost_*
         sudo rm -f /usr/local/lib/libboost_*
@@ -104,7 +106,7 @@ boost165 () {
         wget http://downloads.sourceforge.net/project/boost/boost/1.65.1/boost_1_65_1.tar.gz
         tar -zxvf boost_1_65_1.tar.gz
         cd boost_1_65_1
-        ./bootstrap.sh
+        ./bootstrap.sh --prefix=/usr --with-libraries=atomic,date_time,exception,filesystem,iostreams,locale,program_options,regex,signals,system,test,thread,timer,log
         sudo ./b2 --with=all -j$(expr $(nproc) - 1) install
         cd $HOME
         rm boost_1_65_1.tar.gz
