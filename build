@@ -120,8 +120,14 @@ buildBitcoinBased () {
     make -j$(nproc)
 }
 
+buildKomodoBased () {
+    git pull
+    make clean
+    ./zcutil/build.sh -j$(nproc)
+}
+
 if [[ -v "bitcoinbased[${coinname}]" ]]; then
-    echo "bitcoin based build"
+    echo "${coinname} - bitcoin based build"
     pathdata=(${bitcoinbased[${coinname}]})
 
     berkeleydb48
@@ -131,16 +137,13 @@ if [[ -v "bitcoinbased[${coinname}]" ]]; then
     buildBitcoinBased
 
 elif [[ -v "komodobased[${coinname}]" ]]; then
-    echo "komodo based build"
+    echo "${coinname} - komodo based build"
 
     pathdata=(${bitcoinbased[${coinname}]})
     cd ${pathdata[0]}
 
-    git pull
-    make clean
-    ./zcutil/build.sh -j$(nproc)
+    buildKomodoBased
 
 else
-    echo "invalid coin specified"
+    echo "${coinname} - invalid coin specified"
 fi
-
