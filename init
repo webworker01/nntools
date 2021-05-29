@@ -54,7 +54,6 @@ if [[ ! -d "$HOME/komodo" ]]; then
     #create komodo.conf
     randusername=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
     randpassword=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
-    cd $HOME
 
     if (( thirdpartycoins < 1 )); then
         blocknotify="blocknotify=$HOME/nntools/minerfixer %s"
@@ -101,7 +100,7 @@ if (( thirdpartycoins < 1 )); then
         #litecoin.conf
         randusername=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
         randpassword=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
-        cd $HOME
+
         mkdir -p $HOME/.litecoin
         cat <<EOF > $HOME/.litecoin/litecoin.conf
 rpcuser=user$randusername
@@ -136,7 +135,7 @@ else
         #chips.conf
         randusername=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
         randpassword=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
-        cd $HOME
+
         mkdir -p $HOME/.chips
         cat <<EOF > $HOME/.chips/chips.conf
 rpcuser=user$randusername
@@ -165,7 +164,7 @@ EOF
         #einsteinium.conf
         randusername=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
         randpassword=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
-        cd $HOME
+
         mkdir -p $HOME/.einsteinium
         cat <<EOF > $HOME/.einsteinium/einsteinium.conf
 rpcuser=user$randusername
@@ -200,14 +199,13 @@ EOF
         cd $HOME
         git clone https://github.com/KomodoPlatform/AYAv2
         cd AYAv2
-        git pull
         git checkout 3d03bdf
         $scriptpath/build aya
 
         #aryacoin.conf
         randusername=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
         randpassword=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
-        cd $HOME
+
         mkdir -p $HOME/.aryacoin
         cat <<EOF > $HOME/.aryacoin/aryacoin.conf
 rpcuser=user$randusername
