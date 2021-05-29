@@ -244,7 +244,7 @@ EOF
         cd $HOME
         git clone https://github.com/KomodoPlatform/GleecBTC-FullNode-Win-Mac-Linux.git
         cd GleecBTC-FullNode-Win-Mac-Linux
-        git checkout e159b4e
+        git checkout b4ffcc9
         $scriptpath/build gleec
 
         #gleecbtc.conf
