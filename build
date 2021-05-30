@@ -94,7 +94,7 @@ boost165 () {
     boostversion=$(./boost)
     rm boost
 
-    if [[ "${boostversion-}" != "1_65_1" ]]; then
+    if (( $(echo "${boostversion-999} > 1.71" | bc -l) )); then
         log "build" "installing Boost 1_65_1"
 
         #remove apt installed versions
@@ -131,7 +131,7 @@ buildBitcoinBased () {
     make clean
     ./autogen.sh
 
-    if (( gccversion > 7 )) && [[ "${buildflags}" == "gcc7" ]]; then
+    if (( gccversion > 9 )) && [[ "${buildflags}" == "gcc7" ]]; then
         # install g++ 7 compiler for chips for now
         gccflags="CC=gcc-7 CXX=g++-7"
         log "build" "using g++7"
@@ -149,7 +149,7 @@ buildKomodoBased () {
     make clean
 
     #patches if gcc > 7
-    if (( gccversion > 7 )); then
+    if (( gccversion > 9 )); then
         if [[ "${buildflags}" =~ "stdexcept" ]]; then
             equihashfile="src/crypto/equihash.h"
             if ! grep -q "#include <stdexcept>" ${equihashfile}; then
