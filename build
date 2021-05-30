@@ -42,6 +42,8 @@ declare -A komodobased=(
 
 bdb_PATH="${HOME}/berkeleydb48"
 
+gccversion=$(gcc --version | head -1 | awk '{print $4}' | cut -d"." -f1)
+
 # Functions
 berkeleydb48 () {
     if [[ ! -f "${bdb_PATH}/include/db_cxx.h" || ! -f "${bdb_PATH}/lib/libdb_cxx-4.8.a" ]]; then
@@ -129,7 +131,7 @@ buildBitcoinBased () {
     make clean
     ./autogen.sh
 
-    if [[ "${buildflags}" == "gcc7" ]]; then
+    if (( gccversion > 7 )) && [[ "${buildflags}" == "gcc7" ]]; then
         # install g++ 7 compiler for chips for now
         gccflags="CC=gcc-7 CXX=g++-7"
         log "build" "using g++7"
@@ -146,23 +148,26 @@ buildKomodoBased () {
     git pull
     make clean
 
-    if [[ "${buildflags}" =~ "stdexcept" ]]; then
-        equihashfile="src/crypto/equihash.h"
-        if ! grep -q "#include <stdexcept>" ${equihashfile}; then
-            log "build" "Patching ${equihashfile} for G++ 10" "red"
-            sed -i 's/#include <exception>/#include <exception>\n#include <stdexcept>/g' ${equihashfile}
-        else
-            log "build" "${equihashfile} compatible G++ 10"
+    #patches if gcc > 7
+    if (( gccversion > 7 )); then
+        if [[ "${buildflags}" =~ "stdexcept" ]]; then
+            equihashfile="src/crypto/equihash.h"
+            if ! grep -q "#include <stdexcept>" ${equihashfile}; then
+                log "build" "Patching ${equihashfile} for G++ 10" "red"
+                sed -i 's/#include <exception>/#include <exception>\n#include <stdexcept>/g' ${equihashfile}
+            else
+                log "build" "${equihashfile} compatible G++ 10"
+            fi
         fi
-    fi
 
-    if [[ "${buildflags}" =~ "werror" ]]; then
-        buildfile="zcutil/build.sh"
-        if grep -q "CPPFLAGS='-g -Wno-builtin-declaration-mismatch -Werror'" ${buildfile}; then
-            log "build" "Patching ${buildfile} for G++ 10" "red"
-            sed -i "s/CPPFLAGS='-g -Wno-builtin-declaration-mismatch -Werror'/CPPFLAGS='-g -Wno-builtin-declaration-mismatch'/g" ${buildfile}
-        else
-            log "build" "${buildfile} compatible G++ 10"
+        if [[ "${buildflags}" =~ "werror" ]]; then
+            buildfile="zcutil/build.sh"
+            if grep -q "CPPFLAGS='-g -Wno-builtin-declaration-mismatch -Werror'" ${buildfile}; then
+                log "build" "Patching ${buildfile} for G++ 10" "red"
+                sed -i "s/CPPFLAGS='-g -Wno-builtin-declaration-mismatch -Werror'/CPPFLAGS='-g -Wno-builtin-declaration-mismatch'/g" ${buildfile}
+            else
+                log "build" "${buildfile} compatible G++ 10"
+            fi
         fi
     fi
 
