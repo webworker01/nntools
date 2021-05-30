@@ -141,12 +141,19 @@ EOF
 else
     #CHIPS
     if [[ ! -d "$HOME/chips3" ]]; then
-        log "init" "installing CHIPS"
+        log "init" "installing CHIPS3"
         cd $HOME
         git clone https://github.com/jl777/chips3
         cd chips3
         git checkout b57fd92
-        $scriptpath/build chips
+        $scriptpath/build chips3
+
+        # log "init" "installing CHIPS"
+        # cd $HOME
+        # git clone https://github.com/chips-blockchain/chips.git
+        # cd chips
+        # git checkout 70362d5
+        # $scriptpath/build chips
 
         #chips.conf
         randusername=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)

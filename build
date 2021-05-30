@@ -26,7 +26,8 @@ fi
 declare -A bitcoinbased=(
 [BTC]="$HOME/bitcoin"
 [LTC]="$HOME/litecoin"
-[CHIPS]="$HOME/chips3 gcc7"
+[CHIPS]="$HOME/chips gcc7"
+[CHIPS3]="$HOME/chips3 gcc7"
 [AYA]="$HOME/AYAv2"
 [EMC2]="$HOME/einsteinium"
 [GLEEC]="$HOME/GleecBTC-FullNode-Win-Mac-Linux"
@@ -129,8 +130,9 @@ buildBitcoinBased () {
     ./autogen.sh
 
     if [[ "${buildflags}" == "gcc7" ]]; then
-        # install c++ 7 compiler for chips for now
+        # install g++ 7 compiler for chips for now
         gccflags="CC=gcc-7 CXX=g++-7"
+        log "build" "using g++7"
     fi
 
     ./configure LDFLAGS="-L${bdb_PATH}/lib/" CPPFLAGS="-I${bdb_PATH}/include/" ${gccflags-} --with-gui=no --disable-tests --disable-bench --without-miniupnpc --enable-experimental-asm --enable-static --disable-shared
@@ -147,20 +149,20 @@ buildKomodoBased () {
     if [[ "${buildflags}" =~ "stdexcept" ]]; then
         equihashfile="src/crypto/equihash.h"
         if ! grep -q "#include <stdexcept>" ${equihashfile}; then
-            log "build" "Patching ${equihashfile} for C++ 10" "red"
+            log "build" "Patching ${equihashfile} for G++ 10" "red"
             sed -i 's/#include <exception>/#include <exception>\n#include <stdexcept>/g' ${equihashfile}
         else
-            log "build" "${equihashfile} compatible C++ 10"
+            log "build" "${equihashfile} compatible G++ 10"
         fi
     fi
 
     if [[ "${buildflags}" =~ "werror" ]]; then
         buildfile="zcutil/build.sh"
         if grep -q "CPPFLAGS='-g -Wno-builtin-declaration-mismatch -Werror'" ${buildfile}; then
-            log "build" "Patching ${buildfile} for C++ 10" "red"
+            log "build" "Patching ${buildfile} for G++ 10" "red"
             sed -i "s/CPPFLAGS='-g -Wno-builtin-declaration-mismatch -Werror'/CPPFLAGS='-g -Wno-builtin-declaration-mismatch'/g" ${buildfile}
         else
-            log "build" "${buildfile} compatible C++ 10"
+            log "build" "${buildfile} compatible G++ 10"
         fi
     fi
 
