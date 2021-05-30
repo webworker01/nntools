@@ -14,7 +14,7 @@ else
 fi
 
 if [[ -z "$1" ]]; then
-    log "start" "stopping all"
+    log "stop" "stopping all"
     pkill -15 komodod
     for coins in "${!searchlist}"; do
         searchcoin=($coins)
@@ -24,7 +24,7 @@ if [[ -z "$1" ]]; then
     done
 
 elif [[ "${1^^}" == "KMD" ]]; then
-    log "start" "stopping KMD"
+    log "stop" "stopping KMD"
     $komodocli stop &
 
 else

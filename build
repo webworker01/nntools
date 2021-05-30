@@ -44,7 +44,8 @@ bdb_PATH="${HOME}/berkeleydb48"
 # Functions
 berkeleydb48 () {
     if [[ ! -f "${bdb_PATH}/include/db_cxx.h" || ! -f "${bdb_PATH}/lib/libdb_cxx-4.8.a" ]]; then
-
+        log "build" "installing BerkeleyDB48"
+        cd $HOME
         mkdir -p $bdb_PATH
         wget -N 'http://download.oracle.com/berkeley-db/db-4.8.30.NC.tar.gz'
         echo '12edc0df75bf9abd7f82f821795bcee50f42cb2e5f76a6a281b85732798364ef db-4.8.30.NC.tar.gz' | sha256sum -c
@@ -61,10 +62,10 @@ berkeleydb48 () {
             }
 EOL
         if g++ atomic-builtin-test.cpp -I./db-4.8.30.NC/dbinc -DHAVE_ATOMIC_SUPPORT -DHAVE_ATOMIC_X86_GCC_ASSEMBLY -o atomic-builtin-test 2>/dev/null; then
-            echo "No changes to bdb source are needed ..."
+            log "build" "No changes to bdb source are needed ..."
             rm atomic-builtin-test 2>/dev/null
         else
-            echo "Updating atomic.h file ..."
+            log "build" "Updating atomic.h file ..."
             sed -i 's/__atomic_compare_exchange/__atomic_compare_exchange_db/g' db-4.8.30.NC/dbinc/atomic.h
         fi
 
@@ -79,20 +80,19 @@ EOL
         rm db-4.8.30.NC.tar.gz
         rm -rf db-4.8.30.NC
     else
-        echo "BerkeleyDB 4.8 detected in ${bdb_PATH}"
+        log "build" "BerkeleyDB 4.8 detected in ${bdb_PATH}"
     fi
 }
 
 boost165 () {
     #check if boost 1.65.1 already installed
-    cd $HOME/nntools
-    make boostcheck
-
-    boostversion=$(./boostcheck)
-    rm boostcheck
+    cd $scriptpath/c
+    make boost
+    boostversion=$(./boost)
+    rm boost
 
     if [[ "${boostversion}" != "1_65_1" ]]; then
-        echo "wrong boost version, installing 1_65_1"
+        log "build" "installing Boost 1_65_1"
 
         #remove apt installed versions
         sudo apt-get -y --purge remove libboost-all-dev libboost-doc libboost-dev libboost-system-dev libboost-filesystem-dev libboost-chrono-dev libboost-program-options-dev libboost-test-dev libboost-thread-dev
@@ -111,10 +111,12 @@ boost165 () {
         ./bootstrap.sh --prefix=/usr --with-libraries=chrono,filesystem,program_options,system,test,thread
 
         sudo ./b2 --with=all -j$(expr $(nproc) - 1) install
+
+        #clean up
         cd $HOME
         rm boost_1_65_1.tar.gz
     else
-        echo "Valid Boost Version Installed: ${boostversion}"
+        log "build" "Valid Boost Version Installed: ${boostversion}"
     fi
 }
 
@@ -126,11 +128,11 @@ buildBitcoinBased () {
     ./autogen.sh
 
     if [[ ! -z ${gccversion} && "${gccversion}" == "7" ]]; then
-        #for chips
-        ./configure LDFLAGS="-L${bdb_PATH}/lib/" CPPFLAGS="-I${bdb_PATH}/include/" CC=gcc-7 CXX=g++-7 --with-gui=no --disable-tests --disable-bench --without-miniupnpc --enable-experimental-asm --enable-static --disable-shared
-    else
-        ./configure LDFLAGS="-L${bdb_PATH}/lib/" CPPFLAGS="-I${bdb_PATH}/include/" --with-gui=no --disable-tests --disable-bench --without-miniupnpc --enable-experimental-asm --enable-static --disable-shared
+        # install c++ 7 compiler for chips for now
+        gccflags="CC=gcc-7 CXX=g++-7"
     fi
+
+    ./configure LDFLAGS="-L${bdb_PATH}/lib/" CPPFLAGS="-I${bdb_PATH}/include/" ${gccflags-} --with-gui=no --disable-tests --disable-bench --without-miniupnpc --enable-experimental-asm --enable-static --disable-shared
 
     make -j$(expr $(nproc) - 1)
 }
@@ -149,7 +151,8 @@ buildKomodoBased () {
 }
 
 if [[ -v "bitcoinbased[${coinname}]" ]]; then
-    echo "${coinname} - bitcoin based build"
+    log "build" "${coinname} - bitcoin based build"
+
     builddata=(${bitcoinbased[${coinname}]})
 
     berkeleydb48
@@ -160,7 +163,7 @@ if [[ -v "bitcoinbased[${coinname}]" ]]; then
     buildBitcoinBased ${builddata[1]-}
 
 elif [[ -v "komodobased[${coinname}]" ]]; then
-    echo "${coinname} - komodo based build"
+    log "build" "${coinname} - komodo based build"
     builddata=(${komodobased[${coinname}]})
 
     cd ${builddata[0]}
@@ -168,5 +171,5 @@ elif [[ -v "komodobased[${coinname}]" ]]; then
     buildKomodoBased ${builddata[1]-}
 
 else
-    echo "${coinname} - invalid coin specified"
+    log "build" "${coinname} - invalid coin specified" "red"
 fi
