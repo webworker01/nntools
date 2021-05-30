@@ -26,7 +26,7 @@ fi
 declare -A bitcoinbased=(
 [BTC]="$HOME/bitcoin"
 [LTC]="$HOME/litecoin"
-[CHIPS]="$HOME/chips3 7"
+[CHIPS]="$HOME/chips3 gcc7"
 [AYA]="$HOME/AYAv2"
 [EMC2]="$HOME/einsteinium"
 [GLEEC]="$HOME/GleecBTC-FullNode-Win-Mac-Linux"
@@ -122,13 +122,13 @@ boost165 () {
 }
 
 buildBitcoinBased () {
-    gccversion=${1-}
+    buildflags=${1-}
 
     git pull
     make clean
     ./autogen.sh
 
-    if [[ "${gccversion}" == "7" ]]; then
+    if [[ "${buildflags}" == "gcc7" ]]; then
         # install c++ 7 compiler for chips for now
         gccflags="CC=gcc-7 CXX=g++-7"
     fi
