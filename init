@@ -30,7 +30,7 @@ if (( usesudo > 0 )); then
         aptinstall="g++-7"
     fi
 
-    sudo apt-get install ${aptinstall-} libevent-dev build-essential pkg-config libc6-dev m4 g++-multilib autoconf libtool ncurses-dev zlib1g-dev wget curl bsdmainutils automake cmake clang libsodium-dev libcurl4-gnutls-dev libssl-dev git unzip python python3 python3-zmq jq htop -y
+    sudo apt-get install ${aptinstall-} libevent-dev build-essential pkg-config libc6-dev m4 g++-multilib autoconf libtool ncurses-dev zlib1g-dev wget curl bsdmainutils automake cmake clang libsodium-dev libcurl4-gnutls-dev libssl-dev git unzip python python3 python3-zmq jq htop dc -y
     # sudo apt-get install libboost-system-dev libboost-filesystem-dev libboost-chrono-dev libboost-program-options-dev libboost-test-dev libboost-thread-dev -y
 
     #nanomsg - for iguana
