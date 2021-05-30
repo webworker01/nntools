@@ -11,9 +11,9 @@ function validateaddress ()
 {
     ismine=$($komodocli $2 validateaddress $1 | jq .ismine)
     if [[ ! -z $2 ]]; then
-        echo [$2] $ismine
+        echo "[${2}] ${ismine}"
     else
-        echo [KMD] $ismine
+        echo "[KMD] ${ismine}"
     fi
 }
 
