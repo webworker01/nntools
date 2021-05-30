@@ -12,7 +12,8 @@
 #
 # @author webworker01
 #
-
+scriptpath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $scriptpath/main
 
 if [[ -z $1 ]]; then
     echo "Usage: build <coinname>"
@@ -25,7 +26,7 @@ fi
 declare -A bitcoinbased=(
 [BTC]="$HOME/bitcoin"
 [LTC]="$HOME/litecoin"
-[CHIPS]="$HOME/chips3"
+[CHIPS]="$HOME/chips3 7"
 [AYA]="$HOME/AYAv2"
 [EMC2]="$HOME/einsteinium"
 [GLEEC]="$HOME/GleecBTC-FullNode-Win-Mac-Linux"
@@ -34,8 +35,8 @@ declare -A bitcoinbased=(
 
 declare -A komodobased=(
 [KMD]="$HOME/komodo"
-[VRSC]="$HOME/VerusCoin"
-[MCL]="$HOME/Marmara-v.1.0"
+[VRSC]="$HOME/VerusCoin stdexcept"
+[MCL]="$HOME/Marmara-v.1.0 stdexcept"
 )
 
 bdb_PATH="${HOME}/berkeleydb48"
@@ -118,35 +119,53 @@ boost165 () {
 }
 
 buildBitcoinBased () {
+    gccversion=${1-}
+
     git pull
     make clean
     ./autogen.sh
-    ./configure LDFLAGS="-L${bdb_PATH}/lib/" CPPFLAGS="-I${bdb_PATH}/include/" --with-gui=no --disable-tests --disable-bench --without-miniupnpc --enable-experimental-asm --enable-static --disable-shared
+
+    if [[ ! -z ${gccversion} && "${gccversion}" == "7" ]]; then
+        #for chips
+        ./configure LDFLAGS="-L${bdb_PATH}/lib/" CPPFLAGS="-I${bdb_PATH}/include/" CC=gcc-7 CXX=g++-7 --with-gui=no --disable-tests --disable-bench --without-miniupnpc --enable-experimental-asm --enable-static --disable-shared
+    else
+        ./configure LDFLAGS="-L${bdb_PATH}/lib/" CPPFLAGS="-I${bdb_PATH}/include/" --with-gui=no --disable-tests --disable-bench --without-miniupnpc --enable-experimental-asm --enable-static --disable-shared
+    fi
+
     make -j$(expr $(nproc) - 1)
 }
 
 buildKomodoBased () {
+    stdexcept=${1-}
+
     git pull
     make clean
-    ./zcutil/build.sh -j$(expr $(nproc) - 1)
+
+    if [[ ! -z ${stdexcept} && "${stdexcept}" == "stdexcept" ]]; then
+        ./zcutil/build.sh -j$(expr $(nproc) - 1) -I${scriptpath}/stdexcept.h
+    else
+        ./zcutil/build.sh -j$(expr $(nproc) - 1)
+    fi
 }
 
 if [[ -v "bitcoinbased[${coinname}]" ]]; then
     echo "${coinname} - bitcoin based build"
-    pathdata=(${bitcoinbased[${coinname}]})
+    builddata=(${bitcoinbased[${coinname}]})
 
     berkeleydb48
     boost165
 
-    cd ${pathdata[0]}
-    buildBitcoinBased
+    cd ${builddata[0]}
+
+    buildBitcoinBased ${builddata[1]-}
 
 elif [[ -v "komodobased[${coinname}]" ]]; then
     echo "${coinname} - komodo based build"
-    pathdata=(${komodobased[${coinname}]})
+    builddata=(${komodobased[${coinname}]})
 
-    cd ${pathdata[0]}
-    buildKomodoBased
+    cd ${builddata[0]}
+
+    buildKomodoBased ${builddata[1]-}
 
 else
     echo "${coinname} - invalid coin specified"
