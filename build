@@ -15,7 +15,7 @@
 scriptpath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 source $scriptpath/main
 
-if [[ -z $1 ]]; then
+if [[ -z ${1-} ]]; then
     echo "Usage: build <coinname>"
     exit 0
 else
@@ -91,7 +91,7 @@ boost165 () {
     boostversion=$(./boost)
     rm boost
 
-    if [[ "${boostversion}" != "1_65_1" ]]; then
+    if [[ "${boostversion-}" != "1_65_1" ]]; then
         log "build" "installing Boost 1_65_1"
 
         #remove apt installed versions
@@ -115,6 +115,7 @@ boost165 () {
         #clean up
         cd $HOME
         rm boost_1_65_1.tar.gz
+        rm -rf boost_1_65_1
     else
         log "build" "Valid Boost Version Installed: ${boostversion}"
     fi
@@ -127,7 +128,7 @@ buildBitcoinBased () {
     make clean
     ./autogen.sh
 
-    if [[ ! -z ${gccversion} && "${gccversion}" == "7" ]]; then
+    if [[ "${gccversion}" == "7" ]]; then
         # install c++ 7 compiler for chips for now
         gccflags="CC=gcc-7 CXX=g++-7"
     fi
@@ -143,31 +144,34 @@ buildKomodoBased () {
     git pull
     make clean
 
-    if [[ ! -z ${stdexcept} && "${stdexcept}" == "stdexcept" ]]; then
-        ./zcutil/build.sh -j$(expr $(nproc) - 1) -I${scriptpath}/stdexcept.h
-    else
-        ./zcutil/build.sh -j$(expr $(nproc) - 1)
+    equihashfile="src/crypto/equihash.h"
+    if [[ "${stdexcept}" == "stdexcept" ]]; then
+        if ! grep -q "#include <stdexcept>" ${equihashfile}; then
+            log "build" "Patching ${equihashfile} for C++ 10" "red"
+            sed -i 's/#include <exception>/#include <exception>\n#include <stdexcept>/g' ${equihashfile}
+        else
+            log "build" "${equihashfile} compatible C++ 10"
+        fi
     fi
+
+    ./zcutil/build.sh -j$(expr $(nproc) - 1)
 }
 
 if [[ -v "bitcoinbased[${coinname}]" ]]; then
     log "build" "${coinname} - bitcoin based build"
 
-    builddata=(${bitcoinbased[${coinname}]})
-
     berkeleydb48
     boost165
 
+    builddata=(${bitcoinbased[${coinname}]})
     cd ${builddata[0]}
-
     buildBitcoinBased ${builddata[1]-}
 
 elif [[ -v "komodobased[${coinname}]" ]]; then
     log "build" "${coinname} - komodo based build"
+
     builddata=(${komodobased[${coinname}]})
-
     cd ${builddata[0]}
-
     buildKomodoBased ${builddata[1]-}
 
 else
