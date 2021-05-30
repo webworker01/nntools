@@ -1,4 +1,9 @@
 #!/bin/bash
+#
+# Checks that your addresses are imported
+#
+# @author webworker01
+#
 scriptpath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 source $scriptpath/main
 
@@ -21,7 +26,19 @@ if (( thirdpartycoins < 1 )); then
             validateaddress $nn_address -ac_name=${coin[0]}
         fi
     done
-    # validateaddress $nn_address -ac_name=VRSC
 else
-    validateaddress $nn_address -ac_name=VRSC
+    for coins in "${coinsthird[@]}"; do
+        coin=($coins)
+
+        if [[ ${komodolike[*]} =~ ${coin[0]} ]]; then
+            coinaddress=${nn_address}
+            coincli="${komodocli} -ac_name=${coin[0]^^}"
+        else
+            coinaddress=$(eval echo "\${${coin[0],,}_address-}")
+            eval $(echo coincli=${coin[1]})
+        fi
+
+        ismine=$(${coincli} validateaddress ${coinaddress} | jq .ismine)
+        echo "[${coin[0]}] ${ismine}"
+    done
 fi

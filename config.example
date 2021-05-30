@@ -81,11 +81,11 @@ dpowseeds=('95.213.238.100' '77.75.121.138' '103.6.12.105' '139.99.209.214')
 #which notaryid to use as reference node when checking masks (0 to 63)
 referencenode=7
 
-#additional address entries (used for wallet reset scripts, safe to leave blank if not using and 1p vs 3p servers)
-#1st party server
+#additional address entries (used for checkaddresses and wallet reset scripts, safe to leave blank if not using these)
+#(fill in on 1st party server)
 ltc_address=
 
-#3rd party server
+#(fill in on 3rd party server)
 chips_address=
 emc2_address=
 aya_address=
