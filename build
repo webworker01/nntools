@@ -26,8 +26,8 @@ fi
 declare -A bitcoinbased=(
 [BTC]="$HOME/bitcoin"
 [LTC]="$HOME/litecoin"
-[CHIPS]="$HOME/chips gcc7"
-[CHIPS3]="$HOME/chips3 gcc7"
+[CHIPS]="$HOME/chips gcc9"
+[CHIPS3]="$HOME/chips3 gcc9"
 [AYA]="$HOME/AYAv2"
 [EMC2]="$HOME/einsteinium"
 [GLEEC]="$HOME/GleecBTC-FullNode-Win-Mac-Linux"
@@ -88,10 +88,10 @@ EOL
 }
 
 boost165 () {
-    #check if boost 1.65.1 already installed
+    #check if boost <= 1.71 already installed
     cd $scriptpath/c
     make boost
-    boostversion=$(./boost)
+    boostversion=$(./boost | sed 's/_/./g')
     rm boost
 
     if (( $(echo "${boostversion-999} > 1.71" | bc -l) )); then
@@ -131,10 +131,10 @@ buildBitcoinBased () {
     make clean
     ./autogen.sh
 
-    if (( gccversion > 9 )) && [[ "${buildflags}" == "gcc7" ]]; then
+    if (( gccversion > 9 )) && [[ "${buildflags}" == "gcc9" ]]; then
         # install g++ 7 compiler for chips for now
-        gccflags="CC=gcc-7 CXX=g++-7"
-        log "build" "using g++7"
+        gccflags="CC=gcc-9 CXX=g++-9"
+        log "build" "using g++9"
     fi
 
     ./configure LDFLAGS="-L${bdb_PATH}/lib/" CPPFLAGS="-I${bdb_PATH}/include/" ${gccflags-} --with-gui=no --disable-tests --disable-bench --without-miniupnpc --enable-experimental-asm --enable-static --disable-shared
@@ -148,7 +148,7 @@ buildKomodoBased () {
     git pull
     make clean
 
-    #patches if gcc > 7
+    #patches if gcc > 9
     if (( gccversion > 9 )); then
         if [[ "${buildflags}" =~ "stdexcept" ]]; then
             equihashfile="src/crypto/equihash.h"

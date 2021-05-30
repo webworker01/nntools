@@ -28,8 +28,8 @@ if (( usesudo > 0 )); then
     nntoolsinstall="dc htop"
 
     if (( thirdpartycoins > 0 )); then
-        # install c++ 7 compiler for chips for now
-        aptinstall="g++-7"
+        # install g++ 7 compiler for chips for now
+        aptinstall="g++-9"
     fi
 
     boost_apt_version=$(apt show libboost-system-dev 2>/dev/null | grep Version | awk '{print $2}' | cut -d . -f -2)
