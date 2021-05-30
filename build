@@ -35,7 +35,7 @@ declare -A bitcoinbased=(
 
 declare -A komodobased=(
 [KMD]="$HOME/komodo"
-[VRSC]="$HOME/VerusCoin stdexcept"
+[VRSC]="$HOME/VerusCoin stdexcept,werror"
 [MCL]="$HOME/Marmara-v.1.0 stdexcept"
 )
 
@@ -139,18 +139,28 @@ buildBitcoinBased () {
 }
 
 buildKomodoBased () {
-    stdexcept=${1-}
+    buildflags=${1-}
 
     git pull
     make clean
 
-    equihashfile="src/crypto/equihash.h"
-    if [[ "${stdexcept}" == "stdexcept" ]]; then
+    if [[ "${buildflags}" =~ "stdexcept" ]]; then
+        equihashfile="src/crypto/equihash.h"
         if ! grep -q "#include <stdexcept>" ${equihashfile}; then
             log "build" "Patching ${equihashfile} for C++ 10" "red"
             sed -i 's/#include <exception>/#include <exception>\n#include <stdexcept>/g' ${equihashfile}
         else
             log "build" "${equihashfile} compatible C++ 10"
+        fi
+    fi
+
+    if [[ "${buildflags}" =~ "werror" ]]; then
+        buildfile="zcutil/build.sh"
+        if grep -q "CPPFLAGS='-g -Wno-builtin-declaration-mismatch -Werror'" ${buildfile}; then
+            log "build" "Patching ${buildfile} for C++ 10" "red"
+            sed -i "s/CPPFLAGS='-g -Wno-builtin-declaration-mismatch -Werror'/CPPFLAGS='-g -Wno-builtin-declaration-mismatch'/g" ${buildfile}
+        else
+            log "build" "${buildfile} compatible C++ 10"
         fi
     fi
 
