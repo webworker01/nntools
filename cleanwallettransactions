@@ -1,7 +1,6 @@
 #!/bin/bash
 #
-# Usage: ./cleanwallettransactions <coinname> <sendbalance (optional) (0|1)>
-# Passing a 1 for the third param will send the wallets complete balance to 1 UTXO before cleaning
+# Runs cleanwallettransactions against all KMD based coins
 #
 # @author webworker01
 #
@@ -31,6 +30,7 @@ if (( thirdpartycoins < 1 )); then
             clean ${coin[0]}
         fi
     done
-# else
-#     clean "HUSH3"
+else
+    clean "VRSC"
+    clean "MCL"
 fi

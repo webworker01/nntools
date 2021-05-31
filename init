@@ -25,7 +25,7 @@ if (( usesudo > 0 )); then
     #dependencies
     sudo apt-get update && sudo apt-get upgrade -y
 
-    nntoolsinstall="dc htop"
+    nntoolsinstall="jq bc dc htop"
 
     if (( thirdpartycoins > 0 )); then
         # install g++ 7 compiler for chips for now
@@ -38,7 +38,7 @@ if (( usesudo > 0 )); then
     fi
 
     sudo apt-get install ${nntoolsinstall} ${aptinstall-} ${boostinstall-} libevent-dev build-essential pkg-config libc6-dev m4 g++-multilib \
-        autoconf libtool ncurses-dev zlib1g-dev wget curl bsdmainutils automake cmake clang libsodium-dev libcurl4-gnutls-dev libssl-dev git unzip python python3 python3-zmq jq -y
+        autoconf libtool ncurses-dev zlib1g-dev wget curl bsdmainutils automake cmake clang libsodium-dev libcurl4-gnutls-dev libssl-dev git unzip python python3 python3-zmq -y
 
     #nanomsg - for iguana
     if [[ ! -f "/usr/local/include/nanomsg/nn.h" ]]; then
