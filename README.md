@@ -12,7 +12,7 @@ e.g. the `start` and `assetchains` scripts set the `pid` parameter on the daemon
 Dependencies (installed during `./init`)
 ```
 sudo apt-get install jq bc dc
-``
+```
 
 Setup
 --------
