@@ -33,7 +33,7 @@ cd freshubuntu && sudo ./freshubuntu
 ```
 cd $HOME
 git clone https://github.com/webworker01/nntools.git
-cd nntools && git checkout hirsute
+cd nntools
 cp config.example config
 nano config
 ```
