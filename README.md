@@ -3,23 +3,18 @@ What?
 
 Tools for https://komodoplatform.com Notary Nodes
 
-Assumes Ubuntu 18 installation (might work with 16)
-
-Setup
---------
+Tested on Ubuntu 18.04, 20.04 and 21.04
 
 This set of scripts is interdependent. Any piecemeal usage or mixing with other scripts may result in unexpected behavior!  Please review and understand what the scripts are doing and the data they expect before attempting to use separately from the rest in the repo.
 
 e.g. the `start` and `assetchains` scripts set the `pid` parameter on the daemons when starting up which is expected to be set when using the `resetwallet` script.
 
-Dependencies
+Dependencies (installed during `./init`)
 ```
 sudo apt-get install jq bc dc
-```
+``
 
-Copy the `config.example` file to `config` and edit as needed. No further edits in the various files should be required.
-
-NN Setup
+Setup
 --------
 
 * Install Ubuntu 18.04, 20.04 or 21.04
