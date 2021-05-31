@@ -4,7 +4,7 @@ To calculate the size of a transaction in bytes, get the hex string with `getraw
 
 Before the transaction is signed, we do not know the hex of the actual transaction, so here I attempt to estimate. Some strings I have not yet identified and simply have marked as "unknown".
 
-See [calcFee](https://github.com/webworker01/nntools/blob/master/functions#L51) for a simplified bash implementation.
+See [calcFee](https://github.com/webworker01/nntools/blob/master/functions-wallet#L47) for a simplified bash implementation.
 
 * tx version                  8
 * versiongroupid              8

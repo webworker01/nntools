@@ -17,7 +17,7 @@ komodod="$HOME/komodo/src/komodod"
 #set to 1 if this is the server for third party coins, else leave as 0
 thirdpartycoins=0
 
-#Set iguana port (current 7776 for first party, 7779 for third party)
+#Set internal iguana port (current 7776 for first party, 7779 for third party)
 iguanaport=7776
 
 #Enter your notary node compressed address (no quotes)
@@ -49,10 +49,7 @@ kmdutxoqty=50
 #Lower threshold for assetchain utxos
 acutxoqty=50
 
-#Lower threshold for BTC utxos
-btcutxoqty=200
-
-#Lower threshold for BTC utxos
+#Lower threshold for LTC utxos
 ltcutxoqty=50
 
 #Lower threshold for third party coin utxos
@@ -84,10 +81,13 @@ dpowseeds=('95.213.238.100' '77.75.121.138' '103.6.12.105' '139.99.209.214')
 #which notaryid to use as reference node when checking masks (0 to 63)
 referencenode=7
 
-#additional address entries
-btc_address=
+#additional address entries (used for checkaddresses and wallet reset scripts, safe to leave blank if not using these)
+#(fill in on 1st party server)
+ltc_address=
+
+#(fill in on 3rd party server)
 chips_address=
-game_address=
 emc2_address=
-gin_address=
 aya_address=
+gleec_address=
+sfusd_address=

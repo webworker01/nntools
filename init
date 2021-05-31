@@ -1,4 +1,5 @@
 #!/bin/bash
+#
 # init for notary node required dependencies and repos
 # setup config file first to indicate 1st or 3rd party server
 # after setup you will still need to create wp_7776/wp_7779 file
@@ -8,55 +9,78 @@
 # @see https://docs.komodoplatform.com/notary/setup-Komodo-Notary-Node.html#create-wp-7776
 # @author webworker01
 #
+set -e
+
 scriptpath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 source $scriptpath/main
 
-scriptpath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-
 if [[ ! -z $1 ]]; then
-    nosudo=0
+    usesudo=0
 else
-    nosudo=1
+    usesudo=1
 fi
 
-if (( nosudo > 0 )); then
+if (( usesudo > 0 )); then
+    log "init" "installing dependencies"
     #dependencies
     sudo apt-get update && sudo apt-get upgrade -y
-    sudo apt-get install libevent-dev libboost-system-dev libboost-filesystem-dev libboost-chrono-dev libboost-program-options-dev libboost-test-dev libboost-thread-dev build-essential pkg-config libc6-dev m4 g++-multilib autoconf libtool ncurses-dev python-zmq zlib1g-dev wget curl bsdmainutils automake cmake clang libsodium-dev libcurl4-gnutls-dev libssl-dev git unzip python jq htop -y
-    #nanomsg
-    cd $HOME
-    git clone https://github.com/nanomsg/nanomsg
-    cd nanomsg
-    cmake . -DNN_TESTS=OFF -DNN_ENABLE_DOC=OFF
-    make -j2
-    sudo make install
-    sudo ldconfig
+
+    nntoolsinstall="jq bc dc htop"
+
+    if (( thirdpartycoins > 0 )); then
+        # install g++ 7 compiler for chips for now
+        aptinstall="g++-9"
+    fi
+
+    boost_apt_version=$(apt show libboost-system-dev 2>/dev/null | grep Version | awk '{print $2}' | cut -d . -f -2)
+    if (( $(echo "$boost_apt_version <= 1.71" | bc -l) )); then
+        boostinstall="libboost-system-dev libboost-filesystem-dev libboost-chrono-dev libboost-program-options-dev libboost-test-dev libboost-thread-dev"
+    fi
+
+    sudo apt-get install ${nntoolsinstall} ${aptinstall-} ${boostinstall-} libevent-dev build-essential pkg-config libc6-dev m4 g++-multilib \
+        autoconf libtool ncurses-dev zlib1g-dev wget curl bsdmainutils automake cmake clang libsodium-dev libcurl4-gnutls-dev libssl-dev git unzip python python3 python3-zmq -y
+
+    #nanomsg - for iguana
+    if [[ ! -f "/usr/local/include/nanomsg/nn.h" ]]; then
+        log "init" "installing nanomsg"
+        cd $HOME
+        git clone https://github.com/nanomsg/nanomsg
+        cd nanomsg
+        cmake . -DNN_TESTS=OFF -DNN_ENABLE_DOC=OFF
+        make -j$(expr $(nproc) - 1)
+        sudo make install
+        sudo ldconfig
+        cd $HOME
+        rm -rf nanomsg
+    else
+        log "init" "/usr/local/include/nanomsg already exists, continuing..."
+    fi
 fi
 
 #komodo
-cd $HOME
-git clone https://github.com/KomodoPlatform/komodo
-#cd komodo && git checkout e159b4e7a40d3886519401c4074e957a1f9d42ba
-cd komodo
-$scriptpath/rebuildkomodo
-$HOME/komodo/zcutil/fetch-params.sh
+if [[ ! -d "$HOME/komodo" ]]; then
+    log "init" "installing Komodo"
+    cd $HOME
+    git clone https://github.com/KomodoPlatform/komodo
+    cd komodo
+    $HOME/komodo/zcutil/fetch-params-alt.sh
+    $scriptpath/build kmd
 
-if (( nosudo > 0 )); then
-    sudo ln -sf /home/$USER/komodo/src/komodo-cli /usr/local/bin/komodo-cli
-    sudo ln -sf /home/$USER/komodo/src/komodod /usr/local/bin/komodod
-fi
+    if (( usesudo > 0 )); then
+        sudo ln -sf /home/$USER/komodo/src/komodo-cli /usr/local/bin/komodo-cli
+        sudo ln -sf /home/$USER/komodo/src/komodod /usr/local/bin/komodod
+    fi
 
-#create komodo.conf
-randusername=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
-randpassword=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
-cd $HOME
+    #create komodo.conf
+    randusername=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
+    randpassword=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
 
-if (( thirdpartycoins < 1 )); then
-    blocknotify="blocknotify=$HOME/nntools/minerfixer %s"
-fi
+    if (( thirdpartycoins < 1 )); then
+        blocknotify="blocknotify=$HOME/nntools/minerfixer %s"
+    fi
 
-mkdir -p $HOME/.komodo
-cat <<EOF > $HOME/.komodo/komodo.conf
+    mkdir -p $HOME/.komodo
+    cat <<EOF > $HOME/.komodo/komodo.conf
 rpcuser=user$randusername
 rpcpassword=pass$randpassword
 txindex=1
@@ -68,61 +92,39 @@ rpcallowip=127.0.0.1
 rpcport=7771
 $blocknotify
 EOF
-chmod 600 $HOME/.komodo/komodo.conf
+    chmod 600 $HOME/.komodo/komodo.conf
 
-echo "pubkey=$nn_pubkey" > $HOME/komodo/src/pubkey.txt
+    echo "pubkey=$nn_pubkey" > $HOME/komodo/src/pubkey.txt
+else
+    log "init" "$HOME/komodo already exists, continuing..."
+fi
 
 #Iguana
-cd $HOME
-git clone https://github.com/KomodoPlatform/dPoW -b master --single-branch
-cd dPoW
-# git checkout beta_season3
-cp $HOME/komodo/src/pubkey.txt $HOME/dPoW/iguana/pubkey.txt
+if [[ ! -d "$HOME/dPoW" ]]; then
+    log "init" "installing dPoW"
+    cd $HOME
+    git clone https://github.com/KomodoPlatform/dPoW -b master --single-branch
+    cd dPoW
+    # git checkout beta_season3
+    cp $HOME/komodo/src/pubkey.txt $HOME/dPoW/iguana/pubkey.txt
+else
+    log "init" "$HOME/dPoW already exists, continuing..."
+fi
 
 if (( thirdpartycoins < 1 )); then
-    #bitcoin
-    cd $HOME
-    git clone https://github.com/bitcoin/bitcoin
-    cd bitcoin
-    git checkout 0.16
-    $scriptpath/rebuildbitcoin
-    if (( nosudo > 0 )); then
-        sudo ln -sf /home/$USER/bitcoin/src/bitcoin-cli /usr/local/bin/bitcoin-cli
-        sudo ln -sf /home/$USER/bitcoin/src/bitcoind /usr/local/bin/bitcoind
-    fi
-
-    #bitcoin.conf
-    randusername=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
-    randpassword=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
-    cd $HOME
-    mkdir -p $HOME/.bitcoin
-    cat <<EOF > $HOME/.bitcoin/bitcoin.conf
-rpcuser=user$randusername
-rpcpassword=pass$randpassword
-txindex=1
-server=1
-daemon=1
-rpcworkqueue=256
-rpcbind=127.0.0.1
-rpcallowip=127.0.0.1
-listen=0
-listenonion=0
-onlynet=ipv4
-deprecatedrpc=estimatefee
-maxmempool=500
-EOF
-    chmod 600 $HOME/.bitcoin/bitcoin.conf
-
     #litecoin
-    cd $HOME
-    git clone https://github.com/litecoin-project/litecoin.git -b 0.16 --single-branch
+    if [[ ! -d "$HOME/litecoin" ]]; then
+        log "init" "installing LTC"
+        cd $HOME
+        git clone https://github.com/litecoin-project/litecoin.git -b 0.16 --single-branch
+        $scriptpath/build ltc
 
-#litecoin.conf
-    randusername=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
-    randpassword=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
-    cd $HOME
-    mkdir -p $HOME/.litecoin
-    cat <<EOF > $HOME/.litecoin/litecoin.conf
+        #litecoin.conf
+        randusername=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
+        randpassword=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
+
+        mkdir -p $HOME/.litecoin
+        cat <<EOF > $HOME/.litecoin/litecoin.conf
 rpcuser=user$randusername
 rpcpassword=pass$randpassword
 txindex=1
@@ -138,22 +140,34 @@ onlynet=ipv4
 # deprecatedrpc=estimatefee
 # maxmempool=500
 EOF
-    chmod 600 $HOME/.litecoin/litecoin.conf
+        chmod 600 $HOME/.litecoin/litecoin.conf
+    else
+        log "init" "$HOME/litecoin already exists, continuing..."
+    fi
 
 else
     #CHIPS
-    cd $HOME
-    git clone https://github.com/jl777/chips3
-    cd chips3
-    git checkout 31d59f9d8fa4a8e00dd474ef0561a5b174056d86
-    $scriptpath/rebuildchips
+    if [[ ! -d "$HOME/chips3" ]]; then
+        log "init" "installing CHIPS3"
+        cd $HOME
+        git clone https://github.com/jl777/chips3
+        cd chips3
+        git checkout b57fd92
+        $scriptpath/build chips3
 
-    #chips.conf
-    randusername=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
-    randpassword=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
-    cd $HOME
-    mkdir -p $HOME/.chips
-    cat <<EOF > $HOME/.chips/chips.conf
+        # log "init" "installing CHIPS"
+        # cd $HOME
+        # git clone https://github.com/chips-blockchain/chips.git
+        # cd chips
+        # git checkout 70362d5
+        # $scriptpath/build chips
+
+        #chips.conf
+        randusername=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
+        randpassword=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
+
+        mkdir -p $HOME/.chips
+        cat <<EOF > $HOME/.chips/chips.conf
 rpcuser=user$randusername
 rpcpassword=pass$randpassword
 txindex=1
@@ -164,21 +178,26 @@ rpcbind=127.0.0.1
 rpcallowip=127.0.0.1
 deprecatedrpc=signrawtransaction
 EOF
-    chmod 600 $HOME/.chips/chips.conf
+        chmod 600 $HOME/.chips/chips.conf
+    else
+        log "init" "$HOME/chips3 already exists, continuing..."
+    fi
 
     #EMC2
-    cd ~
-    git clone https://github.com/emc2foundation/einsteinium
-    cd einsteinium
-    git checkout 70d7dc2b94e0b275f026ae51fda2a23725929bfd
-    $scriptpath/rebuildemc2
+    if [[ ! -d "$HOME/einsteinium" ]]; then
+        log "init" "installing EMC2"
+        cd $HOME
+        git clone https://github.com/emc2foundation/einsteinium
+        cd einsteinium
+        git checkout 70d7dc2
+        $scriptpath/build emc2
 
-    #einsteinium.conf
-    randusername=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
-    randpassword=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
-    cd $HOME
-    mkdir -p $HOME/.einsteinium
-    cat <<EOF > $HOME/.einsteinium/einsteinium.conf
+        #einsteinium.conf
+        randusername=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
+        randpassword=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
+
+        mkdir -p $HOME/.einsteinium
+        cat <<EOF > $HOME/.einsteinium/einsteinium.conf
 rpcuser=user$randusername
 rpcpassword=pass$randpassword
 txindex=1
@@ -191,30 +210,38 @@ listen=0
 listenonion=0
 onlynet=ipv4
 EOF
-    chmod 600 $HOME/.einsteinium/einsteinium.conf
+        chmod 600 $HOME/.einsteinium/einsteinium.conf
+    else
+        log "init" "$HOME/einsteinium already exists, continuing..."
+    fi
 
     #VRSC
-    cd $HOME
-    git clone https://github.com/VerusCoin/VerusCoin
-    cd VerusCoin && git checkout d3cffbe
-    ./zcutil/build.sh -j$(expr $(nproc) - 1)
+    if [[ ! -d "$HOME/VerusCoin" ]]; then
+        log "init" "installing VRSC"
+        cd $HOME
+        git clone https://github.com/VerusCoin/VerusCoin
+        cd VerusCoin
+        git checkout d3cffbe
+        $scriptpath/build vrsc
+    else
+        log "init" "$HOME/VerusCoin already exists, continuing..."
+    fi
 
     #AYA
-    cd $HOME
-    git clone https://github.com/KomodoPlatform/AYAv2
-    cd AYAv2
-    git pull
-    git checkout 3d03bdf
-    $scriptpath/rebuildaya
+    if [[ ! -d "$HOME/AYAv2" ]]; then
+        log "init" "installing AYA"
+        cd $HOME
+        git clone https://github.com/KomodoPlatform/AYAv2
+        cd AYAv2
+        git checkout 3d03bdf
+        $scriptpath/build aya
 
-    mkdir -p ~/.aryacoin
+        #aryacoin.conf
+        randusername=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
+        randpassword=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
 
-    #aryacoin.conf
-    randusername=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
-    randpassword=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
-    cd $HOME
-    mkdir -p $HOME/.aryacoin
-    cat <<EOF > $HOME/.aryacoin/aryacoin.conf
+        mkdir -p $HOME/.aryacoin
+        cat <<EOF > $HOME/.aryacoin/aryacoin.conf
 rpcuser=user$randusername
 rpcpassword=pass$randpassword
 txindex=1
@@ -229,27 +256,38 @@ listenonion=0
 onlynet=ipv4
 maxconnections=8
 EOF
-    chmod 600 $HOME/.aryacoin/aryacoin.conf
+        chmod 600 $HOME/.aryacoin/aryacoin.conf
+    else
+        log "init" "$HOME/AYAv2 already exists, continuing..."
+    fi
 
     #Marmara
-    cd $HOME
-    git clone https://github.com/marmarachain/Marmara-v.1.0.git
-    cd Marmara-v.1.0 && git checkout 03dd780
-    ./zcutil/build.sh -j$(expr $(nproc) - 1)
+    if [[ ! -d "$HOME/Marmara-v.1.0" ]]; then
+        log "init" "installing MCL"
+        cd $HOME
+        git clone https://github.com/marmarachain/Marmara-v.1.0.git
+        cd Marmara-v.1.0
+        git checkout 03dd780
+        $scriptpath/build mcl
+    else
+        log "init" "$HOME/Marmara-v.1.0 already exists, continuing..."
+    fi
 
     #GleecBTC
-    cd $HOME
-    git clone https://github.com/KomodoPlatform/GleecBTC-FullNode-Win-Mac-Linux.git
-    cd GleecBTC-FullNode-Win-Mac-Linux
-    git checkout b4ffcc9
-    $scriptpath/rebuildgleecbtc
+    if [[ ! -d "$HOME/GleecBTC-FullNode-Win-Mac-Linux" ]]; then
+        log "init" "installing GLEECBTC"
+        cd $HOME
+        git clone https://github.com/KomodoPlatform/GleecBTC-FullNode-Win-Mac-Linux.git
+        cd GleecBTC-FullNode-Win-Mac-Linux
+        git checkout b4ffcc9
+        $scriptpath/build gleec
 
-    #gleecbtc.conf
-    randusername=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
-    randpassword=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
-    cd $HOME
-    mkdir -p $HOME/.gleecbtc
-    cat <<EOF > $HOME/.gleecbtc/gleecbtc.conf
+        #gleecbtc.conf
+        randusername=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
+        randpassword=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
+        cd $HOME
+        mkdir -p $HOME/.gleecbtc
+        cat <<EOF > $HOME/.gleecbtc/gleecbtc.conf
 rpcuser=user$randusername
 rpcpassword=pass$randpassword
 txindex=1
@@ -264,21 +302,26 @@ listen=0
 listenonion=0
 onlynet=ipv4
 EOF
-    chmod 600 $HOME/.gleecbtc/gleecbtc.conf
+        chmod 600 $HOME/.gleecbtc/gleecbtc.conf
+    else
+        log "init" "$HOME/GleecBTC-FullNode-Win-Mac-Linux already exists, continuing..."
+    fi
 
     #SFUSD
-    cd $HOME
-    git clone https://github.com/pbcllc/sfusd-core
-    cd sfusd-core
-    git checkout 7c4f40b
-    $scriptpath/rebuildsfusd
+    if [[ ! -d "$HOME/sfusd-core" ]]; then
+        log "init" "installing SFUSD"
+        cd $HOME
+        git clone https://github.com/pbcllc/sfusd-core.git
+        cd sfusd-core
+        git checkout 7c4f40b
+        $scriptpath/build sfusd
 
-    #sfusd.conf
-    randusername=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
-    randpassword=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
-    cd $HOME
-    mkdir -p $HOME/.smartusd
-    cat <<EOF > $HOME/.smartusd/smartusd.conf
+        #sfusd.conf
+        randusername=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
+        randpassword=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
+        cd $HOME
+        mkdir -p $HOME/.smartusd
+        cat <<EOF > $HOME/.smartusd/smartusd.conf
 rpcuser=user$randusername
 rpcpassword=pass$randpassword
 txindex=1
@@ -292,7 +335,12 @@ listen=0
 listenonion=0
 onlynet=ipv4
 EOF
-    chmod 600 $HOME/.smartusd/smartusd.conf
+        chmod 600 $HOME/.smartusd/smartusd.conf
+    else
+        log "init" "$HOME/sfusd-core already exists, continuing..."
+    fi
 fi
+
 echo
 echo "Done! You must create wp_7776 or wp_7779 file https://docs.komodoplatform.com/notary/setup-Komodo-Notary-Node.html#create-wp-7776 and import your private keys"
+log "init" "init completed"

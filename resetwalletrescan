@@ -8,7 +8,7 @@ scriptpath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 source $scriptpath/main
 
 if [[ -z $1 ]]; then
-    echo "Usage: ./resetwalletrescan <coin (BTC|CHIPS)>"
+    echo "Usage: ./resetwalletrescan <coin (LTC|CHIPS)>"
     exit 0
 fi
 
@@ -36,9 +36,9 @@ fi
 
 coin=${1^^}
 
-if [[ ! -z $btc_address && $coin == "BTC" ]]; then
-    address=$btc_address
-    splitqty=$btcutxoqty
+if [[ ! -z $ltc_address && $coin == "LTC" ]]; then
+    address=$ltc_address
+    splitqty=$ltcutxoqty
     confcheck=".confirmations"
 elif [[ ! -z $chips_address && $coin == "CHIPS" ]]; then
     address=$chips_address
