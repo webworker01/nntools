@@ -90,9 +90,12 @@ EOL
 boost165 () {
     #check if boost <= 1.71 already installed
     cd $scriptpath/c
-    make boost
-    boostversion=$(./boost | sed 's/_/./g')
-    rm boost
+    if make boost; then
+        boostversion=$(./boost | sed 's/_/./g')
+        rm boost
+    else
+        log "build" "error building boost check" "red"
+    fi
 
     if (( $(echo "${boostversion-999} > 1.71" | bc -l) )); then
         log "build" "installing Boost 1_65_1"
