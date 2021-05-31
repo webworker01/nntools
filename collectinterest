@@ -102,7 +102,7 @@ if (( minedcount > 3 )) || (( minedcount > 0 && combine > 0 )); then
 
         combineconsolidateutxos=$(jq -r --argjson arr1 "$consolidatethese" --argjson arr2 "$alreadyconsolidated" -n '$arr1 + $arr2 | tostring')
 
-        rawtxresult=$($komodocli createrawtransaction ${combineconsolidateutxos} '''{ "'$nn_address'": '$consolidateamountfixed' }''')
+        rawtxresult=$($komodocli createrawtransaction "${combineconsolidateutxos}" '''{ "'$nn_address'": '$consolidateamountfixed' }''')
         rawtxid=$(sendRaw ${rawtxresult})
 
         log "collectinterest" "combine all $consolidateamountfixed - interest: $interest - txid : $rawtxid"
@@ -110,8 +110,7 @@ if (( minedcount > 3 )) || (( minedcount > 0 && combine > 0 )); then
     else
         consolidateamountfixed=$( printf "%.8f" $(bc -l <<< "(${consolidateamount}-${consolidateutxotxfee})") )
         utxostring=$( jq -r '. | tostring' <<< $consolidatethese )
-
-        rawtxresult=$($komodocli createrawtransaction $utxostring '''{ "'$nn_address'": '$consolidateamountfixed' }''')
+        rawtxresult=$($komodocli createrawtransaction "$utxostring" '''{ "'$nn_address'": '$consolidateamountfixed' }''')
         rawtxid=$(sendRaw ${rawtxresult})
 
         log "collectinterest" "combine mined $consolidateamountfixed - txid : $rawtxid"
