@@ -61,8 +61,8 @@ Scripts
 
 Script Name | Function
 ----------- | --------
-**asset-cli** | Send in a single coin name to run RPC commands against
-**assets-cli** | Run RPC command against all NN coin (or 3p coins)
+**asset-cli** | Send in a single coin name (1P or 3P) to run RPC commands against
+**assets-cli** | Run RPC command against all KMD smartchain coins
 **build** | You can run `./build <coinname>` to build/rebuild any already cloned coin repo required for NN
 **checkaddresses** | Validate your NN address is imported correctly against all coins
 **checkfork** | Script to quickly check all assetchains for possible forks
