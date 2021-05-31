@@ -18,7 +18,6 @@ Setup
 --------
 
 * Install Ubuntu 18.04, 20.04 or 21.04
-
 ```
 cd $HOME
 git clone https://github.com/webworker01/freshubuntu
@@ -33,12 +32,11 @@ cp config.example config
 nano config
 ```
  * setup your config
-
 ```
 ./init
 ./start
 ```
-
+* Once `init` starts you can `tail -f $HOME/nntools.log` to more easily keep track of progress
 * wait til syncs are complete (multiple hours to sync all. you can verify complete with ./stats and see no errors)
 ```
  komodo-cli importprivkey <privkey>
