@@ -25,9 +25,9 @@ sendRaw()
 
         if (( sapling > 0 )); then
             txtail="000000000000000000000000000000"
-            hex="${rawtx:0:-38}${nlocktime}${txtail}"
+            hex="${rawtx:0:${#rawtx}-38}${nlocktime}${txtail}"
         else
-            hex="${rawtx:0:-8}${nlocktime}"
+            hex="${rawtx:0:${#rawtx}-8}${nlocktime}"
         fi
 
         signedtx=$($komodocli $asset signrawtransaction $hex | jq -r '.hex')
