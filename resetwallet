@@ -34,7 +34,7 @@ privkey=$($komodocli $asset dumpprivkey $nn_address)
 if (( resettooldest < 1 )); then
     #unlock all tx
     lockedtx=$($komodocli $asset listlockunspent | jq -c .)
-    $komodocli $asset lockunspent true $lockedtx
+    $komodocli $asset lockunspent true "${lockedtx}"
 
     #send complete balance to self
     unspent=$($komodocli $asset listunspent | jq '[.[] | select(.spendable==true)]')
@@ -48,12 +48,13 @@ if (( resettooldest < 1 )); then
     else
         interest=0
     fi
+
     consolidatethese=$(jq -rc '[.[] | {"txid":.txid, "vout":.vout}]' <<< $unspent)
     consolidatetheselength=$(jq -r '. | length' <<< $unspent)
     consolidatethesetxfee=$(calcFee ${consolidatetheselength} 1 "p2pkh" "p2pkh")
     consolidateamount=$(jq -r '[.[].amount] | add' <<< $unspent)
     consolidateamountfixed=$( printf "%.8f" $(bc -l <<< "(${consolidateamount}+${interest}-${consolidatethesetxfee})") )
-    rawtxresult=$($komodocli $asset createrawtransaction ${consolidatethese} '''{ "'$nn_address'": '$consolidateamountfixed' }''')
+    rawtxresult=$($komodocli $asset createrawtransaction "${consolidatethese}" '''{ "'$nn_address'": '$consolidateamountfixed' }''')
     txid=$(sendRaw ${rawtxresult} ${coin})
     log "resetwallet" "${coin} - balance sent $consolidateamountfixed - interest: $interest  - txid : $txid"
 
