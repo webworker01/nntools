@@ -30,7 +30,7 @@ nn_pubkey=
 nn_ipaddress=
 
 #Whitelist other addresses incoming funds are expected from - own address is automatically whitelisted
-whitelist_addresses=("bDnbcXrZ4iMqfnybMgKjWvYosRzgVMToF8" "RKrMB4guHxm52Tx9LG8kK3T5UhhjVuRand" "RVB7Vd4JbbjQPV1WE5ZdeWmWo5EjMpXDH6")
+whitelist_addresses=("bDnbcXrZ4iMqfnybMgKjWvYosRzgVMToF8" "RKrMB4guHxm52Tx9LG8kK3T5UhhjVuRand" "RVB7Vd4JbbjQPV1WE5ZdeWmWo5EjMpXDH6, RDragoNHdwovvsDLSLMiAEzEArAD3kq6FN")
 
 #Date format for logging
 datetime=$(date '+%Y-%m-%d %H:%M:%S')
