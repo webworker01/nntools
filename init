@@ -313,7 +313,7 @@ EOF
         cd $HOME
         git clone https://github.com/pbcllc/sfusd-core.git
         cd sfusd-core
-        git checkout 7c4f40b
+        git checkout d96497c
         $scriptpath/build sfusd
 
         #sfusd.conf
