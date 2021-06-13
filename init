@@ -152,7 +152,7 @@ else
         cd $HOME
         git clone https://github.com/jl777/chips3
         cd chips3
-        git checkout b57fd92
+        git checkout 70362d
         $scriptpath/build chips3
 
         # log "init" "installing CHIPS"
@@ -189,7 +189,7 @@ EOF
         cd $HOME
         git clone https://github.com/emc2foundation/einsteinium
         cd einsteinium
-        git checkout 70d7dc2
+        git checkout a716ae8
         $scriptpath/build emc2
 
         #einsteinium.conf
@@ -221,7 +221,7 @@ EOF
         cd $HOME
         git clone https://github.com/VerusCoin/VerusCoin
         cd VerusCoin
-        git checkout d3cffbe
+        git checkout 7a740d2
         $scriptpath/build vrsc
     else
         log "init" "$HOME/VerusCoin already exists, continuing..."
@@ -279,7 +279,7 @@ EOF
         cd $HOME
         git clone https://github.com/KomodoPlatform/GleecBTC-FullNode-Win-Mac-Linux.git
         cd GleecBTC-FullNode-Win-Mac-Linux
-        git checkout b4ffcc9
+        git checkout 3c486d4
         $scriptpath/build gleec
 
         #gleecbtc.conf
