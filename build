@@ -36,7 +36,7 @@ declare -A bitcoinbased=(
 
 declare -A komodobased=(
 [KMD]="$HOME/komodo"
-[VRSC]="$HOME/VerusCoin stdexcept,werror"
+[VRSC]="$HOME/VerusCoin werror"
 [MCL]="$HOME/Marmara-v.1.0 stdexcept"
 )
 
