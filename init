@@ -152,7 +152,7 @@ else
         cd $HOME
         git clone https://github.com/jl777/chips3
         cd chips3
-        git checkout 70362d
+        git checkout 70362d5
         $scriptpath/build chips3
 
         # log "init" "installing CHIPS"
