@@ -147,7 +147,7 @@ EOF
 
 else
     #CHIPS
-    if [[ ! -d "$HOME/chips3" ]]; then
+    if [[ ! -d "$HOME/chips" ]]; then
         log "init" "installing CHIPS"
         cd $HOME
         git clone https://github.com/chips-blockchain/chips.git
