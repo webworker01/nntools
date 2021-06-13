@@ -58,6 +58,16 @@ if [[ "$lastgen" != "null" ]]; then
         log "minerfixer" "mining.." "green" "echo"
     fi
 else
-    log "minerfixer" "could not get last mined tx! setgenerate true"
-    $komodocli setgenerate true 1
+    getinfo=$($komodocli getinfo)
+
+    if [[ "$getinfo" != "null" ]]; then
+        blocks=$(jq -r .blockhblocksash <<< $getinfo)
+        longestchain=$(jq -r .longestchain <<< $getinfo)
+
+        # Check if still syncing
+        if [[ "${blocks}" == "${longestchain}" ]]; then
+            log "minerfixer" "could not get last mined tx! setgenerate true"
+            $komodocli setgenerate true 1
+        fi
+    fi
 fi
