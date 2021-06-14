@@ -8,8 +8,8 @@ komodolike=('VRSC' 'MCL')
 
 #declare non komodo clis - set the full path accessible as the second part of each string, the 3rd entry is the name of the data dir for the coin and assumes they are in $HOME
 verusd="$HOME/VerusCoin/src/verusd -pid=${HOME}/.komodo/VRSC/komodod.pid"
-marmaracli="$HOME/Marmara-v.1.0/src/komodo-cli -ac_name=MCL"
-marmarad="$HOME/Marmara-v.1.0/src/komodod -ac_name=MCL -ac_supply=2000000 -ac_cc=2 -addnode=37.148.210.158 -addnode=37.148.212.36 -addressindex=1 -spentindex=1 -ac_marmara=1 -ac_staked=75 -ac_reward=3000000000 -pubkey=${nn_pubkey} -pid=${HOME}/.komodo/MCL/komodod.pid"
+marmaracli="$HOME/marmara/src/komodo-cli -ac_name=MCL"
+marmarad="$HOME/marmara/src/komodod -ac_name=MCL -ac_supply=2000000 -ac_cc=2 -addnode=37.148.210.158 -addnode=37.148.212.36 -addressindex=1 -spentindex=1 -ac_marmara=1 -ac_staked=75 -ac_reward=3000000000 -pubkey=${nn_pubkey} -pid=${HOME}/.komodo/MCL/komodod.pid"
 
 coinsfirst=(
 # 'BTC $HOME/bitcoin/src/bitcoin-cli $HOME/bitcoin/src/bitcoind .bitcoin rescan bitcoind.pid'
