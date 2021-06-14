@@ -255,15 +255,15 @@ EOF
     fi
 
     #Marmara
-    if [[ ! -d "$HOME/Marmara-v.1.0" ]]; then
+    if [[ ! -d "$HOME/marmara" ]]; then
         log "init" "installing MCL"
         cd $HOME
-        git clone https://github.com/marmarachain/Marmara-v.1.0.git
-        cd Marmara-v.1.0
-        git checkout 03dd780
+        git clone https://github.com/marmarachain/marmara.git
+        cd marmara
+        git checkout 2412d5f
         $scriptpath/build mcl
     else
-        log "init" "$HOME/Marmara-v.1.0 already exists, continuing..."
+        log "init" "$HOME/marmara already exists, continuing..."
     fi
 
     #GleecBTC
