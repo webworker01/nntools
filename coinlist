@@ -1,11 +1,8 @@
 #!/bin/bash
 coinlist=(
-'AXO'
 'BET'
 'BOTS'
-'BTCH'
 'CCL'
-'COQUICASH'
 'CRYPTO'
 'DEX'
 'GLEEC'
