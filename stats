@@ -115,6 +115,9 @@ outputstats ()
                 coinsutxoamount=$utxoamt
                 coinsntraddr=$ltcntrzaddr
                 seasonfilter=$timefilter
+                if [[ -f "${HOME}/${coin[3]}/wallets/wallet.dat" ]]; then
+                    coinwalletpath="${HOME}/${coin[3]}/wallets/wallet.dat"
+                fi
                 ;;
             GAME)
                 coinsutxoamount=0.00100000
