@@ -61,7 +61,7 @@ else
     getsynced=$($komodocli getinfo | jq .synced)
 
     # Check if synced
-    if [[ "$getsynced" != "null" ]]; then
+    if [[ "$getsynced" != "null" && "$getsynced" == "true" ]]; then
         log "minerfixer" "could not get last mined tx! setgenerate true"
         $komodocli setgenerate true 1
     fi
