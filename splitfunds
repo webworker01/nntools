@@ -1,5 +1,6 @@
 #!/bin/bash
 #
+# For komodo based coins only. See cronsplit script
 # Local split version by webworker01
 # Original version by Decker (c) 2018 <https://github.com/DeckerSU/komodo_scripts/blob/master/split_nn_sapling.sh>
 #
