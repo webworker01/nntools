@@ -29,6 +29,7 @@ else
     #sudo ufw allow 41878 comment 'EMC2'
     #sudo ufw allow 10111 comment 'GIN'
     sudo ufw allow 27485 comment 'VRSC'
+    sudo ufw allow 38890 comment 'MM2 P2P'
 fi
 
 sudo ufw enable
