@@ -12,7 +12,6 @@ forked=false
 
 remotecheck=$(curl -Ssf https://komodostats.com/api/notary/summary.json)
 remotecheck2=$(curl -Ssf https://dexstats.info/api/explorerstatus.php)
-#remotecheck3=$(curl -Ssf https://notarystats.com/json/latest.json)
 
 format="%-10s %8s %8s %15s %15s %15s\n"
 redformat="\033[0;31m$format\033[0m"
@@ -31,14 +30,6 @@ parseDexstats()
     local remotedata=$2
     remoteblocks2=$(jq --arg coinname $coin '.status[] | select(.chain==$coinname) | .height | tonumber' <<< $remotedata)
     remotehash2=$(jq -r --arg coinname $coin '.status[] | select(.chain==$coinname) | .hash' <<< $remotedata)
-}
-
-parseNotarystats()
-{
-    local coin=$1
-    local remotedata=$2
-    remoteblocks3=$(jq --arg coinname $coin '.coin[] | select(.name==$coinname) | .block' <<< $remotedata)
-    remotehash3=$(jq -r --arg coinname $coin '.coin[] | select(.name==$coinname) | .bestblockhash' <<< $remotedata)
 }
 
 outputRow()
@@ -61,11 +52,6 @@ outputRow()
         else
             diff2=0
         fi
-        if (( remoteblocks3 > 0 )); then
-            diff3=$((localblocks-remoteblocks3))
-        else
-            diff3=0
-        fi
 
         if ((localblocks < locallongest)); then
             forked=true
@@ -76,10 +62,6 @@ outputRow()
             thisformat=$redformat
         fi
         if (( diff2 < variance * -1 )) || (( diff2 > variance )); then
-            forked=true
-            thisformat=$redformat
-        fi
-        if (( diff3 < variance * -1 )) || (( diff3 > variance )); then
             forked=true
             thisformat=$redformat
         fi
@@ -94,16 +76,10 @@ outputRow()
             hasherror2="!! "
             echo "Dexstats Hash Mismatch Local: $hashatheight2 Remote: $remotehash2"
         fi
-        #hasherror3=""
-        #if [[ -z $remotehash3 ]] && [[ "$hashatheight3" != "$remotehash3" ]]; then
-        #    forked=true
-        #    hasherror3="!! "
-        #    echo "Notarystats Hash Mismatch Local: $hashatheight3 Remote: $remotehash3"
-        #fi
 
-        printf "$thisformat" "$coinname" "$localblocks" "$locallongest" "${remoteblocks}[$diff1]" "${hasherror2}$remoteblocks2[$diff2]" #"${hasherror3}$remoteblocks3[$diff3]"
+        printf "$thisformat" "$coinname" "$localblocks" "$locallongest" "${remoteblocks}[$diff1]" "${hasherror2}$remoteblocks2[$diff2]"
     else
-        printf "$format" "$coinname" "$localblocks" "$locallongest" "$remoteblocks" "$remoteblocks2" #"$remoteblocks3"
+        printf "$format" "$coinname" "$localblocks" "$locallongest" "$remoteblocks" "$remoteblocks2"
     fi
 }
 
@@ -113,17 +89,13 @@ longest=$($komodocli getinfo | jq .longestchain)
 blockhash=$($komodocli getbestblockhash)
 parseKomodostats "KMD" "$remotecheck"
 parseDexstats "KMD" "$remotecheck2"
-#parseNotarystats "KMD" "$remotecheck3"
+
 if (( blocks >= remoteblocks2 )); then
     hashatheight2=$($komodocli getblockhash $remoteblocks2)
 else
     hashatheight2=
 fi
-#if (( blocks >= remoteblocks3 )); then
-#    hashatheight3=$($komodocli getblockhash $remoteblocks3)
-#else
-#    hashatheight3=
-#fi
+
 outputRow "KMD" $blocks $longest $blockhash
 
 if (( thirdpartycoins > 0 )); then
@@ -152,23 +124,19 @@ else
             blockhash=$($komodocli -ac_name=${coin[0]} getbestblockhash)
             parseKomodostats "${coin[0]}" "$remotecheck"
             parseDexstats "${coin[0]}" "$remotecheck2"
-            #parseNotarystats "${coin[0]}" "$remotecheck3"
+
             if [[ ! -z $remoteblocks2 ]] && (( blocks >= remoteblocks2 )); then
                 hashatheight2=$($komodocli -ac_name=${coin[0]} getblockhash $remoteblocks2)
             else
                 hashatheight2=
             fi
-            #if [[ ! -z $remoteblocks3 ]] &&(( blocks >= remoteblocks3 )); then
-            #    hashatheight3=$($komodocli -ac_name=${coin[0]} getblockhash $remoteblocks3)
-            #else
-            #    hashatheight3=
-            #fi
+
             outputRow "${coin[0]}" $blocks $longest $blockhash
         fi
     done
 fi
 
-if [ "$forked" = false ]; then
+if [ "$forked" == false ]; then
     printf "\033[0;32mAll coins are fine\033[0m\n"
 else
     printf "\033[0;31mPossible fork!\033[0m\n"

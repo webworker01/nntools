@@ -30,7 +30,7 @@ declare -A bitcoinbased=(
 [CHIPS3]="$HOME/chips3 gcc9"
 [AYA]="$HOME/AYAv2"
 [EMC2]="$HOME/einsteinium"
-[GLEEC]="$HOME/GleecBTC-FullNode-Win-Mac-Linux"
+[GLEECBTC]="$HOME/GleecBTC-FullNode-Win-Mac-Linux"
 [SFUSD]="$HOME/sfusd-core"
 )
 
