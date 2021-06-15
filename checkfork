@@ -103,9 +103,9 @@ if (( thirdpartycoins > 0 )); then
         coin=($coins)
 
         eval $(echo coincli=${coin[1]})
-
-        blocks=$($coincli getinfo | jq .blocks)
-        longest=$($coincli getblockchaininfo | jq .headers)
+        blockchaininfo=$(${coincli} getblockchaininfo)
+        blocks=$(jq .blocks <<< $blockchaininfo)
+        longest=$(jq .headers <<< $blockchaininfo)
         blockhash=$($coincli getbestblockhash)
         parseKomodostats "${coin[0]}" "$remotecheck"
         remoteblocks2=""
