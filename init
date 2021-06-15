@@ -273,7 +273,7 @@ EOF
         git clone https://github.com/KomodoPlatform/GleecBTC-FullNode-Win-Mac-Linux.git
         cd GleecBTC-FullNode-Win-Mac-Linux
         git checkout 3c486d4
-        $scriptpath/build gleec
+        $scriptpath/build gleecbtc
 
         #gleecbtc.conf
         randusername=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
