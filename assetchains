@@ -12,7 +12,7 @@ seed_ip1=`getent hosts zero.kolo.supernet.org | awk '{ print $1 }'`
 
 delay=1
 
-skip_whitelist=('VOTE2020')
+skip_whitelist=('VOTE2021')
 
 function komodo_asset()
 {
@@ -39,12 +39,10 @@ function komodo_asset()
     fi
 }
 
-komodo_asset -ac_name=AXO -ac_supply=200000000 -ac_ccactivate=130000
+
 komodo_asset -ac_name=BET -ac_supply=999999
 komodo_asset -ac_name=BOTS -ac_supply=999999
-komodo_asset -ac_name=BTCH -ac_supply=20998641
 komodo_asset -ac_name=CCL -ac_supply=200000000 -ac_end=1 -ac_cc=2 -addressindex=1 -spentindex=1 -addnode=142.93.136.89 -addnode=195.201.22.89
-komodo_asset -ac_name=COQUICASH -ac_supply=72000000 -ac_reward=7200000000 -ac_staked=50 -ac_halving=420000 -ac_cc=2 -ac_ccenable=227,235,236,241 -addnode=78.47.108.168
 komodo_asset -ac_name=CRYPTO -ac_supply=999999
 komodo_asset -ac_name=DEX -ac_supply=999999
 komodo_asset -ac_name=GLEEC -ac_supply=210000000 -ac_public=1 -ac_staked=100 -addnode=95.217.161.126
@@ -68,10 +66,13 @@ komodo_asset -ac_name=VOTE2021 -ac_public=1  -ac_supply=129848152 -addnode=77.74
 komodo_asset -ac_name=WLC21 -ac_supply=21000000 -ac_reward=190258751 -ac_staked=90 -ac_public=1 -addnode=37.187.225.231 -addnode=51.38.38.134
 komodo_asset -ac_name=ZILLA -ac_supply=11000000 -ac_sapling=5000000 -addnode=54.39.23.248
 
+# komodo_asset -ac_name=AXO -ac_supply=200000000 -ac_ccactivate=130000
 # komodo_asset -ac_name=BNTN -ac_supply=500000000
+# komodo_asset -ac_name=BTCH -ac_supply=20998641
 # komodo_asset -ac_name=CEAL -ac_supply=366666666
 # komodo_asset -ac_name=CHAIN -ac_supply=999999
 # komodo_asset -ac_name=COMMOD -ac_supply=0 -ac_reward=204800000000,100000000 -ac_end=482130,0 -ac_halving=43830,525960 -ac_decay=50000000,10000000 -ac_eras=2 -ac_cc=777 -ac_public=1 -addnode=34.246.186.176 -addnode=34.251.151.148
+# komodo_asset -ac_name=COQUICASH -ac_supply=72000000 -ac_reward=7200000000 -ac_staked=50 -ac_halving=420000 -ac_cc=2 -ac_ccenable=227,235,236,241 -addnode=78.47.108.168
 # komodo_asset -ac_name=DION -ac_supply=3900000000 -ac_reward=22260000000 -ac_staked=100 -ac_cc=1 -ac_end=4300000000 -addnode=51.75.124.34
 # komodo_asset -ac_name=DSEC -ac_supply=7000000
 # komodo_asset -ac_name=EQL -ac_supply=500000000 -ac_ccactivate=205000
