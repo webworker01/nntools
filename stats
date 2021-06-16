@@ -103,7 +103,12 @@ outputstats ()
 
         #expand coinexec
         eval $(echo coinexec=${coin[1]})
-        coinwalletpath="${HOME}/${coin[3]}/wallet.dat"
+
+        if [[ -f "${HOME}/${coin[3]}/wallets/wallet.dat" ]]; then
+            coinwalletpath="${HOME}/${coin[3]}/wallets/wallet.dat"
+        else
+            coinwalletpath="${HOME}/${coin[3]}/wallet.dat"
+        fi
 
         case ${coin[0]} in
             BTC)
@@ -115,9 +120,6 @@ outputstats ()
                 coinsutxoamount=$utxoamt
                 coinsntraddr=$ltcntrzaddr
                 seasonfilter=$timefilter
-                if [[ -f "${HOME}/${coin[3]}/wallets/wallet.dat" ]]; then
-                    coinwalletpath="${HOME}/${coin[3]}/wallets/wallet.dat"
-                fi
                 ;;
             GAME)
                 coinsutxoamount=0.00100000
@@ -138,9 +140,6 @@ outputstats ()
             GLEECBTC)
                 coinsutxoamount=$utxoamt
                 coinsntraddr=FTsxvoops8zGeMbY3pHPwY86bfacGvMdfU
-                if [[ -f "${HOME}/${coin[3]}/wallets/wallet.dat" ]]; then
-                    coinwalletpath="${HOME}/${coin[3]}/wallets/wallet.dat"
-                fi
                 ;;
             SFUSD)
                 coinsutxoamount=$utxoamt
