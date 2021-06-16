@@ -104,7 +104,13 @@ else
         otherutxo=$(${coincli} listunspent | jq --arg amt "$coinsutxoamount" '[.[] | select(.amount==($amt|tonumber))] | length')
         if (( otherutxo < otherutxoqty )); then
             echo "${coin[0]} utxos: $otherutxo"
-            raw_tx=$(curl -s --url "http://127.0.0.1:$iguanaport" --data "{\"coin\":\"${coin[0]}\",\"agent\":\"iguana\",\"method\":\"splitfunds\",\"satoshis\":\"$coinsplitamount\",\"sendflag\":1,\"duplicates\":$otherutxoqty}")
+            if [[ "${coin[0]}" == "GLEECBTC" ]]; then
+                cointosplit="GLEEC"
+            else
+                cointosplit=${coin[0]}
+            fi
+
+            raw_tx=$(curl -s --url "http://127.0.0.1:$iguanaport" --data "{\"coin\":\"${cointosplit}\",\"agent\":\"iguana\",\"method\":\"splitfunds\",\"satoshis\":\"$coinsplitamount\",\"sendflag\":1,\"duplicates\":$otherutxoqty}")
             raw_tx=$(jq -r .result <<< $raw_tx)
 
             if [[ ! -z $raw_tx ]]; then
