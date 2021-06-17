@@ -144,6 +144,20 @@ outputstats ()
             balance=$(printf "%8.3f" $balance)
         fi
 
+        laststring=""
+        if (( thirdpartycoins > 0 )); then
+
+            lastcoin=(${coinsthird[-1]})
+            secondlast=(${coinsthird[-2]})
+
+            if [[ ${coin[0]} == ${lastcoin[0]} ]]; then
+                laststring="@ $now"
+            fi
+            if [[ ${coin[0]} == ${secondlast[0]} ]]; then
+                laststring="All:$totalntrzd"
+            fi
+        fi
+
         printf "$format\n" "${coin[0]}" \
                 "$coinsntrzd" \
                 "$(timeSince $coinslastntrztime)" \
@@ -153,7 +167,8 @@ outputstats ()
                 "$(timeSince $($coinexec getblock $($coinexec getbestblockhash) | jq .time))" \
                 "$($coinexec getnetworkinfo | jq .connections)" \
                 "$(ls -lh ${coinwalletpath} | awk '{print $5}')" \
-                "$wallettime"
+                "$wallettime" \
+                "$laststring"
     done
 
     if (( thirdpartycoins < 1 )); then
@@ -177,8 +192,8 @@ outputstats ()
                 else
                     balance=$(printf "%8.3f" $balance)
                 fi
-                laststring=""
 
+                laststring=""
                 if [[ ${coin[0]} == ${lastcoin[0]} ]]; then
                     laststring="@ $now"
                 fi
