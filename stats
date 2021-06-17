@@ -64,6 +64,14 @@ outputstats ()
     TIMEFORMAT="%R"
     wallettime=$( (time $komodocli listunspent) 2>&1 > /dev/null )
 
+    if (( $thirdpartycoins < 1 )); then
+        othercoins="coinsfirst[@]"
+        mined="$(echo $kmdtxinfo | jq '[.[] | select(.generated==true)] | length') mined"
+    else
+        othercoins="coinsthird[@]"
+        mined=""
+    fi
+
     printf "$format\n" "KMD" \
             "" \
             "$(timeSince $kmdlastntrztime)" \
@@ -74,13 +82,7 @@ outputstats ()
             "$(echo $kmdinfo | jq .connections)" \
             "$(ls -lh ~/.komodo/wallet.dat  | awk '{print $5}')" \
             "$wallettime" \
-            "$(echo $kmdtxinfo | jq '[.[] | select(.generated==true)] | length') mined"
-
-    if (( $thirdpartycoins < 1 )); then
-        othercoins="coinsfirst[@]"
-    else
-        othercoins="coinsthird[@]"
-    fi
+            "$mined"
 
     for coins in "${!othercoins}"; do
         coin=($coins)
