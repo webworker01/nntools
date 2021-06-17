@@ -39,7 +39,7 @@ ltcntrzaddr=LhGojDga6V1fGzQfNGcYFAfKnDvsWeuAsP
 kmdntrzaddr=RXL3YXG2ceaB6C5hfJcN4fvmLH2C34knhA
 
 # Only count KMD->BTC after this timestamp
-# Season 5 kmd block 2437300
+# Season 5 kmd block 2437301
 timefilter=1623711782
 
 # Second time filter for assetchains
