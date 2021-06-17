@@ -28,8 +28,9 @@ coinsthird=(
 
 #for git checking - path and remote branch
 declare -A repos=(
+[NNTOOLS]="$HOME/nntools origin/master"
 [KMD]="$HOME/komodo origin/master"
-[SUPERNET]="$HOME/dPoW origin/master"
+[DPOW]="$HOME/dPoW origin/master"
 # [CHIPS]="$HOME/chips3 origin/dev"
 # [GAME]="$HOME/GameCredits origin/master"
 # [EMC2]="$HOME/einsteinium origin/master"

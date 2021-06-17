@@ -16,7 +16,6 @@ checkRepo () {
 
     prevdir=${PWD}
 
-    #eval cd "$2"
     cd $2
 
     git remote update > /dev/null 2>&1
@@ -28,18 +27,6 @@ checkRepo () {
     if [ $localrev != $remoterev ]; then
         printf "$color_red[U]$color_reset"
     fi
-
-    case $1 in
-        KMD|GIN)
-            printf "     "
-            ;;
-        CHIPS)
-            printf "   "
-            ;;
-        GAME|EMC2)
-            printf "    "
-            ;;
-    esac
 }
 
 #Do not change below for any reason!
@@ -50,14 +37,14 @@ ntrzdamt=-0.00083600
 # btcntrzaddr=1P3rU1Nk1pmc2BiWC8dEy9bZa1ZbMp5jfg
 ltcntrzaddr=LhGojDga6V1fGzQfNGcYFAfKnDvsWeuAsP
 kmdntrzaddr=RXL3YXG2ceaB6C5hfJcN4fvmLH2C34knhA
-#Only count KMD->BTC after this timestamp (block 814000)
-#timefilter=1525032458
-#season 3 - (kmd block 1444000 btc block ~ 585548 txid ff603c48f1e3958de4b170e84c85322a55bae2097c2ea2b659a3bd89617b6fb1)
-timefilter=1563202267
-#Second time filter for assetchains (SuperNET commit 07515fb)
-#timefilter2=1525513998
-#season 3 ACs - 2019-07-15 00:00 UTC (kmd block 1443129)
-timefilter2=1563148800
+
+# Only count KMD->BTC after this timestamp
+# Season 5 kmd block 2437300
+timefilter=1623711782
+
+# Second time filter for assetchains
+# season 5 ACs - Season 5 Monday, June 14th, 2021 (03:00:00 PM UTC) (Komodo commit 7e380a1)
+timefilter2=1623682800
 
 format="%-11s %6s %7s %6s %.20s %8s %7s %5s %6s %6s %6s"
 
@@ -74,11 +61,10 @@ outputstats ()
     kmdtxinfo=$($komodocli listtransactions "" $txscanamount)
     kmdlastntrztime=$(echo $kmdtxinfo | jq -r --arg address "$kmdntrzaddr" '[.[] | select(.address==$address)] | sort_by(.time) | last | "\(.time)"')
     kmdutxos=$($komodocli listunspent | jq --arg amt "$utxoamt" '[.[] | select(.amount==($amt|tonumber))] | length')
-    repo=(${repos[KMD]})
     TIMEFORMAT="%R"
     wallettime=$( (time $komodocli listunspent) 2>&1 > /dev/null )
 
-    printf "$format\n" "KMD$(checkRepo KMD ${repo[0]} ${repo[1]})" \
+    printf "$format\n" "KMD" \
             "" \
             "$(timeSince $kmdlastntrztime)" \
             "$kmdutxos" \
@@ -148,7 +134,6 @@ outputstats ()
         coinsntrzd=$(echo $coinstxinfo | jq --arg address "$coinsntraddr" --arg timefilter $seasonfilter '[.[] | select(.time>=($timefilter|tonumber) and .address==$address and .category=="send")] | length')
         otherutxo=$($coinexec listunspent | jq --arg amt "$coinsutxoamount" '[.[] | select(.amount==($amt|tonumber))] | length')
         totalntrzd=$(( $totalntrzd + $coinsntrzd ))
-        repo=(${repos[${coin[0]}]})
         wallettime=$( (time $coinexec listunspent) 2>&1 >/dev/null )
         balance=$($coinexec getbalance)
         if (( $(bc <<< "$balance < 0.02") )); then
@@ -157,7 +142,7 @@ outputstats ()
             balance=$(printf "%8.3f" $balance)
         fi
 
-        printf "$format\n" "${coin[0]}$(checkRepo ${coin[0]} ${repo[0]} ${repo[1]})" \
+        printf "$format\n" "${coin[0]}" \
                 "$coinsntrzd" \
                 "$(timeSince $coinslastntrztime)" \
                 "$otherutxo" \
@@ -183,7 +168,6 @@ outputstats ()
                 acntrzd=$(echo $txinfo | jq --arg address "$kmdntrzaddr" --arg timefilter $timefilter2 '[.[] | select(.time>=($timefilter|tonumber) and .address==$address and .category=="send")] | length')
                 totalntrzd=$(( $totalntrzd + $acntrzd ))
                 acutxo=$($komodocli -ac_name=${coin[0]} listunspent | jq --arg amt "$utxoamt" '[.[] | select(.amount==($amt|tonumber))] | length')
-                repo=(${repos[${coin[0]}]})
                 wallettime=$( (time $komodocli -ac_name=${coin[0]} listunspent) 2>&1 >/dev/null )
                 balance=$(jq .balance <<< $info)
                 if (( $(bc <<< "$balance < 0.02") )); then
@@ -200,7 +184,7 @@ outputstats ()
                     laststring="All:$totalntrzd"
                 fi
 
-                printf "$format" "${coin[0]}$(checkRepo ${coin[0]} ${repo[0]} ${repo[1]})" \
+                printf "$format" "${coin[0]}" \
                         "$acntrzd" \
                         "$(timeSince $lastntrztime)" \
                         "$acutxo" \
@@ -218,6 +202,15 @@ outputstats ()
             fi
         done
     fi
+
+    # Check if repos defined in paths file have an update compared to local
+    for repoindex in "${!repos[@]}"; do
+        repo=(${repos[${repoindex}]})
+        hasupdate=$(checkRepo ${repoindex} ${repo[0]} ${repo[1]})
+        if [[ ! -z ${hasupdate} ]]; then
+            echo -e "\n${repoindex} has an update ${hasupdate}"
+        fi
+    done
 }
 
 if [ "$sleepytime" != "false" ]; then
