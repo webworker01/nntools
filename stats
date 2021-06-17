@@ -121,14 +121,6 @@ outputstats ()
                 coinsntraddr=$ltcntrzaddr
                 seasonfilter=$timefilter
                 ;;
-            GAME)
-                coinsutxoamount=0.00100000
-                coinsntraddr=Gftmt8hgzgNu6f1o85HMPuwTVBMSV2TYSt
-                ;;
-            GIN)
-                coinsutxoamount=$utxoamt
-                coinsntraddr=Gftmt8hgzgNu6f1o85HMPuwTVBMSV2TYSt
-                ;;
             EMC2)
                 coinsutxoamount=0.00100000
                 coinsntraddr=EfCkxbDFSn4X1VKMzyckyHaXLf4ithTGoM
