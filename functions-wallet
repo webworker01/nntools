@@ -120,7 +120,7 @@ consolidateUTXOs ()
 
         if (( $(echo "$consolidateamountfixed > 0" | bc -l) )); then
 
-            rawtxresult=$($komodocli $asset createrawtransaction ${consolidatethese} '''{ "'$nn_address'": '$consolidateamountfixed' }''')
+            rawtxresult=$($komodocli $asset createrawtransaction "${consolidatethese}" '''{ "'$nn_address'": '$consolidateamountfixed' }''')
             rawtxid=$(sendRaw ${rawtxresult} ${coin})
 
             log "consolidate" "${coin} - Sent $consolidateamount to $nn_address TXID: $rawtxid" "green" "file"

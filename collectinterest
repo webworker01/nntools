@@ -47,7 +47,7 @@ if (( minedcount > 0 )); then
 
     #if feeder utxo doesn't exist
     if [[ "$feederamount" == "null" ]]; then
-        rawtxresult=$($komodocli createrawtransaction ${feedthis} '''{ "'$nn_address'": '$feedthisamountfixed' }''')
+        rawtxresult=$($komodocli createrawtransaction "${feedthis}" '''{ "'$nn_address'": '$feedthisamountfixed' }''')
         rawtxid=$(sendRaw ${rawtxresult})
         feederfed=1
 
@@ -58,7 +58,7 @@ if (( minedcount > 0 )); then
         combinefeederamounts=$( printf "%.8f" $(bc -l <<< "(${feederamount} + ${feedthisamountfixed} - ${feederutxotxfee})") )
         combinefeederutxos=$(jq -r --argjson arr1 "$feederutxovin" --argjson arr2 "$feedthis" -n '$arr1 + $arr2 | tostring')
 
-        rawtxresult=$($komodocli createrawtransaction ${combinefeederutxos} '''{ "'$nn_address'": '$combinefeederamounts' }''')
+        rawtxresult=$($komodocli createrawtransaction "${combinefeederutxos}" '''{ "'$nn_address'": '$combinefeederamounts' }''')
         rawtxid=$(sendRaw ${rawtxresult})
         feederfed=1
 
