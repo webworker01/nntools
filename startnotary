@@ -62,8 +62,13 @@ else
 
     for coins in "${coinsthird[@]}"; do
         coin=($coins)
+        if [[ "${coin[0]}" == "GLEECBTC" ]]; then
+            cointostart="GLEEC"
+        else
+            cointostart=${coin[0]}
+        fi
         log "startnotary" "Adding ${coin[0]}"
-        ./coins/${coin[0],,}_${iguanaport}
+        ./coins/${cointostart,,}_${iguanaport}
     done
 fi
 
