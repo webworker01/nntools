@@ -61,7 +61,7 @@ else
         curl --url "http://127.0.0.1:${iguanaport}" --data "{\"agent\":\"iguana\",\"method\":\"dpow\",\"symbol\":\"MCL\",\"pubkey\":\"${nn_pubkey}\"}"
         sleep $sleeptime
         # log "dpow" "Start VRSC Freq Default"
-        # curl --url "http://127.0.0.1:${iguanaport}" --data "{\"agent\":\"iguana\",\"method\":\"dpow\",\"symbol\":\"VRSC\",\"pubkey\":\"${nn_pubkey}\"}"
+        curl --url "http://127.0.0.1:${iguanaport}" --data "{\"agent\":\"iguana\",\"method\":\"dpow\",\"symbol\":\"VRSC\",\"pubkey\":\"${nn_pubkey}\"}"
         sleep $sleeptime
         log "dpow" "Start GLEECBTC Freq Default"
         curl --url "http://127.0.0.1:${iguanaport}" --data "{\"agent\":\"iguana\",\"method\":\"dpow\",\"symbol\":\"GLEEC\",\"pubkey\":\"${nn_pubkey}\"}"
