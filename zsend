@@ -44,18 +44,25 @@ echo "Send: $amounttosend"
 echo "Fee: $feeamount"
 echo "Change: $change"
 
-hexmemo=$(echo -n ${memo} | xxd -ps -u -l 512 -c 512)
-reversehexmemo=$(echo -n ${hexmemo} | xxd -r -p)
+if [[ ! -z ${memo} ]]; then
 
-if [[ "${reversehexmemo}" != "${memo}" ]]; then
-    echo "Warning your memo may have been truncated because it is too long:"
-    echo ${reversehexmemo}
+    hexmemo=$(echo -n ${memo} | xxd -ps -u -l 512 -c 512)
+    reversehexmemo=$(echo -n ${hexmemo} | xxd -r -p)
+
+    if [[ "${reversehexmemo}" != "${memo}" ]]; then
+        echo "Warning your memo may have been truncated because it is too long:"
+        echo ${reversehexmemo}
+    fi
+
+    memotxstring=",\"memo\":\"${hexmemo}\""
+else
+    memotxstring=""
 fi
 
 if [[ $change == "0.00000000" ]]; then
-    echo "${komodocli} ${asset} z_sendmany ${fromaddress} '[{"address":\"${toaddress}\","amount":${amounttosend},"memo":\"${hexmemo}\"}]' 1"
+    echo "${komodocli} ${asset} z_sendmany ${fromaddress} '[{"address":\"${toaddress}\","amount":${amounttosend}${memotxstring}}]' 1"
 else
-    echo "${komodocli} ${asset} z_sendmany ${fromaddress} '[{"address":\"${toaddress}\","amount":${amounttosend},"memo":\"${hexmemo}\"},{"address":\"${fromaddress}\","amount":${change}]' 1"
+    echo "${komodocli} ${asset} z_sendmany ${fromaddress} '[{"address":\"${toaddress}\","amount":${amounttosend}${memotxstring}},{"address":\"${fromaddress}\","amount":${change}]' 1"
 fi
 
 read -p "Do you want to execute this transaction? (y/n)" -n 1 DOZSEND
@@ -63,9 +70,9 @@ echo
 
 if [[ $DOZSEND =~ ^[Yy]$ ]]; then
     if [[ $change == "0.00000000" ]]; then
-        opid=$( ${komodocli} ${asset} z_sendmany ${fromaddress} '[{"address":"'''${toaddress}'''","amount":'''${amounttosend}''',"memo":"'''${hexmemo}'''"}]' 1 )
+        opid=$( ${komodocli} ${asset} z_sendmany ${fromaddress} '[{"address":"'''${toaddress}'''","amount":'''${amounttosend}${memotxstring}'''}]' 1 )
     else
-        opid=$( ${komodocli} ${asset} z_sendmany ${fromaddress} '[{"address":"'''${toaddress}'''","amount":'''${amounttosend}''',"memo":"'''${hexmemo}'''"},{"address":"'''${fromaddress}'''","amount":'''${change}'''}]' 1 )
+        opid=$( ${komodocli} ${asset} z_sendmany ${fromaddress} '[{"address":"'''${toaddress}'''","amount":'''${amounttosend}${memotxstring}'''},{"address":"'''${fromaddress}'''","amount":'''${change}'''}]' 1 )
     fi
     echo $opid
 fi
