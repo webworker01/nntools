@@ -11,18 +11,18 @@ else
     searchlist="coinsthird[@]"
 fi
 
+if [[ ! -z ${nn_pubkey} ]]; then
+    usepubkey="-pubkey=${nn_pubkey}"
+else
+    usepubkey=""
+fi
+
 if [[ -z "$1" || "${1^^}" == "KMD" ]]; then
 
     if [[ ! -z ${nn_address} ]]; then
         usenotary="-notary=\".litecoin/litecoin.conf\""
     else
         usenotary=""
-    fi
-
-    if [[ ! -z ${nn_pubkey} ]]; then
-        usepubkey="-pubkey=${nn_pubkey}"
-    else
-        usepubkey=""
     fi
 
     if [[ ! -z ${whitelist_addresses} ]]; then
@@ -36,9 +36,9 @@ if [[ -z "$1" || "${1^^}" == "KMD" ]]; then
 
     log "start" "Starting KMD"
     if (( $thirdpartycoins < 1 )); then
-        $komodod ${usenotary} ${usepubkey} $addnodes -pid=$HOME/.komodo/komodod.pid  ${whitelist} -minrelaytxfee=0.000035 -opretmintxfee=0.004 &
+        $komodod ${usenotary} ${usepubkey} ${addnodes} -pid=${HOME}/.komodo/komodod.pid ${whitelist} -minrelaytxfee=0.000035 -opretmintxfee=0.004 &
     else
-        $komodod ${usepubkey} $addnodes -pid=$HOME/.komodo/komodod.pid ${whitelist} -minrelaytxfee=0.000035 -opretmintxfee=0.004 &
+        $komodod ${usepubkey} ${addnodes} -pid=${HOME}/.komodo/komodod.pid ${whitelist} -minrelaytxfee=0.000035 -opretmintxfee=0.004 &
     fi
 fi
 
@@ -50,8 +50,7 @@ for coins in "${!searchlist}"; do
         cd $scriptpath/7776/
         log "start" "Starting ${searchcoin[0]}"
         eval $(echo coinexec=${searchcoin[2]})
-#        $coinexec -pubkey=${nn_pubkey} $addnodes &
-        $coinexec $addnodes &
+        $coinexec ${usepubkey} $addnodes &
     fi
 done
 
