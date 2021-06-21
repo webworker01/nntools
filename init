@@ -221,38 +221,38 @@ EOF
     fi
 
     #AYA
-    # if [[ ! -d "$HOME/AYAv2" ]]; then
-    #     log "init" "installing AYA"
-    #     cd $HOME
-    #     git clone https://github.com/KomodoPlatform/AYAv2
-    #     cd AYAv2
-    #     git checkout 3d03bdf
-    #     $scriptpath/build aya
+    if [[ ! -d "$HOME/AYAv2" ]]; then
+        log "init" "installing AYA"
+        cd $HOME
+        git clone https://github.com/KomodoPlatform/AYAv2
+        cd AYAv2
+        git checkout 02afeac
+        $scriptpath/build aya
 
         #aryacoin.conf
-#         randusername=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
-#         randpassword=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
+        randusername=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
+        randpassword=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
 
-#         mkdir -p $HOME/.aryacoin
-#         cat <<EOF > $HOME/.aryacoin/aryacoin.conf
-# rpcuser=user$randusername
-# rpcpassword=pass$randpassword
-# txindex=1
-# server=1
-# daemon=1
-# litemode=1
-# rpcworkqueue=256
-# rpcbind=127.0.0.1
-# rpcallowip=127.0.0.1
-# listen=0
-# listenonion=0
-# onlynet=ipv4
-# maxconnections=8
-# EOF
-#         chmod 600 $HOME/.aryacoin/aryacoin.conf
-#     else
-#         log "init" "$HOME/AYAv2 already exists, continuing..."
-#     fi
+        mkdir -p $HOME/.aryacoin
+        cat <<EOF > $HOME/.aryacoin/aryacoin.conf
+rpcuser=user$randusername
+rpcpassword=pass$randpassword
+txindex=1
+server=1
+daemon=1
+litemode=1
+rpcworkqueue=256
+rpcbind=127.0.0.1
+rpcallowip=127.0.0.1
+listen=0
+listenonion=0
+onlynet=ipv4
+maxconnections=8
+EOF
+        chmod 600 $HOME/.aryacoin/aryacoin.conf
+    else
+        log "init" "$HOME/AYAv2 already exists, continuing..."
+    fi
 
     #Marmara
     if [[ ! -d "$HOME/marmara" ]]; then
