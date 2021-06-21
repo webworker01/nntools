@@ -2,7 +2,7 @@
 #
 # Script to simplify sending a specified amount to/from z addressess
 #
-# Usage: zsend <coinname> <fromaddress> <toaddress> <amounttosend>
+# Usage: zsend <coinname> <fromaddress> <toaddress> <amounttosend> <memo>
 #
 # @author webworker01
 #
@@ -10,13 +10,13 @@ scriptpath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 source $scriptpath/main
 
 if [[ -z $1 ]] || [[ -z $2 ]] || [[ -z $3 ]] || [[ -z $4 ]]; then
-    echo "Usage: zsend <coinname> <fromaddress> <toaddress> <amounttosend>"
+    echo "Usage: zsend <coinname> <fromaddress> <toaddress> <amounttosend> <memo (optional)>"
     exit 0
 fi
 
 if [[ ${1^^} != "KMD" ]]; then
     coin=${1^^}
-    asset=" -ac_name=${coin}"
+    asset="-ac_name=${coin}"
 else
     coin="KMD"
     asset=""
@@ -25,24 +25,47 @@ fi
 fromaddress=$2
 toaddress=$3
 amounttosend=$4
+memo=$5
+
+feeamount=0.0001
 
 #get balance
 zbalance=$($komodocli $asset z_getbalance $fromaddress)
 
-if (( $(echo "$amounttosend > $zbalance" | bc -l) )); then
+if (( $(echo "$amounttosend + $feeamount > $zbalance" | bc -l) )); then
     echo "You cannot send more than your shielded balanced of $zbalance!"
     exit 0
 fi
 
-change=$( printf "%.8f" $(bc -l <<< "($zbalance-$amounttosend)") )
+change=$( printf "%.8f" $(bc -l <<< "($zbalance-$amounttosend-$feeamount)") )
 
 echo "Balance: $zbalance"
 echo "Send: $amounttosend"
+echo "Fee: $feeamount"
 echo "Change: $change"
 
-if [[ $change == "0.00000000" ]]; then
-    opid=$( $komodocli $asset z_sendmany $fromaddress '[{"address":"'''$toaddress'''","amount":'''$amounttosend'''}]' 1 0 )
-else
-    opid=$( $komodocli $asset z_sendmany $fromaddress '[{"address":"'''$toaddress'''","amount":'''$amounttosend'''},{"address":"'''$fromaddress'''","amount":'''$change'''}]' 1 0 )
+hexmemo=$(echo -n ${memo} | xxd -ps -u -l 512 -c 512)
+reversehexmemo=$(echo -n ${hexmemo} | xxd -r -p)
+
+if [[ "${reversehexmemo}" != "${memo}" ]]; then
+    echo "Warning your memo may have been truncated because it is too long:"
+    echo ${reversehexmemo}
 fi
-echo $opid
+
+if [[ $change == "0.00000000" ]]; then
+    echo "${komodocli} ${asset} z_sendmany ${fromaddress} '[{"address":\"${toaddress}\","amount":${amounttosend},"memo":\"${hexmemo}\"}]' 1"
+else
+    echo "${komodocli} ${asset} z_sendmany ${fromaddress} '[{"address":\"${toaddress}\","amount":${amounttosend},"memo":\"${hexmemo}\"},{"address":\"${fromaddress}\","amount":${change}]' 1"
+fi
+
+read -p "Do you want to execute this transaction? (y/n)" -n 1 DOZSEND
+echo
+
+if [[ $DOZSEND =~ ^[Yy]$ ]]; then
+    if [[ $change == "0.00000000" ]]; then
+        opid=$( ${komodocli} ${asset} z_sendmany ${fromaddress} '[{"address":"'''${toaddress}'''","amount":'''${amounttosend}''',"memo":"'''${hexmemo}'''"}]' 1 )
+    else
+        opid=$( ${komodocli} ${asset} z_sendmany ${fromaddress} '[{"address":"'''${toaddress}'''","amount":'''${amounttosend}''',"memo":"'''${hexmemo}'''"},{"address":"'''${fromaddress}'''","amount":'''${change}'''}]' 1 )
+    fi
+    echo $opid
+fi
