@@ -19,6 +19,8 @@ function validateaddress ()
 
 validateaddress $nn_address
 
+novalidateaddress=('AYA' 'GLEECBTC')
+
 if (( thirdpartycoins < 1 )); then
     for coins in "${coinlist[@]}"; do
         coin=($coins)
@@ -38,7 +40,11 @@ else
             eval $(echo coincli=${coin[1]})
         fi
 
-        ismine=$(${coincli} validateaddress ${coinaddress} | jq .ismine)
+        if [[ ${novalidateaddress[*]} =~ ${coin[0]} ]]; then
+            ismine=$(${coincli} getaddressinfo ${coinaddress} | jq .ismine)
+        else
+            ismine=$(${coincli} validateaddress ${coinaddress} | jq .ismine)
+        fi
         echo "[${coin[0]}] ${ismine}"
     done
 fi
