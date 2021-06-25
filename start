@@ -20,7 +20,7 @@ fi
 if [[ -z "$1" || "${1^^}" == "KMD" ]]; then
 
     if [[ ! -z ${nn_address} ]]; then
-        usenotary="-notary=\".litecoin/litecoin.conf\""
+        usenotary="-notary=.litecoin/litecoin.conf"
     else
         usenotary=""
     fi
