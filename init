@@ -106,7 +106,7 @@ if [[ ! -d "$HOME/dPoW" ]]; then
     git clone https://github.com/KomodoPlatform/dPoW -b master --single-branch
     cd dPoW
     # git checkout beta_season3
-    cp $HOME/komodo/src/pubkey.txt $HOME/dPoW/iguana/pubkey.txt
+    echo "pubkey=$nn_pubkey" > $HOME/komodo/src/pubkey.txt
 else
     log "init" "$HOME/dPoW already exists, continuing..."
 fi
