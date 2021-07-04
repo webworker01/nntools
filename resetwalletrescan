@@ -105,7 +105,7 @@ if [[ ! -z $raw_tx ]]; then
         txid=$(${coincli} sendrawtransaction ${signed_tx})
 
         if [[ ! -z $txid ]]; then
-            log "resetwalletrescan" "${coin} - utxos: ${splitamount} - ${txid}"
+            log "resetwalletrescan" "${coin} - utxos: ${splitqty} - ${txid}"
         fi
     fi
 fi
