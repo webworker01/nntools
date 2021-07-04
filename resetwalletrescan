@@ -44,6 +44,14 @@ elif [[ ! -z $chips_address && $coin == "CHIPS" ]]; then
     address=$chips_address
     splitqty=$otherutxoqty
     confcheck=".rawconfirmations"
+elif [[ ! -z $aya_address && $coin == "AYA" ]]; then
+    address=$aya_address
+    splitqty=$otherutxoqty
+    confcheck=".confirmations"
+elif [[ ! -z $gleecbtc_address && $coin == "GLEECBTC" ]]; then
+    address=$gleecbtc_address
+    splitqty=$otherutxoqty
+    confcheck=".confirmations"
 else
     echo "can't find address for $coin"
     exit 0
