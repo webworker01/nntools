@@ -89,6 +89,27 @@ scanfrom=$($coincli getblock $blockhash | jq .height)
 splitter=$(curl --url "http://127.0.0.1:$iguanaport" --data "{\"coin\":\"${coin}\",\"agent\":\"iguana\",\"method\":\"splitfunds\",\"satoshis\":\"$splitamount\",\"sendflag\":1,\"duplicates\":$splitqty}")
 log "resetwalletrescan" "${coin} - utxos: $splitqty - $splitter"
 
+raw_tx=$(jq -r .result <<< $raw_tx)
+
+if [[ ! -z $raw_tx ]]; then
+    usesignrawtxwallet=('AYA' 'GLEECBTC')
+    if [[ ${usesignrawtxwallet[*]} =~ ${coin} ]]; then
+        signed_tx=$(${coincli} signrawtransactionwithwallet ${raw_tx})
+    else
+        signed_tx=$(${coincli} signrawtransaction ${raw_tx})
+    fi
+    signed_tx=$(jq -r .hex <<< $signed_tx)
+
+    if [[ ! -z $signed_tx ]]; then
+
+        txid=$(${coincli} sendrawtransaction ${signed_tx})
+
+        if [[ ! -z $txid ]]; then
+            log "resetwalletrescan" "${coin} - utxos: ${splitamount} - ${txid}"
+        fi
+    fi
+fi
+
 sleep 10
 
 #stop daemon
