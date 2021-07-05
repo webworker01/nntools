@@ -123,10 +123,12 @@ fi
 log "resetwallet" "${coin} - scanfrom: $scanfrom" "red" "echo"
 
 #Grab daemon args before killing
-if [[ $coin == "KMD" ]]; then
+nodaemonargs=('MCL' 'VRSC')
+
+if [[ ${nodaemonargs[*]} =~ ${coin} ]]; then
+    daemon_args=""
+elif [[ $coin == "KMD" ]]; then
     daemon_args=$(ps -fC komodod | grep -- "-pubkey=${nn_pubkey}" | grep -v -- "-ac_name=" | grep -Po "komodod .*" | sed 's/komodod //g' | sed -e 's/-reindex//g' | sed -e 's/-rescan//g')
-elif [[ "${coin}" == "VRSC" ]]; then
-    daemon_args=$(ps -fC verusd | grep -- "-pubkey=${nn_pubkey}" | grep -v -- "-ac_name=" | grep -Po "verusd .*" | sed 's/verusd //g' | sed -e 's/-reindex//g' | sed -e 's/-rescan//g')
 else
     daemon_args=$(ps -fC komodod | grep -- "-pubkey=${nn_pubkey}" | grep -- "-ac_name=${coin}" | grep -Po "komodod .*" | sed 's/komodod //g' | sed -e 's/-reindex//g' | sed -e 's/-rescan//g')
 fi
@@ -165,7 +167,7 @@ else
     importedaddress=$($komodocli $asset importprivkey $privkey "" false)
     results=$(${komodocli} ${asset} z_importkey "${tempkey}" yes $scanfrom)
 fi
-log "resetwallet" "${coin} - Imported address -> $importedaddress as height $scanfrom"
+log "resetwallet" "${coin} - Imported address -> $importedaddress at height $scanfrom"
 
 newbalance=$($komodocli $asset getbalance)
 log "resetwallet" "${coin} - Done! Balance $newbalance"
