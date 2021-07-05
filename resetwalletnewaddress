@@ -38,14 +38,8 @@ coin=${1^^}
 
 confcheck=""
 splitqty=$otherutxoqty
-if [[ ! -z $game_address && $coin == "GAME" ]]; then
-    address=$game_address
-elif [[ ! -z $emc2_address && $coin == "EMC2" ]]; then
+if [[ ! -z $emc2_address && $coin == "EMC2" ]]; then
     address=$emc2_address
-elif [[ ! -z $gin_address && $coin == "GIN" ]]; then
-    address=$gin_address
-elif [[ ! -z $aya_address && $coin == "AYA" ]]; then
-    address=$aya_address
 else
     echo "can't find address for $coin"
     exit 0

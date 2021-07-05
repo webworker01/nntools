@@ -36,6 +36,9 @@ fi
 
 coin=${1^^}
 
+utxoamt=0.00010000
+splitamount=10000
+
 if [[ ! -z $ltc_address && $coin == "LTC" ]]; then
     address=$ltc_address
     splitqty=$ltcutxoqty
@@ -44,15 +47,22 @@ elif [[ ! -z $chips_address && $coin == "CHIPS" ]]; then
     address=$chips_address
     splitqty=$otherutxoqty
     confcheck=".rawconfirmations"
+elif [[ ! -z $aya_address && $coin == "AYA" ]]; then
+    address=$aya_address
+    splitqty=$otherutxoqty
+    splitamount=100000
+    utxoamt=0.001000000
+    confcheck=".confirmations"
+elif [[ ! -z $gleecbtc_address && $coin == "GLEECBTC" ]]; then
+    address=$gleecbtc_address
+    splitqty=$otherutxoqty
+    confcheck=".confirmations"
 else
     echo "can't find address for $coin"
     exit 0
 fi
 
 pidfile="$datadir/$pidfile"
-
-utxoamt=0.00010000
-splitamount=10000
 
 privkey=$($coincli dumpprivkey $address)
 
@@ -80,6 +90,27 @@ scanfrom=$($coincli getblock $blockhash | jq .height)
 #split funds
 splitter=$(curl --url "http://127.0.0.1:$iguanaport" --data "{\"coin\":\"${coin}\",\"agent\":\"iguana\",\"method\":\"splitfunds\",\"satoshis\":\"$splitamount\",\"sendflag\":1,\"duplicates\":$splitqty}")
 log "resetwalletrescan" "${coin} - utxos: $splitqty - $splitter"
+
+raw_tx=$(jq -r .result <<< $splitter)
+
+if [[ ! -z $raw_tx ]]; then
+    usesignrawtxwallet=('AYA' 'GLEECBTC')
+    if [[ ${usesignrawtxwallet[*]} =~ ${coin} ]]; then
+        signed_tx=$(${coincli} signrawtransactionwithwallet ${raw_tx})
+    else
+        signed_tx=$(${coincli} signrawtransaction ${raw_tx})
+    fi
+    signed_tx=$(jq -r .hex <<< $signed_tx)
+
+    if [[ ! -z $signed_tx ]]; then
+
+        txid=$(${coincli} sendrawtransaction ${signed_tx})
+
+        if [[ ! -z $txid ]]; then
+            log "resetwalletrescan" "${coin} - utxos: ${splitqty} - ${txid}"
+        fi
+    fi
+fi
 
 sleep 10
 
