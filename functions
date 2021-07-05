@@ -133,9 +133,10 @@ setupCoinVars ()
         fi
 
         #search for alt komodods
+        altkmd=('kmd' 'zimport')
         for coins in "${!searchlist}"; do
             searchcoin=($coins)
-            if [[ "${searchcoin[4]}" == "kmd" ]] || [[ "${searchcoin[4]}" == "zimport" ]] && [[ "$1" == "${coin[0]}" ]]; then
+            if [[ "${coin}" == "${searchcoin[0]}" ]] && [[ ${altkmd[*]} =~ ${searchcoin[4]} ]]; then
                 eval $(echo coinexec=${searchcoin[2]})
                 datadir="${HOME}/${searchcoin[3]}"
             fi
