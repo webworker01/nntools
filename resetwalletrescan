@@ -36,6 +36,9 @@ fi
 
 coin=${1^^}
 
+utxoamt=0.00010000
+splitamount=10000
+
 if [[ ! -z $ltc_address && $coin == "LTC" ]]; then
     address=$ltc_address
     splitqty=$ltcutxoqty
@@ -47,6 +50,8 @@ elif [[ ! -z $chips_address && $coin == "CHIPS" ]]; then
 elif [[ ! -z $aya_address && $coin == "AYA" ]]; then
     address=$aya_address
     splitqty=$otherutxoqty
+    splitamount=100000
+    utxoamt=0.001000000
     confcheck=".confirmations"
 elif [[ ! -z $gleecbtc_address && $coin == "GLEECBTC" ]]; then
     address=$gleecbtc_address
@@ -58,9 +63,6 @@ else
 fi
 
 pidfile="$datadir/$pidfile"
-
-utxoamt=0.00010000
-splitamount=10000
 
 privkey=$($coincli dumpprivkey $address)
 
