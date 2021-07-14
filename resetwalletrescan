@@ -38,7 +38,7 @@ coin=${1^^}
 
 utxoamt=0.00010000
 splitamount=10000
-
+splitcoin=$coin
 if [[ ! -z $ltc_address && $coin == "LTC" ]]; then
     address=$ltc_address
     splitqty=$ltcutxoqty
@@ -55,6 +55,11 @@ elif [[ ! -z $aya_address && $coin == "AYA" ]]; then
     confcheck=".confirmations"
 elif [[ ! -z $gleecbtc_address && $coin == "GLEECBTC" ]]; then
     address=$gleecbtc_address
+    splitqty=$otherutxoqty
+    confcheck=".confirmations"
+    splitcoin="GLEEC"
+elif [[ ! -z $sfusd_address && $coin == "SFUSD" ]]; then
+    address=$sfusd_address
     splitqty=$otherutxoqty
     confcheck=".confirmations"
 else
@@ -88,7 +93,7 @@ blockhash=$($coincli gettransaction $txid | jq -r .blockhash)
 scanfrom=$($coincli getblock $blockhash | jq .height)
 
 #split funds
-splitter=$(curl --url "http://127.0.0.1:$iguanaport" --data "{\"coin\":\"${coin}\",\"agent\":\"iguana\",\"method\":\"splitfunds\",\"satoshis\":\"$splitamount\",\"sendflag\":1,\"duplicates\":$splitqty}")
+splitter=$(curl --url "http://127.0.0.1:$iguanaport" --data "{\"coin\":\"${splitcoin}\",\"agent\":\"iguana\",\"method\":\"splitfunds\",\"satoshis\":\"$splitamount\",\"sendflag\":1,\"duplicates\":$splitqty}")
 log "resetwalletrescan" "${coin} - utxos: $splitqty - $splitter"
 
 raw_tx=$(jq -r .result <<< $splitter)
