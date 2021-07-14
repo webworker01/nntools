@@ -10,8 +10,6 @@
 scriptpath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 source $scriptpath/main
 
-max_no_blocks=192
-
 lastgen=$($komodocli listtransactions "*" 777 | jq '[.[] | select(.generated==true)] | .[-1]')
 if [[ "$lastgen" != "null" ]]; then
     confirmations=$(jq .confirmations <<< $lastgen)
@@ -21,41 +19,38 @@ if [[ "$lastgen" != "null" ]]; then
     lasttxid=$(jq -r .txid <<< $lastgen)
     lastheight=$($komodocli getblockheader $lasthash | jq -r .height)
 
-    log "minerfixer" "Last Amt:$lastamount Ht:$lastheight RawConfs:$rawconfirmations Confs:$confirmations" "green" "echo"
+    log "minerfixer" "Last Amt:${lastamount} Ht:${lastheight} RawConfs:${rawconfirmations} Confs:${confirmations}" "green" "echo"
+
+    if (( $rawconfirmations == 1 )); then
+        log "minerfixer" "[[ Block found! ]] Height: ${lastheight} Amount: ${lastamount} TxID: ${lasttxid}" "red"
+
+    elif (( $rawconfirmations == 2 )); then
+        log "minerfixer" "[[ Block found! ]]" "green" "echo"
 
     #between 3 and 64 confirmations go into power saving mode
-    if (( (rawconfirmations > 2 && rawconfirmations < 65) )); then
-        eligible=$(( 65 - rawconfirmations ))
-
+    elif (( ($rawconfirmations > 2 && $rawconfirmations < 65) )); then
         $komodocli setgenerate false
-        if (( rawconfirmations == 3 )); then
+
+        if (( $rawconfirmations == 3 )); then
             log "minerfixer" "energy saving mode" "green"
         else
             log "minerfixer" "energy saving mode" "green" "echo"
         fi
 
-    #turn on setgenerate upon eligibility
-    elif (( rawconfirmations == 65 )); then
-        log "minerfixer" "setgenerate true"
+    #setgenerate true upon eligibility and every 65 blocks after that as failsafe
+    elif (( $rawconfirmations % 65 == 0 )); then
+        log "minerfixer" "setgenerate true (${rawconfirmations} confs)"
         $komodocli setgenerate true 1
 
-    elif (( rawconfirmations < 3 )); then
-        if (( rawconfirmations == 1 )); then
-            log "minerfixer" "Block Found! Height: $lastheight Amount: $lastamount TxID: $lasttxid" "red"
-        else
-            log "minerfixer" " [[ Block found! ]]" "green" "echo"
-        fi
-
-    # If we're past $max_no_blocks since last block found, double check that mining is enabled.
-    elif (( rawconfirmations > max_no_blocks )); then
+    # Verify mining when it should be
+    else
         mining=$($komodocli getmininginfo | jq -r .generate)
         if [[ "${mining}" == "false" ]]; then
-            log "minerfixer" "Should have been mining but wasn't - ${rawconfirmations} > ${max_no_blocks} - setgenerate true" "red"
+            log "minerfixer" "Should have been mining but wasn't - setgenerate true" "red"
             $komodocli setgenerate true 1
+        else
+            log "minerfixer" "mining.." "green" "echo"
         fi
-    # No change, just verify mining
-    else
-        log "minerfixer" "mining.." "green" "echo"
     fi
 else
     getsynced=$($komodocli getinfo | jq .synced)
