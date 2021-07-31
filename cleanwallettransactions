@@ -23,14 +23,15 @@ clean() {
 
 clean "KMD"
 
-if (( thirdpartycoins < 1 )); then
-    for coins in "${coinlist[@]}"; do
-        coin=($coins)
-        if [[ ! ${ignoreacs[*]} =~ ${coin[0]} ]]; then
-            clean ${coin[0]}
-        fi
-    done
+if (( $thirdpartycoins < 1 )); then
+    cleanlist="coinlist[@]"
 else
-    clean "VRSC"
-    clean "MCL"
+    cleanlist="komodolike[@]"
 fi
+
+for coins in "${!cleanlist}"; do
+    coin=($coins)
+    if [[ ! ${ignoreacs[*]} =~ ${coin[0]} ]]; then
+        clean ${coin[0]}
+    fi
+done

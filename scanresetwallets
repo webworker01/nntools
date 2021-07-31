@@ -24,7 +24,7 @@ for coins in "${!searchlist}"; do
     coin=($coins)
     walletsize=$(ls -l ~/${coin[3]}/wallet.dat  | awk '{print $5}')
 
-    if [[ ${coin[0]} == "VRSC" ]] || [[ ${coin[0]} == "MCL" ]]; then
+    if [[ ${komodolike[*]} =~ ${coin[0]} ]]; then
         monitorsizeother=$monitorsize
     fi
 

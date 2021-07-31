@@ -123,9 +123,7 @@ fi
 log "resetwallet" "${coin} - scanfrom: $scanfrom" "red" "echo"
 
 #Grab daemon args before killing
-nodaemonargs=('MCL' 'VRSC')
-
-if [[ ${nodaemonargs[*]} =~ ${coin} ]]; then
+if [[ ${komodolike[*]} =~ ${coin} ]]; then
     daemon_args=""
 elif [[ $coin == "KMD" ]]; then
     daemon_args=$(ps -fC komodod | grep -- "-pubkey=${nn_pubkey}" | grep -v -- "-ac_name=" | grep -Po "komodod .*" | sed 's/komodod //g' | sed -e 's/-reindex//g' | sed -e 's/-rescan//g')

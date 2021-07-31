@@ -38,6 +38,7 @@ declare -A komodobased=(
 [KMD]="$HOME/komodo"
 [VRSC]="$HOME/VerusCoin werror"
 [MCL]="$HOME/marmara stdexcept"
+[TOKEL]="$HOME/tokelkomodo stdexcept"
 )
 
 bdb_PATH="${HOME}/berkeleydb48"

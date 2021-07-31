@@ -19,17 +19,17 @@ if (( thirdpartycoins < 1 )); then
         if [[ ! ${ignoreacs[*]} =~ ${coin[0]} ]]; then
             acport=$($komodocli -ac_name=${coin[0]} getinfo | jq .p2pport)
             echo $acport
-            sudo ufw allow $acport comment "${coin[0]}"
+            sudo ufw allow ${acport}/tcp comment "${coin[0]}"
         fi
     done
 else
-    sudo ufw allow 13334 comment 'Iguana Notary Third Party'
-    sudo ufw allow 57777 comment 'CHIPS'
-    #sudo ufw allow 40002 comment 'GAME'
-    #sudo ufw allow 41878 comment 'EMC2'
-    #sudo ufw allow 10111 comment 'GIN'
-    sudo ufw allow 27485 comment 'VRSC'
-    sudo ufw allow 38890 comment 'MM2 P2P'
+    sudo ufw allow 13334/tcp comment 'Iguana Notary Third Party'
+    sudo ufw allow 57777/tcp comment 'CHIPS'
+    sudo ufw allow 41878/tcp comment 'EMC2'
+    sudo ufw allow 33824/tcp comment 'MCL'
+    sudo ufw allow 27485/tcp comment 'VRSC'
+    sudo ufw allow 29404/tcp comment 'TOKEL'
+    sudo ufw allow 38890/tcp comment 'MM2 P2P'
 fi
 
 sudo ufw enable

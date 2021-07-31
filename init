@@ -332,6 +332,17 @@ EOF
     else
         log "init" "$HOME/sfusd-core already exists, continuing..."
     fi
+
+    #TOKEL
+    if [[ ! -d "$HOME/tokelkomodo" ]]; then
+        log "init" "installing TOKEL"
+        cd $HOME
+        git clone https://github.com/komodoplatform/komodo -b tokel tokelkomodo
+        cd tokelkomodo
+        $scriptpath/build tokel
+    else
+        log "init" "$HOME/tokelkomodo already exists, continuing..."
+    fi
 fi
 
 echo
