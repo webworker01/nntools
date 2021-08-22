@@ -214,7 +214,7 @@ EOF
         cd $HOME
         git clone https://github.com/VerusCoin/VerusCoin
         cd VerusCoin
-        git checkout 942b01b
+        git checkout 77424d8
         $scriptpath/build vrsc
     else
         log "init" "$HOME/VerusCoin already exists, continuing..."
