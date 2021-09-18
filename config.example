@@ -28,8 +28,6 @@ nn_pubkey=
 
 #Enter your notary node IPv4 address
 nn_ipaddress=
-#Optionally, this can be used instead of hardcoding IP address
-#nn_ipaddress=$(curl -s4 icanhazip.com)
 
 #Whitelist other addresses incoming funds are expected from - own address is automatically whitelisted
 whitelist_addresses=("RKrMB4guHxm52Tx9LG8kK3T5UhhjVuRand" "RVB7Vd4JbbjQPV1WE5ZdeWmWo5EjMpXDH6" "RDragoNHdwovvsDLSLMiAEzEArAD3kq6FN")
