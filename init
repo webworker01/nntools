@@ -214,7 +214,7 @@ EOF
         cd $HOME
         git clone https://github.com/VerusCoin/VerusCoin
         cd VerusCoin
-        git checkout 77424d8
+        git checkout 4c7a0a6
         $scriptpath/build vrsc
     else
         log "init" "$HOME/VerusCoin already exists, continuing..."
@@ -339,6 +339,7 @@ EOF
         cd $HOME
         git clone https://github.com/komodoplatform/komodo -b tokel tokelkomodo
         cd tokelkomodo
+        git checkout 4302bb3
         $scriptpath/build tokel
     else
         log "init" "$HOME/tokelkomodo already exists, continuing..."
