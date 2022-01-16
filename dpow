@@ -26,12 +26,18 @@ else
     for coins in "${!dpowlist}"; do
         coin=($coins)
 
+        if [[ "${coin[0]}" == "GLEECBTC" ]]; then
+            cointostart="GLEEC"
+        else
+            cointostart=${coin[0]}
+        fi
+
         if [[ ${freqfive[*]} =~ ${coin[0]} ]]; then
             log "dpow" "Start ${coin[0]} Freq 5"
-            curl --url "http://127.0.0.1:${iguanaport}" --data "{\"agent\":\"iguana\",\"method\":\"dpow\",\"symbol\":\"${coin[0]}\",\"freq\":5,\"pubkey\":\"${nn_pubkey}\"}"
+            curl --url "http://127.0.0.1:${iguanaport}" --data "{\"agent\":\"iguana\",\"method\":\"dpow\",\"symbol\":\"${cointostart}\",\"freq\":5,\"pubkey\":\"${nn_pubkey}\"}"
         else
             log "dpow" "Start ${coin[0]} Freq Default"
-            curl --url "http://127.0.0.1:${iguanaport}" --data "{\"agent\":\"iguana\",\"method\":\"dpow\",\"symbol\":\"${coin[0]}\",\"pubkey\":\"${nn_pubkey}\"}"
+            curl --url "http://127.0.0.1:${iguanaport}" --data "{\"agent\":\"iguana\",\"method\":\"dpow\",\"symbol\":\"${cointostart}\",\"pubkey\":\"${nn_pubkey}\"}"
         fi
         sleep $sleeptime
     done
