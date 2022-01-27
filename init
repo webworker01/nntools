@@ -260,7 +260,7 @@ EOF
         cd $HOME
         git clone https://github.com/marmarachain/marmara.git
         cd marmara
-        git checkout 2412d5f
+        git checkout b288dfd
         $scriptpath/build mcl
     else
         log "init" "$HOME/marmara already exists, continuing..."
