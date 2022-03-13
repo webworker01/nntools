@@ -28,9 +28,9 @@ coinsthird=(
 'VRSC $HOME/VerusCoin/src/verus $verusd .komodo/VRSC zimport komodod.pid'
 'AYA $HOME/AYAv2/src/aryacoin-cli $HOME/AYAv2/src/aryacoind .aryacoin rescan aryacoin.pid'
 'MCL $marmaracli $marmarad .komodo/MCL kmd komodod.pid'
-'GLEECBTC $HOME/GleecBTC-FullNode-Win-Mac-Linux/src/gleecbtc-cli $HOME/GleecBTC-FullNode-Win-Mac-Linux/src/gleecbtcd .gleecbtc rescan gleecbtcd.pid'
 'SFUSD $HOME/sfusd-core/src/smartusd-cli $HOME/sfusd-core/src/smartusdd .smartusd rescan smartusdd.pid'
 'TOKEL $tokelcli $tokeld .komodo/TOKEL kmd komodod.pid'
+'MIL $HOME/mil-1/src/mil-cli $HOME/mil-1/mild .mil newaddress mil.pid'
 )
 
 #for git checking - path and remote branch
