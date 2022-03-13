@@ -315,7 +315,7 @@ EOF
     if [[ ! -d "$HOME/mil-1" ]]; then
         log "init" "installing MIL"
         cd $HOME
-        git clone git clone https://github.com/KomodoPlatform/mil-1
+        git clone https://github.com/KomodoPlatform/mil-1
         cd mil-1
         git checkout 4fb0389
 
