@@ -19,7 +19,7 @@ function validateaddress ()
 
 validateaddress $nn_address
 
-novalidateaddress=('AYA' 'GLEECBTC')
+novalidateaddress=('AYA')
 
 if (( thirdpartycoins < 1 )); then
     for coins in "${coinlist[@]}"; do

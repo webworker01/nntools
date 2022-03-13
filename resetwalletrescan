@@ -51,16 +51,16 @@ elif [[ ! -z $aya_address && $coin == "AYA" ]]; then
     address=$aya_address
     splitqty=$otherutxoqty
     splitamount=100000
-    utxoamt=0.001000000
+    utxoamt=0.00100000
     confcheck=".confirmations"
-elif [[ ! -z $gleecbtc_address && $coin == "GLEECBTC" ]]; then
-    address=$gleecbtc_address
-    splitqty=$otherutxoqty
-    confcheck=".confirmations"
-    splitcoin="GLEEC"
 elif [[ ! -z $sfusd_address && $coin == "SFUSD" ]]; then
     address=$sfusd_address
     splitqty=$otherutxoqty
+    confcheck=".confirmations"
+elif [[ ! -z $mil_address && $coin == "MIL" ]]; then
+    address=$mil_address
+    splitamount=100000
+    utxoamt=0.00100000
     confcheck=".confirmations"
 else
     echo "can't find address for $coin"
@@ -99,7 +99,7 @@ log "resetwalletrescan" "${coin} - utxos: $splitqty - $splitter"
 raw_tx=$(jq -r .result <<< $splitter)
 
 if [[ ! -z $raw_tx ]]; then
-    usesignrawtxwallet=('AYA' 'GLEECBTC')
+    usesignrawtxwallet=('AYA')
     if [[ ${usesignrawtxwallet[*]} =~ ${coin} ]]; then
         signed_tx=$(${coincli} signrawtransactionwithwallet ${raw_tx})
     else

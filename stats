@@ -114,16 +114,16 @@ outputstats ()
                 coinsntraddr=EfCkxbDFSn4X1VKMzyckyHaXLf4ithTGoM
                 ;;
             AYA)
-                coinsutxoamount=0.001000000
+                coinsutxoamount=0.00100000
                 coinsntraddr=Adpj7WENLyRkq9vVknHa82rf3cVHjYvzCG
-                ;;
-            GLEECBTC)
-                coinsutxoamount=$utxoamt
-                coinsntraddr=FTsxvoops8zGeMbY3pHPwY86bfacGvMdfU
                 ;;
             SFUSD)
                 coinsutxoamount=$utxoamt
                 coinsntraddr=SjLrVr9tkBxoYVVxjZcKX3k8Dno2A28YD7
+                ;;
+            MIL)
+                coinsutxoamount=0.00100000
+                coinsntraddr=MVx1hSH9WqwQurgqR7HBDRCu3ESkuhQC8r
                 ;;
             *)
                 coinsutxoamount=$utxoamt
