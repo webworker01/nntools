@@ -46,6 +46,7 @@ function komodo_asset()
 komodo_asset -ac_name=BET -ac_supply=999999
 komodo_asset -ac_name=BOTS -ac_supply=999999
 komodo_asset -ac_name=CCL -ac_supply=200000000 -ac_end=1 -ac_cc=2 -addressindex=1 -spentindex=1 -addnode=142.93.136.89 -addnode=195.201.22.89
+komodo_asset -ac_name=CLC -ac_supply=99000000 -ac_reward=50000000 -ac_perc=100000000 -ac_founders=1 -ac_cc=45 -ac_public=1 -ac_snapshot=1440 -ac_pubkey=02df9bda7bfe2bcaa938b29a399fb0ba58cfb6cc3ddc0001062a600f60a8237ad9 -addnode=node.cryptocollider.com -ac_adaptivepow=6
 komodo_asset -ac_name=CRYPTO -ac_supply=999999
 komodo_asset -ac_name=DEX -ac_supply=999999
 komodo_asset -ac_name=GLEEC -ac_supply=210000000 -ac_public=1 -ac_staked=100 -addnode=95.217.161.126

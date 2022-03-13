@@ -5,7 +5,7 @@
 scriptpath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 source $scriptpath/main
 
-freqfive=('AYA' 'EMC2')
+freqfive=('AYA' 'EMC2' 'MIL')
 sleeptime=3
 
 if [[ ! -z $1 ]]; then
@@ -25,12 +25,7 @@ else
 
     for coins in "${!dpowlist}"; do
         coin=($coins)
-
-        if [[ "${coin[0]}" == "GLEECBTC" ]]; then
-            cointostart="GLEEC"
-        else
-            cointostart=${coin[0]}
-        fi
+        cointostart=${coin[0]}
 
         if [[ ${freqfive[*]} =~ ${coin[0]} ]]; then
             log "dpow" "Start ${coin[0]} Freq 5"

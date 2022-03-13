@@ -83,7 +83,8 @@ else
             continue
         fi
 
-        if [[ ${coin[0]} == "GAME" ]] || [[ ${coin[0]} == "EMC2" ]] || [[ ${coin[0]} == "AYA" ]]; then
+        usebigsplit=('GAME' 'EMC2' 'AYA' 'MIL')
+        if [[ ${usebigsplit[*]} =~ ${coin[0]} ]]; then
             coinsutxoamount=0.00100000
             coinsplitamount=100000
         else
@@ -104,17 +105,13 @@ else
         otherutxo=$(${coincli} listunspent | jq --arg amt "$coinsutxoamount" '[.[] | select(.amount==($amt|tonumber))] | length')
         if (( otherutxo < otherutxoqty )); then
             echo "${coin[0]} utxos: $otherutxo"
-            if [[ "${coin[0]}" == "GLEECBTC" ]]; then
-                cointosplit="GLEEC"
-            else
-                cointosplit=${coin[0]}
-            fi
+            cointosplit=${coin[0]}
 
             raw_tx=$(curl -s --url "http://127.0.0.1:$iguanaport" --data "{\"coin\":\"${cointosplit}\",\"agent\":\"iguana\",\"method\":\"splitfunds\",\"satoshis\":\"$coinsplitamount\",\"sendflag\":1,\"duplicates\":$otherutxoqty}")
             raw_tx=$(jq -r .result <<< $raw_tx)
 
             if [[ ! -z $raw_tx ]]; then
-                usesignrawtxwallet=('AYA' 'GLEECBTC')
+                usesignrawtxwallet=('AYA')
                 if [[ ${usesignrawtxwallet[*]} =~ ${coin[0]} ]]; then
                     signed_tx=$(${coincli} signrawtransactionwithwallet ${raw_tx})
                 else
