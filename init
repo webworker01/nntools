@@ -318,6 +318,7 @@ EOF
         git clone https://github.com/KomodoPlatform/mil-1
         cd mil-1
         git checkout 4fb0389
+        $scriptpath/build mil
 
         #mil.conf
         randusername=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
