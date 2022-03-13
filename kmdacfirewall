@@ -30,6 +30,7 @@ else
     sudo ufw allow 27485/tcp comment 'VRSC'
     sudo ufw allow 29404/tcp comment 'TOKEL'
     sudo ufw allow 38890/tcp comment 'MM2 P2P'
+    sudo ufw allow 41888/tcp comment 'MIL'
 fi
 
 sudo ufw enable
