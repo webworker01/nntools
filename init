@@ -340,7 +340,7 @@ onlynet=ipv4
 EOF
         chmod 600 $HOME/.mil/mil.conf
     else
-        log "init" "$HOME/einsteinium already exists, continuing..."
+        log "init" "$HOME/mil-1 already exists, continuing..."
     fi
 fi
 
