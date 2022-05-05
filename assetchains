@@ -10,7 +10,7 @@ name=${1^^}
 args=("$@")
 delay=1
 
-skip_whitelist=('')
+skip_whitelist=('VOTE2022')
 
 function komodo_asset()
 {
