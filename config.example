@@ -55,8 +55,11 @@ ltcutxoqty=50
 #Lower threshold for third party coin utxos
 otherutxoqty=50
 
-#Standard tx fee amount
+#Standard tx fee amount for KMD
 txfeeperkb=0.000035
+
+#Standard tx fee amount for Smartchains
+sctxfeeperkb=0.000035
 
 #size to monitor for in bytes
 monitorsize=20000000

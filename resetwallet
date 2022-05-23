@@ -51,7 +51,7 @@ if (( resettooldest < 1 )); then
 
     consolidatethese=$(jq -rc '[.[] | {"txid":.txid, "vout":.vout}]' <<< $unspent)
     consolidatetheselength=$(jq -r '. | length' <<< $unspent)
-    consolidatethesetxfee=$(calcFee ${consolidatetheselength} 1 "p2pkh" "p2pkh")
+    consolidatethesetxfee=$(calcFee ${consolidatetheselength} 1 "p2pkh" "p2pkh" $feepkb)
     consolidateamount=$(jq -r '[.[].amount] | add' <<< $unspent)
     consolidateamountfixed=$( printf "%.8f" $(bc -l <<< "(${consolidateamount}+${interest}-${consolidatethesetxfee})") )
     rawtxresult=$($komodocli $asset createrawtransaction "${consolidatethese}" '''{ "'$nn_address'": '$consolidateamountfixed' }''')
