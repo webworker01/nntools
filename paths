@@ -30,7 +30,7 @@ coinsthird=(
 'MCL $marmaracli $marmarad .komodo/MCL kmd komodod.pid'
 'SFUSD $HOME/sfusd-core/src/smartusd-cli $HOME/sfusd-core/src/smartusdd .smartusd rescan smartusdd.pid'
 'TOKEL $tokelcli $tokeld .komodo/TOKEL kmd tokeld.pid'
-'MIL $HOME/mil/src/mil-cli $HOME/mil-1/src/mild .mil newaddress mil.pid'
+'MIL $HOME/mil/src/mil-cli $HOME/mil/src/mild .mil newaddress mil.pid'
 )
 
 #for git checking - path and remote branch
