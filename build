@@ -29,16 +29,16 @@ declare -A bitcoinbased=(
 [CHIPS]="$HOME/chips gcc9"
 [CHIPS3]="$HOME/chips3 gcc9"
 [AYA]="$HOME/AYAv2"
-[EMC2]="$HOME/einsteinium"
+[EMC2]="$HOME/einsteinium gcc9"
 [SFUSD]="$HOME/sfusd-core"
-[MIL]="$HOME/mil-1"
+[MIL]="$HOME/mil gcc9"
 )
 
 declare -A komodobased=(
 [KMD]="$HOME/komodo"
 [VRSC]="$HOME/VerusCoin werror"
 [MCL]="$HOME/marmara stdexcept"
-[TOKEL]="$HOME/tokelkomodo stdexcept"
+[TOKEL]="$HOME/tokel stdexcept"
 )
 
 bdb_PATH="${HOME}/berkeleydb48"
