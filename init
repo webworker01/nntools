@@ -305,7 +305,7 @@ EOF
         log "init" "installing TOKEL"
         cd $HOME
         git clone https://github.com/TokelPlatform/tokel -b tokel
-        cd tokelkomodo
+        cd tokel
         git checkout 65d50d0
         $scriptpath/build tokel
     else
