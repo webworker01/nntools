@@ -304,7 +304,7 @@ EOF
     if [[ ! -d "$HOME/tokelkomodo" ]]; then
         log "init" "installing TOKEL"
         cd $HOME
-        git clone https://github.com/komodoplatform/komodo -b tokel tokelkomodo
+        git clone https://github.com/TokelPlatform/tokel -b tokel
         cd tokelkomodo
         git checkout 65d50d0
         $scriptpath/build tokel
