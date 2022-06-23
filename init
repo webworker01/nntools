@@ -301,7 +301,7 @@ EOF
     fi
 
     #TOKEL
-    if [[ ! -d "$HOME/tokelkomodo" ]]; then
+    if [[ ! -d "$HOME/tokel" ]]; then
         log "init" "installing TOKEL"
         cd $HOME
         git clone https://github.com/TokelPlatform/tokel -b tokel
@@ -309,11 +309,11 @@ EOF
         git checkout 65d50d0
         $scriptpath/build tokel
     else
-        log "init" "$HOME/tokelkomodo already exists, continuing..."
+        log "init" "$HOME/tokel already exists, continuing..."
     fi
 
     #MIL
-    if [[ ! -d "$HOME/mil-1" ]]; then
+    if [[ ! -d "$HOME/mil" ]]; then
         log "init" "installing MIL"
         cd $HOME
         git clone https://github.com/emc2foundation/mil -b master
@@ -341,7 +341,7 @@ onlynet=ipv4
 EOF
         chmod 600 $HOME/.mil/mil.conf
     else
-        log "init" "$HOME/mil-1 already exists, continuing..."
+        log "init" "$HOME/mil already exists, continuing..."
     fi
 fi
 
