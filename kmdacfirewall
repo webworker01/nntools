@@ -11,7 +11,7 @@ sudo ufw allow 22    comment 'SSH'
 sudo ufw allow 7770  comment 'KMD'
 if (( thirdpartycoins < 1 )); then
     #sudo ufw allow 8333  comment 'BTC'
-    if (( $season == 6 )); then
+    if (( nn_season == 6 )); then
         port=13347
     else
         port=13337
@@ -28,7 +28,7 @@ if (( thirdpartycoins < 1 )); then
         fi
     done
 else
-    if (( $season == 6 )); then
+    if (( nn_season == 6 )); then
         port=13344
     else
         port=13334
