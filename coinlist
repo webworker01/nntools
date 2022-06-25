@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if (( $season == 6 )); then
+if (( nn_season == 6 )); then
     coinlist=(
     'BET'
     'BOTS'
