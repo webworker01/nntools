@@ -40,6 +40,8 @@ confcheck=""
 splitqty=$otherutxoqty
 if [[ ! -z $emc2_address && $coin == "EMC2" ]]; then
     address=$emc2_address
+elif [[ ! -z $mil_address && $coin == "MIL" ]]; then
+    address=$mil_address
 else
     echo "can't find address for $coin"
     exit 0
