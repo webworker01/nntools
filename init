@@ -25,7 +25,7 @@ if (( usesudo > 0 )); then
     #dependencies
     sudo apt-get update && sudo apt-get upgrade -y
 
-    nntoolsinstall="jq bc dc htop"
+    nntoolsinstall="jq bc dc htop libevent-dev"
 
     if (( thirdpartycoins > 0 )); then
         # install g++ 7 compiler for chips for now
@@ -37,8 +37,9 @@ if (( usesudo > 0 )); then
         boostinstall="libboost-system-dev libboost-filesystem-dev libboost-chrono-dev libboost-program-options-dev libboost-test-dev libboost-thread-dev"
     fi
 
-    sudo apt-get install ${nntoolsinstall} ${aptinstall-} ${boostinstall-} libevent-dev build-essential pkg-config libc6-dev m4 g++-multilib \
-        autoconf libtool ncurses-dev zlib1g-dev wget curl bsdmainutils automake cmake clang libsodium-dev libcurl4-gnutls-dev libssl-dev git unzip python python3 python3-zmq -y
+    sudo apt-get install ${nntoolsinstall} ${aptinstall-} ${boostinstall-} build-essential pkg-config libc6-dev m4 g++-multilib \
+        autoconf libtool ncurses-dev zlib1g-dev wget curl bsdmainutils automake cmake clang libsodium-dev libcurl4-gnutls-dev \
+        libssl-dev git unzip python2.7 python3 python3-zmq -y
 
     #nanomsg - for iguana
     if [[ ! -f "/usr/local/include/nanomsg/nn.h" ]]; then
@@ -152,7 +153,7 @@ else
         cd $HOME
         git clone https://github.com/chips-blockchain/chips.git
         cd chips
-        git checkout 70362d
+        git checkout 6e7560a
         $scriptpath/build chips
 
         #chips.conf
@@ -182,7 +183,7 @@ EOF
         cd $HOME
         git clone https://github.com/emc2foundation/einsteinium
         cd einsteinium
-        git checkout a716ae8
+        git checkout c329ae6
         $scriptpath/build emc2
 
         #einsteinium.conf
@@ -226,7 +227,7 @@ EOF
         cd $HOME
         git clone https://github.com/KomodoPlatform/AYAv2
         cd AYAv2
-        git checkout 02afeac
+        git checkout 94e6bc0
         $scriptpath/build aya
 
         #aryacoin.conf
@@ -260,7 +261,7 @@ EOF
         cd $HOME
         git clone https://github.com/marmarachain/marmara.git
         cd marmara
-        git checkout b288dfd
+        git checkout a92d834
         $scriptpath/build mcl
     else
         log "init" "$HOME/marmara already exists, continuing..."
@@ -272,7 +273,7 @@ EOF
         cd $HOME
         git clone https://github.com/pbcllc/sfusd-core.git
         cd sfusd-core
-        git checkout d96497c
+        git checkout 4e79e1b
         $scriptpath/build sfusd
 
         #sfusd.conf
@@ -300,24 +301,24 @@ EOF
     fi
 
     #TOKEL
-    if [[ ! -d "$HOME/tokelkomodo" ]]; then
+    if [[ ! -d "$HOME/tokel" ]]; then
         log "init" "installing TOKEL"
         cd $HOME
-        git clone https://github.com/komodoplatform/komodo -b tokel tokelkomodo
-        cd tokelkomodo
-        git checkout f39a088
+        git clone https://github.com/TokelPlatform/tokel -b tokel
+        cd tokel
+        git checkout 65d50d0
         $scriptpath/build tokel
     else
-        log "init" "$HOME/tokelkomodo already exists, continuing..."
+        log "init" "$HOME/tokel already exists, continuing..."
     fi
 
     #MIL
-    if [[ ! -d "$HOME/mil-1" ]]; then
+    if [[ ! -d "$HOME/mil" ]]; then
         log "init" "installing MIL"
         cd $HOME
-        git clone https://github.com/KomodoPlatform/mil-1
-        cd mil-1
-        git checkout 4fb0389
+        git clone https://github.com/emc2foundation/mil -b master
+        cd mil
+        git checkout 578bed7
         $scriptpath/build mil
 
         #mil.conf
@@ -340,7 +341,7 @@ onlynet=ipv4
 EOF
         chmod 600 $HOME/.mil/mil.conf
     else
-        log "init" "$HOME/mil-1 already exists, continuing..."
+        log "init" "$HOME/mil already exists, continuing..."
     fi
 fi
 

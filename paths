@@ -22,7 +22,7 @@ coinsfirst=(
 'LTC $HOME/litecoin/src/litecoin-cli $HOME/litecoin/src/litecoind .litecoin rescan litecoind.pid'
 )
 
-coinsthird=(
+coinsthird=(45m
 'CHIPS $HOME/chips/src/chips-cli $HOME/chips/src/chipsd .chips rescan chipsd.pid'
 'EMC2 $HOME/einsteinium/src/einsteinium-cli $HOME/einsteinium/src/einsteiniumd .einsteinium newaddress einsteinium.pid'
 'VRSC $HOME/VerusCoin/src/verus $verusd .komodo/VRSC zimport komodod.pid'
