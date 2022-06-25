@@ -34,6 +34,7 @@ else
         port=13334
     fi
     sudo ufw allow ${port}/tcp comment 'Iguana Notary Third Party'
+    sudo ufw allow 26001/tcp comment 'AYA'
     sudo ufw allow 57777/tcp comment 'CHIPS'
     sudo ufw allow 41878/tcp comment 'EMC2'
     sudo ufw allow 33824/tcp comment 'MCL'
