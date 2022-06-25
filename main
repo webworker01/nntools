@@ -27,3 +27,4 @@ txfeeperkb=${txfeeperkb:=0.000035}
 sctxfeeperkb=${sctxfeeperkb:=0}
 ltcutxoqty=${ltcutxoqty:=100}
 pubkey=${nn_pubkey}
+season=${nn_season:=5}

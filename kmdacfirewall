@@ -11,7 +11,12 @@ sudo ufw allow 22    comment 'SSH'
 sudo ufw allow 7770  comment 'KMD'
 if (( thirdpartycoins < 1 )); then
     #sudo ufw allow 8333  comment 'BTC'
-    sudo ufw allow 13337 comment 'Iguana Notary Main'
+    if (( $season == 6 )); then
+        port=13347
+    else
+        port=13337
+    fi
+    sudo ufw allow ${port} comment 'Iguana Notary Main'
 
     for coins in "${coinlist[@]}"; do
         coin=($coins)
@@ -23,7 +28,12 @@ if (( thirdpartycoins < 1 )); then
         fi
     done
 else
-    sudo ufw allow 13334/tcp comment 'Iguana Notary Third Party'
+    if (( $season == 6 )); then
+        port=13344
+    else
+        port=13334
+    fi
+    sudo ufw allow ${port}/tcp comment 'Iguana Notary Third Party'
     sudo ufw allow 57777/tcp comment 'CHIPS'
     sudo ufw allow 41878/tcp comment 'EMC2'
     sudo ufw allow 33824/tcp comment 'MCL'

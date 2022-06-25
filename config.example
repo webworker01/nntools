@@ -14,6 +14,9 @@ komodocli=/usr/local/bin/komodo-cli
 #Full path to komodod
 komodod="$HOME/komodo/src/komodod"
 
+#set the season to allow different setups when we're between seasons
+nn_season=6
+
 #set to 1 if this is the server for third party coins, else leave as 0
 thirdpartycoins=0
 
