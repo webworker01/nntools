@@ -14,22 +14,22 @@ komodolike=(
 verusd="$HOME/VerusCoin/src/verusd -pid=${HOME}/.komodo/VRSC/komodod.pid"
 marmaracli="$HOME/marmara/src/komodo-cli -ac_name=MCL"
 marmarad="$HOME/marmara/src/komodod -ac_name=MCL -ac_supply=2000000 -ac_cc=2 -addnode=37.148.210.158 -addnode=37.148.212.36 -addressindex=1 -spentindex=1 -ac_marmara=1 -ac_staked=75 -ac_reward=3000000000 -pubkey=${nn_pubkey} -pid=${HOME}/.komodo/MCL/komodod.pid"
-tokelcli="$HOME/tokel/src/komodo-cli -ac_name=TOKEL"
-tokeld="$HOME/tokel/src/komodod -ac_name=TOKEL -ac_supply=100000000 -ac_eras=2 -ac_cbmaturity=1 -ac_reward=100000000,4250000000 -ac_end=80640,0 -ac_decay=0,77700000 -ac_halving=0,525600 -ac_cc=555 -ac_ccenable=236,245,246,247 -ac_adaptivepow=6 -addnode=135.125.204.169 -addnode=192.99.71.125 -addnode=144.76.140.197 -addnode=135.181.92.123 -pubkey=${nn_pubkey} -pid=${HOME}/.komodo/TOKEL/komodod.pid"
+tokelcli="$HOME/tokel/src/tokel-cli"
+tokeld="$HOME/tokel/src/tokeld -addnode=135.125.204.169 -addnode=192.99.71.125 -addnode=144.76.140.197 -addnode=135.181.92.123 -pubkey=${nn_pubkey} -pid=${HOME}/.komodo/TOKEL/komodod.pid"
 
 coinsfirst=(
 # 'BTC $HOME/bitcoin/src/bitcoin-cli $HOME/bitcoin/src/bitcoind .bitcoin rescan bitcoind.pid'
 'LTC $HOME/litecoin/src/litecoin-cli $HOME/litecoin/src/litecoind .litecoin rescan litecoind.pid'
 )
 
-coinsthird=(
+coinsthird=(45m
 'CHIPS $HOME/chips/src/chips-cli $HOME/chips/src/chipsd .chips rescan chipsd.pid'
 'EMC2 $HOME/einsteinium/src/einsteinium-cli $HOME/einsteinium/src/einsteiniumd .einsteinium newaddress einsteinium.pid'
 'VRSC $HOME/VerusCoin/src/verus $verusd .komodo/VRSC zimport komodod.pid'
 'AYA $HOME/AYAv2/src/aryacoin-cli $HOME/AYAv2/src/aryacoind .aryacoin rescan aryacoin.pid'
 'MCL $marmaracli $marmarad .komodo/MCL kmd komodod.pid'
 'SFUSD $HOME/sfusd-core/src/smartusd-cli $HOME/sfusd-core/src/smartusdd .smartusd rescan smartusdd.pid'
-'TOKEL $tokelcli $tokeld .komodo/TOKEL kmd komodod.pid'
+'TOKEL $tokelcli $tokeld .komodo/TOKEL kmd tokeld.pid'
 'MIL $HOME/mil/src/mil-cli $HOME/mil/src/mild .mil newaddress mil.pid'
 )
 
