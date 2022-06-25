@@ -28,3 +28,4 @@ sctxfeeperkb=${sctxfeeperkb:=0}
 ltcutxoqty=${ltcutxoqty:=100}
 pubkey=${nn_pubkey}
 season=${nn_season:=5}
+skip_whitelist=${skip_whitelist:=('VOTE2022')}

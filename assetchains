@@ -10,8 +10,6 @@ name=${1^^}
 args=("$@")
 delay=1
 
-skip_whitelist=('VOTE2022')
-
 function komodo_asset()
 {
     if [[ -z "$name" || "$1" == "-ac_name=$name" ]]; then
