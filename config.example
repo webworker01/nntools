@@ -35,6 +35,9 @@ nn_ipaddress=
 #Whitelist other addresses incoming funds are expected from - own address is automatically whitelisted
 whitelist_addresses=("RKrMB4guHxm52Tx9LG8kK3T5UhhjVuRand" "RVB7Vd4JbbjQPV1WE5ZdeWmWo5EjMpXDH6" "RDragoNHdwovvsDLSLMiAEzEArAD3kq6FN")
 
+#or disable whitelisting for all coins
+#whitelist_address=""
+
 #Skip applying whitelist addresses when starting these coins
 skip_whitelist=('VOTE2022' 'PIRATE')
 
