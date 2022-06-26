@@ -10,8 +10,10 @@
 scriptpath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 source $scriptpath/main
 
-#disable until new consensus logic is analyzed
-if (( nn_season == 6 )); then
+#disable after HF22 height until new consensus logic is analyzed
+nHF22Height=2973410
+blockheight=$($komodocli getblockcount)
+if (( blockheight >= nHF22Height )); then
     exit 0
 fi
 
