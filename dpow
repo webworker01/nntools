@@ -27,13 +27,15 @@ else
         coin=($coins)
         cointostart=${coin[0]}
 
-        if [[ ${freqfive[*]} =~ ${coin[0]} ]]; then
-            log "dpow" "Start ${coin[0]} Freq 5"
-            curl --url "http://127.0.0.1:${iguanaport}" --data "{\"agent\":\"iguana\",\"method\":\"dpow\",\"symbol\":\"${cointostart}\",\"freq\":5,\"pubkey\":\"${nn_pubkey}\"}"
-        else
-            log "dpow" "Start ${coin[0]} Freq Default"
-            curl --url "http://127.0.0.1:${iguanaport}" --data "{\"agent\":\"iguana\",\"method\":\"dpow\",\"symbol\":\"${cointostart}\",\"pubkey\":\"${nn_pubkey}\"}"
+        if [[ ! ${ignoreacs[*]} =~ ${coin[0]} ]] && [[ ! ${skipnotarize[*]} =~ ${coin[0]} ]]; then
+            if [[ ${freqfive[*]} =~ ${coin[0]} ]]; then
+                log "dpow" "Start ${coin[0]} Freq 5"
+                curl --url "http://127.0.0.1:${iguanaport}" --data "{\"agent\":\"iguana\",\"method\":\"dpow\",\"symbol\":\"${cointostart}\",\"freq\":5,\"pubkey\":\"${nn_pubkey}\"}"
+            else
+                log "dpow" "Start ${coin[0]} Freq Default"
+                curl --url "http://127.0.0.1:${iguanaport}" --data "{\"agent\":\"iguana\",\"method\":\"dpow\",\"symbol\":\"${cointostart}\",\"pubkey\":\"${nn_pubkey}\"}"
+            fi
+            sleep $sleeptime
         fi
-        sleep $sleeptime
     done
 fi

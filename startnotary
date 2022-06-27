@@ -5,12 +5,6 @@
 scriptpath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 source $scriptpath/main
 
-skipnotarize=(
-'CHIPS'
-'VRSC'
-'MIL'
-)
-
 pkill -15 iguana
 sleep 10
 
