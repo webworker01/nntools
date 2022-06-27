@@ -106,3 +106,6 @@ emc2_address=
 aya_address=
 sfusd_address=
 mil_address=
+
+#Number of threads to start mining with
+miner_threads=1

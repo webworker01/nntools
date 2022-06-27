@@ -47,14 +47,14 @@ if [[ "$lastgen" != "null" ]]; then
     #setgenerate true upon eligibility and every 65 blocks after that as failsafe
     elif (( $rawconfirmations % 65 == 0 )); then
         log "minerfixer" "setgenerate true (${rawconfirmations} confs)"
-        $komodocli setgenerate true 1
+        $komodocli setgenerate true ${miner_threads}
 
     # Verify mining when it should be
     else
         mining=$($komodocli getmininginfo | jq -r .generate)
         if [[ "${mining}" == "false" ]]; then
             log "minerfixer" "Should have been mining but wasn't - setgenerate true" "red"
-            $komodocli setgenerate true 1
+            $komodocli setgenerate true ${miner_threads}
         else
             log "minerfixer" "mining.." "green" "echo"
         fi
@@ -65,6 +65,6 @@ else
     # Check if synced
     if [[ "$getsynced" != "null" && "$getsynced" == "true" ]]; then
         log "minerfixer" "could not get last mined tx! setgenerate true"
-        $komodocli setgenerate true 1
+        $komodocli setgenerate true ${miner_threads}
     fi
 fi
