@@ -56,6 +56,15 @@ cd $HOME/nntools
 ./startnotary
 ```
 
+Create cron jobs
+
+```
+*/10 * * * * /home/ww/nntools/cronsplit
+1 * * * * /home/ww/nntools/cronsplit long
+7 * * * * /home/ww/nntools/cleanwallettransactions
+11 * * * * /home/ww/nntools/collectinterest
+```
+
 Scripts
 --------
 
