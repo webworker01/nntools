@@ -5,7 +5,7 @@ Tools for https://komodoplatform.com Notary Nodes
 
 Tested on Ubuntu 18.04, 20.04 and 21.04
 
-This set of scripts is interdependent. Any piecemeal usage or mixing with other scripts may result in unexpected behavior!  Please review and understand what the scripts are doing and the data they expect before attempting to use separately from the rest in the repo.
+**_This set of scripts is interdependent. Any piecemeal usage or mixing with other scripts may result in unexpected behavior!  Please review and understand what the scripts are doing and the data they expect before attempting to use separately from the rest in the repo._**
 
 e.g. the `start` and `assetchains` scripts set the `pid` parameter on the daemons when starting up which is expected to be set when using the `resetwallet` script.
 
@@ -47,8 +47,7 @@ nano config
 ```
 (note the space in front to exclude the privkey commands from your ~/.bash_history)
 
-Create your [wp_7776 or wp_7779](https://docs.komodoplatform.com/notary/setup-Komodo-Notary-Node.html#create-wp-7776)
-
+* Create your [wp_7776 or wp_7779](https://docs.komodoplatform.com/notary/setup-Komodo-Notary-Node.html#create-wp-7776)
 ```
 cd $HOME/nntools
 
@@ -56,8 +55,7 @@ cd $HOME/nntools
 ./startnotary
 ```
 
-Create cron jobs
-
+* Create cron jobs `crontab -e`
 ```
 */10 * * * * /home/ww/nntools/cronsplit
 1 * * * * /home/ww/nntools/cronsplit long
