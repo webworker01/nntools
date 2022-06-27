@@ -5,6 +5,12 @@
 scriptpath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 source $scriptpath/main
 
+skipnotarize=(
+'CHIPS'
+'VRSC'
+'MIL'
+)
+
 pkill -15 iguana
 sleep 10
 
@@ -44,7 +50,7 @@ if (( thirdpartycoins < 1 )); then
 
     for coins in "${coinlist[@]}"; do
         coin=($coins)
-        if [[ ! ${ignoreacs[*]} =~ ${coin[0]} ]] && [[ ! ${tmp7776[*]} =~ ${coin[0]} ]]; then
+        if [[ ! ${ignoreacs[*]} =~ ${coin[0]} ]] && [[ ! ${skipnotarize[*]} =~ ${coin[0]} ]]; then
             log "startnotary" "Adding ${coin[0]}"
             ./coins/${coin[0],,}_${iguanaport}
         fi
@@ -63,8 +69,10 @@ else
     for coins in "${coinsthird[@]}"; do
         coin=($coins)
         cointostart=${coin[0]}
-        log "startnotary" "Adding ${coin[0]}"
-        ./coins/${cointostart,,}_${iguanaport}
+        if [[ ! ${ignoreacs[*]} =~ ${coin[0]} ]] && [[ ! ${skipnotarize[*]} =~ ${coin[0]} ]]; then
+            log "startnotary" "Adding ${coin[0]}"
+            ./coins/${cointostart,,}_${iguanaport}
+        fi
     done
 fi
 
