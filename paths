@@ -20,7 +20,7 @@ skipnotarize=(
 verusd="$HOME/VerusCoin/src/verusd -pid=${HOME}/.komodo/VRSC/komodod.pid"
 marmaracli="$HOME/marmara/src/komodo-cli -ac_name=MCL"
 marmarad="$HOME/marmara/src/komodod -ac_name=MCL -ac_supply=2000000 -ac_cc=2 -addnode=37.148.210.158 -addnode=37.148.212.36 -addressindex=1 -spentindex=1 -ac_marmara=1 -ac_staked=75 -ac_reward=3000000000 -pid=${HOME}/.komodo/MCL/komodod.pid"
-tokeld="$HOME/tokel/src/tokeld -addnode=135.125.204.169 -addnode=192.99.71.125 -addnode=144.76.140.197 -addnode=135.181.92.123 -pid=${HOME}/.komodo/TOKEL/tokeld.pid"
+tokeld="$HOME/tokel/src/tokeld -addnode=135.125.204.169 -addnode=192.99.71.125 -addnode=144.76.140.197 -addnode=135.181.92.123 -pid=${HOME}/.komodo/TOKEL/komodod.pid"
 
 coinsfirst=(
 # 'BTC $HOME/bitcoin/src/bitcoin-cli $HOME/bitcoin/src/bitcoind .bitcoin rescan bitcoind.pid'
