@@ -70,6 +70,11 @@ if (( resettooldest < 1 )); then
     blockhash=$($komodocli $asset gettransaction $txid | jq -r .blockhash)
     scanfrom=$($komodocli $asset getblock $blockhash | jq .height)
 
+    #scan a bit further back to account for immature mining rewards
+    if [[ $coin == "KMD" ]]; then
+        scanfrom=$(( scanfrom - 100 ))
+    fi
+
     #send feeder tx
     if [[ $coin == "KMD" ]]; then
         txid2=$($komodocli sendtoaddress $nn_address 5)
