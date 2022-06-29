@@ -59,7 +59,6 @@ cd $HOME/nntools
 ```
 */10 * * * * /home/ww/nntools/cronsplit
 1 * * * * /home/ww/nntools/cronsplit long
-7 * * * * /home/ww/nntools/cleanwallettransactions
 11 * * * * /home/ww/nntools/collectinterest
 ```
 
