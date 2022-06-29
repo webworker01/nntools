@@ -9,21 +9,13 @@ source $scriptpath/main
 
 clean() {
     coin=$1
-
-    keeptxid=""
     if [[ -z "$coin" || "$coin" == "KMD" ]]; then
         acparam=""
-        keeptxid=$(${komodocli} listtransactions "*" 777 | jq -r '[.[] | select(.generated==true and .category=="immature")] | .[-1] | .txid')
     else
         acparam="-ac_name=${coin}"
     fi
 
-    if [[ -z $keeptxid ]] || [[ "${keeptxid}" == "null" ]]; then
-        cleanerremoved=$(${komodocli} ${acparam} cleanwallettransactions | jq -r .removed_transactions)
-    else
-        cleanerremoved=$(${komodocli} ${acparam} cleanwallettransactions "${keeptxid}" | jq -r .removed_transactions)
-    fi
-
+    cleanerremoved=$(${komodocli} ${acparam} cleanwallettransactions | jq -r .removed_transactions)
     if (( cleanerremoved > 0 )); then
         log "cleanwallettransactions" "${coin} - Removed ${cleanerremoved} transactions"
     fi
