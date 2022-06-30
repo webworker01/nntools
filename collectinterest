@@ -92,7 +92,8 @@ if (( minedcount > 3 )) || (( minedcount > 0 && combine > 0 )); then
     # echo "$dt [collectinterest] current interest $interest - consolidateamount $consolidateamount" >> $nntoolslogfile
 
     #combine all
-    if (( $(echo "$interest > $collectinterestthreshold" | bc) )) || (( combine > 0 )); then
+    #if (( $(echo "$interest > $collectinterestthreshold" | bc) )) || (( combine > 0 )); then
+    if [[ "1" == "0" ]]; then
         alreadyconsolidated=$(jq '[.[] | {"txid":.txid, "vout":.vout}]' <<< $alreadyutxounlocked)
         alreadyconsolidateutxolength=$(jq -r '. | length' <<< $alreadyutxounlocked)
         alreadyconsolidateutxotxfee=$(calcFee ${alreadyconsolidateutxolength} 1 "p2pkh" "p2pkh")
