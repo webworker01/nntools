@@ -36,14 +36,14 @@ else
 fi
 
 # Get current UTXO amount
-unspent_amount=$($komodocli $asset listunspent | jq --arg checkaddr $nn_address --arg exclude_amount $exclude_amount '[.[] | select(.amount!=$exclude_amount and .address==$checkaddr and .spendable==true)] | length')
+unspent_amount=$($komodocli $asset listunspent | jq --arg checkaddr $nn_address --arg exclude_amount $exclude_amount '[.[] | select(.amount!=($exclude_amount|tonumber) and .address==$checkaddr and .spendable==true)] | length')
 log "collectall" "unspent_amount: $unspent_amount"
 c=0
 while (( unspent_amount > 1)); do
     txid=$(consolidateUTXOs ${coin} ${exclude_amount})
     waitForConfirm ${coin} ${txid}
 
-    unspent_amount=$($komodocli $asset listunspent | jq --arg checkaddr $nn_address --arg exclude_amount $exclude_amount '[.[] | select(.amount!=$exclude_amount and .address==$checkaddr and .spendable==true)] | length')
+    unspent_amount=$($komodocli $asset listunspent | jq --arg checkaddr $nn_address --arg exclude_amount $exclude_amount '[.[] | select(.amount!=($exclude_amount|tonumber) and .address==$checkaddr and .spendable==true)] | length')
     log "collectall" "Consolidate TX: $txid New unspent_amount: $unspent_amount"
 
     c=$((c+1))
