@@ -33,14 +33,14 @@ if (( minedcount > 0 )); then
     #check if feeder utxo needs to be fed
     feederutxo=$(jq -r --arg utxosize $utxoamount --arg feedermax $utxofeederhigh '[.[] | select (.generated==false and .spendable==true and .amount>($utxosize|tonumber) and .amount<($feedermax|tonumber))]' <<< $unspent)
     feederutxolength=$(jq -r '. | length' <<< $feederutxo)
-    feederutxotxfee=$(calcFee ${feederutxolength} 1 "p2pkh" "p2pkh")
+    feederutxotxfee=$(calcFee ${feederutxolength} 1 "p2pkh" "p2pkh" ${txfeeperkb})
     feederutxovin=$(jq '[.[] | {"txid":.txid, "vout":.vout}]' <<< $feederutxo)
     feederamount=$(jq '[.[].amount] | add' <<< $feederutxo)
     feederfed=0
 
     feedutxo=$(jq -r --arg minsize $utxofeederlow '[.[] | select (.amount>($minsize|tonumber) and .generated==true and .spendable==true)] | sort_by(.amount)[0]' <<< $unspent)
     feedutxolength=$(jq -r '. | length' <<< $feedutxo)
-    feedutxotxfee=$(calcFee ${feedutxolength} 1 "p2pk" "p2pkh")
+    feedutxotxfee=$(calcFee ${feedutxolength} 1 "p2pk" "p2pkh" ${txfeeperkb})
     feedthis=$(jq -r '[. | {"txid":.txid, "vout":.vout}] | tostring' <<< $feedutxo)
     feedthisamount=$(jq -r '.amount' <<< $feedutxo)
     feedthisamountfixed=$( printf "%.8f" $(bc -l <<< "(${feedthisamount}-${feedutxotxfee})") )
@@ -85,7 +85,7 @@ if (( minedcount > 3 )) || (( minedcount > 0 && combine > 0 )); then
         consolidateutxo=$(jq -r '. | del(.[0])' <<< $consolidateutxo)
     fi
     consolidateutxolength=$(jq -r '. | length' <<< $consolidateutxo)
-    consolidateutxotxfee=$(calcFee ${consolidateutxolength} 1 "p2pk" "p2pkh")
+    consolidateutxotxfee=$(calcFee ${consolidateutxolength} 1 "p2pk" "p2pkh" ${txfeeperkb})
     consolidatethese=$(jq -r '[.[] | {"txid":.txid, "vout":.vout}]' <<< $consolidateutxo)
     consolidateamount=$(jq -r '[.[].amount] | add' <<< $consolidateutxo)
 
@@ -96,7 +96,7 @@ if (( minedcount > 3 )) || (( minedcount > 0 && combine > 0 )); then
     if [[ "1" == "0" ]]; then
         alreadyconsolidated=$(jq '[.[] | {"txid":.txid, "vout":.vout}]' <<< $alreadyutxounlocked)
         alreadyconsolidateutxolength=$(jq -r '. | length' <<< $alreadyutxounlocked)
-        alreadyconsolidateutxotxfee=$(calcFee ${alreadyconsolidateutxolength} 1 "p2pkh" "p2pkh")
+        alreadyconsolidateutxotxfee=$(calcFee ${alreadyconsolidateutxolength} 1 "p2pkh" "p2pkh" ${txfeeperkb})
         alreadyconsolidatedamount=$(jq -r '[.[].amount] | add' <<< $alreadyutxounlocked)
 
         consolidateamountfixed=$( printf "%.8f" $(bc -l <<< "(${consolidateamount}+${alreadyconsolidatedamount}+${interest}-${consolidateutxotxfee}-${alreadyconsolidateutxotxfee})") )
