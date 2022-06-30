@@ -8,6 +8,7 @@ sendRaw()
 {
     local rawtx=$1
     local acname=${2^^}
+    local setnlocktime=$3
 
     if [[ ! -z $acname ]] && [[ $acname != "KMD" ]]; then
         coin=${acname}
@@ -17,12 +18,15 @@ sendRaw()
         asset=""
     fi
 
+    if [[ ! -z ${setnlocktime} ]] && [[ ${setnlocktime} == "1" ]]; then
+        nlocktime=$(printf "%08x" $(date +%s) | dd conv=swab 2> /dev/null | rev)
+    else
+        nlocktime="00000000"
+    fi
+
     sapling=$(isSapling $coin)
 
     if [[ ! -z $rawtx ]]; then
-        # nlocktime=$(printf "%08x" $(date +%s) | dd conv=swab 2> /dev/null | rev)
-        nlocktime="00000000"
-
         if (( sapling > 0 )); then
             txtail="000000000000000000000000000000"
             hex="${rawtx:0:${#rawtx}-38}${nlocktime}${txtail}"
@@ -122,7 +126,7 @@ consolidateUTXOs ()
         if (( $(echo "$consolidateamountfixed > 0" | bc -l) )); then
 
             rawtxresult=$($komodocli $asset createrawtransaction "${consolidatethese}" '''{ "'$nn_address'": '$consolidateamountfixed' }''')
-            rawtxid=$(sendRaw ${rawtxresult} ${coin})
+            rawtxid=$(sendRaw ${rawtxresult} ${coin} 1)
 
             log "consolidate" "${coin} - Sent $consolidateamount to $nn_address TXID: $rawtxid" "green" "file"
             echo $rawtxid

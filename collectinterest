@@ -48,7 +48,7 @@ if (( minedcount > 0 )); then
     #if feeder utxo doesn't exist
     if [[ "$feederamount" == "null" ]]; then
         rawtxresult=$($komodocli createrawtransaction "${feedthis}" '''{ "'$nn_address'": '$feedthisamountfixed' }''')
-        rawtxid=$(sendRaw ${rawtxresult})
+        rawtxid=$(sendRaw ${rawtxresult} 1)
         feederfed=1
 
         log "collectinterest" "create feeder $feedthisamountfixed - txid : $rawtxid"
@@ -59,7 +59,7 @@ if (( minedcount > 0 )); then
         combinefeederutxos=$(jq -r --argjson arr1 "$feederutxovin" --argjson arr2 "$feedthis" -n '$arr1 + $arr2 | tostring')
 
         rawtxresult=$($komodocli createrawtransaction "${combinefeederutxos}" '''{ "'$nn_address'": '$combinefeederamounts' }''')
-        rawtxid=$(sendRaw ${rawtxresult})
+        rawtxid=$(sendRaw ${rawtxresult} 1)
         feederfed=1
 
         log "collectinterest" "feed feeder $combinefeederamounts - txid : $rawtxid"
@@ -92,8 +92,7 @@ if (( minedcount > 3 )) || (( minedcount > 0 && combine > 0 )); then
     # echo "$dt [collectinterest] current interest $interest - consolidateamount $consolidateamount" >> $nntoolslogfile
 
     #combine all
-    #if (( $(echo "$interest > $collectinterestthreshold" | bc) )) || (( combine > 0 )); then
-    if [[ "1" == "0" ]]; then
+    if (( $(echo "$interest > $collectinterestthreshold" | bc) )) || (( combine > 0 )); then
         alreadyconsolidated=$(jq '[.[] | {"txid":.txid, "vout":.vout}]' <<< $alreadyutxounlocked)
         alreadyconsolidateutxolength=$(jq -r '. | length' <<< $alreadyutxounlocked)
         alreadyconsolidateutxotxfee=$(calcFee ${alreadyconsolidateutxolength} 1 "p2pkh" "p2pkh" ${txfeeperkb})
@@ -104,7 +103,7 @@ if (( minedcount > 3 )) || (( minedcount > 0 && combine > 0 )); then
         combineconsolidateutxos=$(jq -r --argjson arr1 "$consolidatethese" --argjson arr2 "$alreadyconsolidated" -n '$arr1 + $arr2 | tostring')
 
         rawtxresult=$($komodocli createrawtransaction "${combineconsolidateutxos}" '''{ "'$nn_address'": '$consolidateamountfixed' }''')
-        rawtxid=$(sendRaw ${rawtxresult})
+        rawtxid=$(sendRaw ${rawtxresult} 1)
 
         log "collectinterest" "combine all $consolidateamountfixed - interest: $interest - txid : $rawtxid"
     #combine mined
@@ -112,7 +111,7 @@ if (( minedcount > 3 )) || (( minedcount > 0 && combine > 0 )); then
         consolidateamountfixed=$( printf "%.8f" $(bc -l <<< "(${consolidateamount}-${consolidateutxotxfee})") )
         utxostring=$( jq -r '. | tostring' <<< $consolidatethese )
         rawtxresult=$($komodocli createrawtransaction "$utxostring" '''{ "'$nn_address'": '$consolidateamountfixed' }''')
-        rawtxid=$(sendRaw ${rawtxresult})
+        rawtxid=$(sendRaw ${rawtxresult} 1)
 
         log "collectinterest" "combine mined $consolidateamountfixed - txid : $rawtxid"
     fi
