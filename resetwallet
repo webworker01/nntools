@@ -45,8 +45,10 @@ if (( resettooldest < 1 )); then
         else
             interest=0
         fi
+        setnlocktime=1
     else
         interest=0
+        setnlocktime=0
     fi
 
     consolidatethese=$(jq -rc '[.[] | {"txid":.txid, "vout":.vout}]' <<< $unspent)
@@ -55,7 +57,7 @@ if (( resettooldest < 1 )); then
     consolidateamount=$(jq -r '[.[].amount] | add' <<< $unspent)
     consolidateamountfixed=$( printf "%.8f" $(bc -l <<< "(${consolidateamount}+${interest}-${consolidatethesetxfee})") )
     rawtxresult=$($komodocli $asset createrawtransaction "${consolidatethese}" '''{ "'$nn_address'": '$consolidateamountfixed' }''')
-    txid=$(sendRaw ${rawtxresult} ${coin})
+    txid=$(sendRaw ${rawtxresult} ${coin} ${setnlocktime})
     log "resetwallet" "${coin} - balance sent $consolidateamountfixed - interest: $interest  - txid : $txid"
 
     i=0
