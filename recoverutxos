@@ -44,5 +44,5 @@ if [[ -z $1 ]]; then
     echo "To send run: ./recoverutxos 1"
 else
     komodo-cli sendrawtransaction "$signedtx"
-    sendRaw ${rawtxresult} 1
+    sendRaw ${rawtxresult} "KMD" 1
 fi
