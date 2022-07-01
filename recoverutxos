@@ -32,9 +32,9 @@ if [[ ${vins_recover} == "]" ]]; then
     echo "All transactions already exist in your wallet ${nn_address}"
     exit 0
 fi
+
 vins=$(jq -r '[.[] | {"txid":.txid, "vout":.vout}] | tostring' <<< $vins_recover)
 amount=$(jq -r "[.[].amount] | add" <<< $vins_recover)
-
 fixamount=$( printf "%.8f" $amount )
 
 rawtxresult=$(komodo-cli createrawtransaction "${vins}" '''{ "'$nn_address'": '$fixamount' }''')
