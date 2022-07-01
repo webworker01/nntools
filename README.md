@@ -70,21 +70,23 @@ Script Name | Function
 **asset-cli** | Send in a single coin name (1P or 3P) to run RPC commands against
 **assets-cli** | Run RPC command against all KMD smartchain coins
 **build** | You can run `./build <coinname>` to build/rebuild any already cloned coin repo required for NN
+**buildnotary** | Builds the notary dPoW program
 **checkaddresses** | Validate your NN address is imported correctly against all coins
 **checkfork** | Script to quickly check all assetchains for possible forks
 **checkmasks** | Check your nodes connectivity to the notary node network
+**cleanwallettransactions** | Runs cleanwallettransactions against all KMD based coins (cronjob)
 **collectall** | Loop and collect every UTXO until all are completely consolidated
 **collectinterest** | My method of consolidating mine funds (cronjob)
-**cleanwallettransactions** | Runs cleanwallettransactions against all KMD based coins (cronjob)
 **cronsplit** | Script to schedule auto splitting of utxos to be used in conjunction with splitfunds (cronjob)
 **init** | Clones required repos, sets up sensible default configs and builds them (skips if repo is already cloned)
-**kill** | Look up the process id of a komodod and KILL (pkill -9)
+**kill** | Look up the process id of a komodod via the `.pid` file and KILL (pkill -9)
 **kmdacfirewall** | UFW settings with commentary
 **minerfixer** | Tweak to not mine (waste CPU) when node is not eligible for easy-mining (automatically added to komodo.conf if using `init`)
 **niceiguana** | Run this to display iguana pids and suggested nice command
+**recoverutxos** | Uses kmd insight explorer api to lookup utxos and send them if they don't exist locally
 **scanresetwallets** | Checks all wallet sizes against the variables in config "size to monitor for in bytes" and runs the appropriate wallet reset script for the coin that is over the limit
 **setconfigpermissions** | Finds all `.conf` files in `.komodo` data dir and subdirectories and sets higher security permissions on them (`init` does this by default)
-**start** | Start all coins daemons
+**start** | Start all coins daemons or you can run `./start <coinname>`
 **startnotary** | Starts dPoW
 **stats** | Fancy cli stats for notary nodes
 **stop** | Stop all coin daemon
@@ -104,7 +106,6 @@ File Name | Function
 **functions** | Store functions for use in other files
 **functions-wallet** | Store functions for use in other files
 **main** | Most if not all scripts include this file to set common variables etc (don't need to run directly)
-**networktweaksundo.md** | Reference to my default Ubuntu 16.04 net config "just in case"
 **paths** | Stores paths to different coin files
 **resetwallet*** | Various reset wallet methods (used by `scanresetwallets`)
 **splitfunds** | Split utxo types required for notarizations (used by `cronsplit`)

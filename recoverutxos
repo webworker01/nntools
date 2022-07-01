@@ -1,0 +1,49 @@
+#!/bin/bash
+#
+# Use this to send utxos that aren't in the wallet currently without rescan back to self
+# Run this from a wallet that has the key imported so it can be signed
+#
+# ./recoverutxos - shows the transaction that could be sent
+# ./recoverutxos 1 - actually send the transaction
+#
+# @see https://github.com/DeckerSU/komodo_scripts/blob/master/sendfromaddress.sh
+# @author webworker01
+#
+secretpath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+nntoolspath="${secretpath}/../nntools"
+source ${nntoolspath}/main
+
+utxos=$(curl -s https://kmdexplorer.io/insight-api-komodo/addr/$nn_address/utxo)
+
+filterutxos=$(jq -c "[.[] | select (.confirmations > 100 and .amount != 0.0001 and .amount != 0.00000055)]" <<< $utxos)
+
+# loop through results
+vins_recover="["
+for row in $(jq -rc '.[] | {txid: .txid, vout: .vout, amount: .amount}' <<< $filterutxos); do
+    txid=$(jq -r .txid <<< $row)
+    txresult=$(${komodocli} gettransaction ${txid})
+
+    if [[ " ${txresult} " == "  " ]]; then
+        vins_recover+="${row},"
+    fi
+done
+vins_recover="${vins_recover::-1}]"
+
+if [[ ${vins_recover} == "]" ]]; then
+    echo "All transactions already exist in your wallet ${nn_address}"
+    exit 0
+fi
+vins=$(jq -r '[.[] | {"txid":.txid, "vout":.vout}] | tostring' <<< $vins_recover)
+amount=$(jq -r "[.[].amount] | add" <<< $vins_recover)
+
+fixamount=$( printf "%.8f" $amount )
+
+rawtxresult=$(komodo-cli createrawtransaction "${vins}" '''{ "'$nn_address'": '$fixamount' }''')
+
+if [[ -z $1 ]]; then
+    komodo-cli decoderawtransaction "$rawtxresult"
+    echo "To send run: ./recoverutxos 1"
+else
+    komodo-cli sendrawtransaction "$signedtx"
+    sendRaw ${rawtxresult} 1
+fi
