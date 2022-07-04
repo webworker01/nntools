@@ -10,20 +10,6 @@
 scriptpath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 source $scriptpath/main
 
-#disable after HF22 height until new consensus logic is analyzed
-nHF22Height=2973410
-blockheight=$($komodocli getblockcount)
-if (( blockheight >= nHF22Height )); then
-    mining=$($komodocli getmininginfo | jq -r .generate)
-    if [[ "${mining}" == "false" ]]; then
-        log "minerfixer" "Should have been mining but wasn't - setgenerate true" "red"
-        $komodocli setgenerate true ${miner_threads}
-    else
-        log "minerfixer" "mining.." "green" "echo"
-    fi
-    exit 0
-fi
-
 lastgen=$($komodocli listtransactions "*" 777 | jq '[.[] | select(.generated==true)] | .[-1]')
 if [[ "$lastgen" != "null" ]]; then
     confirmations=$(jq .confirmations <<< $lastgen)
