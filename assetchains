@@ -37,6 +37,7 @@ function komodo_asset()
         fi
 
         $komodod "$@" ${usepubkey} ${addnodes} ${args[2]} ${args[3]} ${args[4]} ${args[5]} ${args[6]} ${args[7]} ${args[8]} ${args[9]} ${whitelist} -pid=${HOME}/.komodo/${coinname}/komodod.pid &
+        echo $! > ${scriptpath}/pid/${coinname^^}
         sleep $delay
     fi
 }
@@ -63,12 +64,6 @@ komodo_asset -ac_name=RICK -ac_supply=90000000000 -ac_reward=100000000 -ac_cc=3 
 komodo_asset -ac_name=SUPERNET -ac_supply=816061
 komodo_asset -ac_name=THC -ac_supply=251253103 -ac_reward=360000000,300000000,240000000,180000000,150000000,90000000,0 -ac_staked=100 -ac_eras=7 -ac_end=500001,1000001,1500001,2000001,2500001,4500001,0 -ac_perc=233333333 -ac_cc=2 -ac_ccenable=229,236,240 -ac_script=2ea22c8020987fad30df055db6fd922c3a57e55d76601229ed3da3b31340112e773df3d0d28103120c008203000401ccb8 -ac_founders=150 -ac_cbmaturity=1 -ac_sapling=1 -addnode=157.230.45.184 -addnode=165.22.52.123 -earlytxid=7e4a76259e99c9379551389e9f757fc5f46c33ae922a8644dc2b187af2a6adc1
 
-if (( nn_season < 6 )); then
-    komodo_asset -ac_name=MESH -ac_supply=1000007 -ac_ccactivate=320000 -addnode=95.213.238.98
-    komodo_asset -ac_name=VOTE2022 -ac_public=1 -ac_supply=141331546 -ac_staked=10 -addnode=77.74.197.115
-    komodo_asset -ac_name=ZILLA -ac_supply=11000000 -ac_sapling=5000000 -addnode=54.39.23.248
-fi
-
 # komodo_asset -ac_name=AXO -ac_supply=200000000 -ac_ccactivate=130000
 # komodo_asset -ac_name=BNTN -ac_supply=500000000
 # komodo_asset -ac_name=BTCH -ac_supply=20998641
@@ -86,6 +81,7 @@ fi
 # komodo_asset -ac_name=KMDICE -ac_supply=10500000 -ac_reward=2500000000 -ac_halving=210000 -ac_cc=2 -addressindex=1 -spentindex=1 -addnode=144.76.217.232 -addnode=178.63.77.56
 # komodo_asset -ac_name=KSB -ac_supply=1000000000 -ac_end=1 -ac_public=1 -addnode=37.187.225.231
 # komodo_asset -ac_name=KV -ac_supply=1000000
+# komodo_asset -ac_name=MESH -ac_supply=1000007 -ac_ccactivate=320000 -addnode=95.213.238.98
 # komodo_asset -ac_name=MGNX -ac_supply=12465003 -ac_staked=90 -ac_reward=2000000000 -ac_halving=525960 -ac_cc=2 -ac_end=2629800 -addnode=142.93.27.180
 # komodo_asset -ac_name=MNZ -ac_supply=257142858
 # komodo_asset -ac_name=MORTY -ac_supply=90000000000 -ac_reward=100000000 -ac_cc=3 -addnode=138.201.136.145
@@ -101,4 +97,6 @@ fi
 # komodo_asset -ac_name=VOTE2019 -ac_supply=123651638 -ac_public=1 -addnode=95.213.238.98
 # komodo_asset -ac_name=VOTE2020 -ac_supply=123651638 -ac_public=1 -addnode=95.213.238.98 -addnode=38.91.101.236 -addnode=2.56.153.50
 # komodo_asset -ac_name=VOTE2021 -ac_public=1  -ac_supply=129848152 -addnode=77.74.197.115
+# komodo_asset -ac_name=VOTE2022 -ac_public=1 -ac_supply=141331546 -ac_staked=10 -addnode=77.74.197.115
 # komodo_asset -ac_name=ZEXO -ac_supply=100000000 -ac_reward=1478310502 -ac_halving=525600 -ac_cc=42 -ac_ccenable=236 -ac_perc=77700 -ac_staked=93 -ac_pubkey=02713bd85e054db923694b6b7a85306264edf4d6bd6d331814f2b40af444b3ebbc -ac_public=1 -addnode=80.240.17.222
+# komodo_asset -ac_name=ZILLA -ac_supply=11000000 -ac_sapling=5000000 -addnode=54.39.23.248

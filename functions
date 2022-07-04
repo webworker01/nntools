@@ -152,6 +152,16 @@ setupCoinVars ()
         coinexec=$komodod
     fi
 
-    pidfile="$datadir/komodod.pid"
-    processid=$(<${pidfile})
+    nntpath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+    if [[ -f "${datadir}/komodod.pid" ]]; then
+        pidfile="${datadir}/komodod.pid"
+        processid=$(<${pidfile})
+    elif [[ -f "${nntpath}/pid/${coin}" ]]; then
+        pidfile="${nntpath}/pid/${coin}"
+        processid=$(<${pidfile})
+        log $logfrom "komodod.pid does not exist, pid=${processid} from ${nntpath}/pid/${coin}!" "red"
+    else
+        log $logfrom "no pid files found!" "red"
+        processid=""
+    fi
 }

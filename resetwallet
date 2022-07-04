@@ -15,15 +15,16 @@ source ${scriptpath}/main
 # @see functions
 setupCoinVars $1 "resetwallet"
 
-if [[ -z $2 ]] || [[ $2 != "1" ]]; then
-    resettooldest=0
-else
-    resettooldest=1
+if [[ $processid == "" ]]; then
+    log "resetwallet" "pid not found, cannot continue" "red"
+    exit 1
 fi
 
-if [[ -z $2 ]] || [[ $2 != "2" ]]; then
-    zimport=0
-else
+resettooldest=0
+zimport=0
+if [[ $2 == "1" ]]; then
+    resettooldest=1
+elif [[ $2 == "2" ]]; then
     zimport=1
 fi
 
@@ -127,36 +128,23 @@ if (( zimport > 0 )); then
     log "resetwallet" "${coin} Temp Address: ${tempaddress} Key: ${tempkey}"
 fi
 
-log "resetwallet" "${coin} - scanfrom: $scanfrom" "red" "echo"
+log "resetwallet" "${coin} - killing daemon - scanfrom: ${scanfrom}"
 
-#Grab daemon args before killing
-if [[ ${komodolike[*]} =~ ${coin} ]]; then
-    daemon_args=""
-elif [[ $coin == "KMD" ]]; then
-    daemon_args=$(ps -fC komodod | grep -- "-pubkey=${nn_pubkey}" | grep -v -- "-ac_name=" | grep -Po "komodod .*" | sed 's/komodod //g' | sed -e 's/-reindex//g' | sed -e 's/-rescan//g')
-else
-    daemon_args=$(ps -fC komodod | grep -- "-pubkey=${nn_pubkey}" | grep -- "-ac_name=${coin}" | grep -Po "komodod .*" | sed 's/komodod //g' | sed -e 's/-reindex//g' | sed -e 's/-rescan//g')
-fi
-
-log "resetwallet" "${coin} - killing daemon - scanfrom: $scanfrom - restart command: $coinexec $daemon_args"
-
-$komodocli $asset stop
+${scriptpath}/stop ${coin}
 
 i=0
 while ps -p $processid > /dev/null; do
-   i=$((i+1))
-   log "resetwallet" "${coin} - Waiting for daemon stop ($i)" "red" "echo"
-   sleep 1
+    i=$((i+1))
+    log "resetwallet" "${coin} - Waiting for daemon [${processid}] stop ($i)" "red" "echo"
+    sleep 1
 done
 sleep 15
 mv $datadir/wallet.dat $datadir/wallet.dat.old
 
 #restart the daemon
-log "resetwallet" "${coin} - Restart daemon $coinexec $daemon_args"
+log "resetwallet" "${coin} - Restart daemon"
 
-cd $scriptpath/7776/
-$coinexec $daemon_args &
-cd $scriptpath
+${scriptpath}/start ${coin}
 
 i=0
 while ! $komodocli $asset getinfo >/dev/null 2>&1; do

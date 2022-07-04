@@ -19,6 +19,7 @@ fi
 stdbuf -oL ../agents/iguana $iguanamode &
 iguanapid=$(echo $!)
 log "startnotary" "iguana pid $iguanapid"
+echo ${iguanapid} > ${scriptpath}/pid/iguana
 sleep 4
 
 curl --url "http://127.0.0.1:${iguanaport}" --data "{\"agent\":\"SuperNET\",\"method\":\"myipaddr\",\"ipaddr\":\"${nn_ipaddress}\"}"

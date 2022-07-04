@@ -40,6 +40,7 @@ if [[ -z "$1" || "${1^^}" == "KMD" ]]; then
     else
         $komodod ${usepubkey} ${addnodes} -pid=${HOME}/.komodo/komodod.pid ${whitelist} -minrelaytxfee=0.000035 -opretmintxfee=0.004 &
     fi
+    echo $! > ${scriptpath}/pid/KMD
 fi
 
 #search
@@ -51,6 +52,7 @@ for coins in "${!searchlist}"; do
         log "start" "Starting ${searchcoin[0]}"
         eval $(echo coinexec=${searchcoin[2]})
         $coinexec ${usepubkey} &
+        echo $! > ${scriptpath}/pid/${1^^}
     fi
 done
 
