@@ -1,3 +1,9 @@
 #!/bin/bash
+scriptpath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $scriptpath/main
 
 pkill -15 iguana
+
+if [[ -f "${scriptpath}/pid/iguana" ]]; then
+    rm "${scriptpath}/pid/iguana"
+fi
