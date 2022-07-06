@@ -32,6 +32,9 @@ nn_pubkey=
 #Enter your notary node IPv4 address
 nn_ipaddress=
 
+#Enter address to send excess mined funds to (compressed address no quotes)
+send_mined_to_address=
+
 #Whitelist other addresses incoming funds are expected from - own address is automatically whitelisted
 whitelist_addresses=("RKrMB4guHxm52Tx9LG8kK3T5UhhjVuRand" "RVB7Vd4JbbjQPV1WE5ZdeWmWo5EjMpXDH6" "RDragoNHdwovvsDLSLMiAEzEArAD3kq6FN")
 

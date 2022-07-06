@@ -1,0 +1,100 @@
+#!/bin/bash
+#
+# New strategy for handling mined
+#
+# Don't aggregate funds/worry about interest on notary node, handle it all elsewhere on your own
+#
+scriptpath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $scriptpath/main
+
+cd "${BASH_SOURCE%/*}" || exit
+
+# @see functions
+setupCoinVars "KMD" "handlemined"
+
+utxoamount=0.001
+utxofeederhigh=9
+utxofeederlow=3
+
+unspent=$($komodocli listunspent)
+minedcount=$(jq '[.[] | select(.generated==true)] | length' <<< $unspent)
+
+if (( minedcount > 0 )); then
+    #check if feeder utxo needs to be fed
+    feeder_utxos=$(jq -r --arg utxosize $utxoamount --arg feedermax $utxofeederhigh '[.[] | select (.generated==false and .spendable==true and .amount>($utxosize|tonumber) and .amount<($feedermax|tonumber))]' <<< $unspent)
+    feeder_length=$(jq -r '. | length' <<< $feeder_utxos)
+    feeder_txfee=$(calcFee ${feeder_length} 1 "p2pkh" "p2pkh" ${txfeeperkb})
+    feeder_vins=$(jq '[.[] | {"txid":.txid, "vout":.vout}]' <<< $feeder_utxos)
+    feeder_amount=$(jq '[.[].amount] | add' <<< $feeder_utxos)
+
+    #special case if more than one feeder found
+    if (( $feeder_length > 1 )); then
+        rawtxresult=$($komodocli createrawtransaction "${feeder_vins}" '''{ "'$nn_address'": '$feeder_amount' }''')
+        rawtxid=$(sendRaw ${rawtxresult} "KMD" 1)
+        waitForConfirm "KMD" ${rawtxid}
+        log "handlemined" "${feeder_length} feeder utxos combined. txid: ${rawtxid}"
+        exit 0
+    fi
+
+    #grab a candidate utxo to add to feeder
+    combine_utxo=$(jq -r --arg maxsize ${utxofeederhigh} --arg feederamount ${feeder_amount} '[.[] | select (.amount+($feederamount|tonumber)<=($maxsize|tonumber) and .generated==true and .spendable==true)] | sort_by(.amount)[0]' <<< $unspent)
+    combine_txfee=$(calcFee 1 1 "p2pk" "p2pkh" ${txfeeperkb})
+    combine_vin=$(jq -r '[. | {"txid":.txid, "vout":.vout}] | tostring' <<< $combine_utxo)
+    combine_amount=$(jq -r '.amount' <<< $combine_utxo)
+    combine_amountfixed=$( printf "%.8f" $(bc -l <<< "(${combine_amount}-${combine_txfee})") )
+
+    if [[ "${combine_utxo}" != "null" ]]; then
+        #if feeder utxo doesn't exist
+        if [[ "$feeder_amount" == "null" ]]; then
+            rawtxresult=$($komodocli createrawtransaction "${combine_vin}" '''{ "'$nn_address'": '$combine_amountfixed' }''')
+            rawtxid=$(sendRaw ${rawtxresult} "KMD" 1)
+            waitForConfirm "KMD" ${rawtxid}
+            log "handlemined" "create feeder $combine_amountfixed - txid : $rawtxid"
+
+        #if feeder utxo is getting low
+        elif (( $(echo "$feeder_amount < $utxofeederlow" | bc -l) )); then
+            combined_amounts=$( printf "%.8f" $(bc -l <<< "(${feeder_amount} + ${combine_amountfixed} - ${feeder_txfee})") )
+            combined_vins=$(jq -r --argjson arr1 "${feeder_vins}" --argjson arr2 "${combine_vin}" -n '$arr1 + $arr2 | tostring')
+            rawtxresult=$($komodocli createrawtransaction "${combined_vins}" '''{ "'$nn_address'": '$combined_amounts' }''')
+            rawtxid=$(sendRaw ${rawtxresult} "KMD" 1)
+            waitForConfirm "KMD" ${rawtxid}
+            log "handlemined" "feed feeder $combined_amounts - txid : $rawtxid"
+        fi
+    fi
+
+    #send away the rest if there are at least 4 or more mined utxos waiting to be handled
+    if [[ ! -z ${send_mined_to_address} ]] && (( minedcount > 3 )); then
+        unspent=$($komodocli listunspent)
+
+        mined_utxos=$(jq -r '[.[] | select (.generated==true and .spendable==true)]' <<< $unspent)
+        mined_length=$(jq -r '. | length' <<< $mined_utxos)
+        mined_txfee=$(calcFee ${mined_length} 1 "p2pk" "p2pkh" ${txfeeperkb})
+        mined_vins=$(jq -r '[.[] | {"txid":.txid, "vout":.vout}]' <<< $mined_utxos)
+        mined_amount=$(jq -r '[.[].amount] | add' <<< $mined_utxos)
+
+        #check for any utxos bigger than the feeder that don't belong in notary wallet and send those as well
+        big_utxos=$(jq -r --arg feedermax $utxofeederhigh '[.[] | select (.generated==false and .spendable==true and .amount>($feedermax|tonumber))]' <<< $unspent)
+        if [[ "${big_utxos}" != "null" ]]; then
+            big_length=$(jq -r '. | length' <<< $big_utxos)
+            big_txfee=$(calcFee ${big_length} 1 "p2pkh" "p2pkh" ${txfeeperkb})
+            big_vins=$(jq -r '[.[] | {"txid":.txid, "vout":.vout}]' <<< $big_utxos)
+            big_amount=$(jq '[.[].amount] | add' <<< $big_utxos)
+            big_interest=$(jq -r '[.[].interest] | add' <<< $big_utxos)
+            big_interest=$( printf "%.8f" $big_interest )
+
+            output_amount=$( printf "%.8f" $(bc -l <<< "(${mined_amount}-${mined_txfee}+${big_amount}+${big_interest}-${big_txfee})") )
+            output_vins=$(jq -r --argjson arr1 "$mined_vins" --argjson arr2 "$big_vins" -n '$arr1 + $arr2 | tostring')
+        else
+            output_amount=$mined_amount
+            output_vins=$mined_vins
+        fi
+
+        rawtxresult=$($komodocli createrawtransaction "${output_vins}" '''{ "'$send_mined_to_address'": '$output_amount' }''')
+        # $komodocli decoderawtransaction $rawtxresult
+        rawtxid=$(sendRaw ${rawtxresult} "KMD" 1)
+        waitForConfirm "KMD" ${rawtxid}
+        log "handlemined" "sent ${output_amount} to ${send_mined_to_address} - txid : $rawtxid"
+    else
+        log "handlemined" "send_mined_to_address is not defined, leaving mined funds on notary node"
+    fi
+fi
