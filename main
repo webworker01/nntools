@@ -26,6 +26,7 @@ pubkey=${nn_pubkey}
 nn_season=${nn_season:=6}
 skip_whitelist=${skip_whitelist:=('VOTE2022')}
 miner_threads=${miner_threads:=1}
+send_mined_utxo_count=${send_mined_utxo_count:=3}
 
 #more imports
 source ${scriptpath}/coinlist

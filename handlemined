@@ -62,8 +62,13 @@ if (( minedcount > 0 )); then
         fi
     fi
 
-    #send away the rest if there are at least 4 or more mined utxos waiting to be handled
-    if [[ ! -z ${send_mined_to_address} ]] && (( minedcount > 3 )); then
+    if [[ ! -z ${send_mined_to_address} ]]; then
+        log "handlemined" "send_mined_to_address is not defined, leaving mined funds on notary node"
+        exit 0
+    fi
+
+    #send away the rest if there are at least ${send_mined_utxo_count} or more mined utxos waiting to be handled
+    if (( minedcount >= send_mined_utxo_count )); then
         unspent=$($komodocli listunspent)
 
         mined_utxos=$(jq -r '[.[] | select (.generated==true and .spendable==true)]' <<< $unspent)
@@ -94,7 +99,5 @@ if (( minedcount > 0 )); then
         rawtxid=$(sendRaw ${rawtxresult} "KMD" 1)
         waitForConfirm "KMD" ${rawtxid}
         log "handlemined" "sent ${output_amount} to ${send_mined_to_address} - txid : $rawtxid"
-    else
-        log "handlemined" "send_mined_to_address is not defined, leaving mined funds on notary node"
     fi
 fi
