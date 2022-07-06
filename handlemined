@@ -62,7 +62,7 @@ if (( minedcount > 0 )); then
         fi
     fi
 
-    if [[ ! -z ${send_mined_to_address} ]]; then
+    if [[ -z ${send_mined_to_address} ]]; then
         log "handlemined" "send_mined_to_address is not defined, leaving mined funds on notary node"
         exit 0
     fi
@@ -79,7 +79,7 @@ if (( minedcount > 0 )); then
 
         #check for any utxos bigger than the feeder that don't belong in notary wallet and send those as well
         big_utxos=$(jq -r --arg feedermax $utxofeederhigh '[.[] | select (.generated==false and .spendable==true and .amount>($feedermax|tonumber))]' <<< $unspent)
-        if [[ "${big_utxos}" != "null" ]]; then
+        if [[ "${big_utxos}" != "null" && "${big_utxos}" != "" ]]; then
             big_length=$(jq -r '. | length' <<< $big_utxos)
             big_txfee=$(calcFee ${big_length} 1 "p2pkh" "p2pkh" ${txfeeperkb})
             big_vins=$(jq -r '[.[] | {"txid":.txid, "vout":.vout}]' <<< $big_utxos)
