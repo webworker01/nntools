@@ -91,6 +91,7 @@ if (( minedcount > 0 )); then
             output_vins=$(jq -r --argjson arr1 "$mined_vins" --argjson arr2 "$big_vins" -n '$arr1 + $arr2 | tostring')
         else
             output_amount=$mined_amount
+            output_amount=$( printf "%.8f" $(bc -l <<< "(${mined_amount}-${mined_txfee})") )
             output_vins=$mined_vins
         fi
 
