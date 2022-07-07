@@ -153,6 +153,6 @@ waitForConfirm()
         sleep 10
         confirmations=$(${komodocli} ${asset} gettransaction ${txid} | jq .confirmations)
         i=$((i+1))
-        log "waitForConfirm" "consolidate - waiting for confirmation ${confirmations} (${i}) - ${txid}" "red" "echo"
+        log "waitForConfirm" "[${acname}] - waiting for confirmation ${confirmations} (${i}) - ${txid}" "red" "echo"
     done
 }
