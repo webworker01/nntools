@@ -12,7 +12,6 @@ komodolike=(
 
 skipnotarize=(
 'VRSC'
-'MIL'
 )
 
 #declare non komodo clis - set the full path accessible as the second part of each string, the 3rd entry is the name of the data dir for the coin and assumes they are in $HOME
