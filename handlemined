@@ -4,6 +4,8 @@
 #
 # Don't aggregate funds/worry about interest on notary node, handle it all elsewhere on your own
 #
+# @author webworker01
+#
 scriptpath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 source $scriptpath/main
 
