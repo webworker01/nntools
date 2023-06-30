@@ -1,26 +1,16 @@
 #!/bin/bash
 
-if (( nn_season == 6 )); then
+if (( nn_season == 7 )); then
     coinlist=(
-    'BET'
-    'BOTS'
     'CCL'
     'CLC'
-    'CRYPTO'
-    'DEX'
+    'DOC'
     'GLEEC'
-    'HODL'
     'ILN'
-    'JUMBLR'
     'KOIN'
-    'MORTY'
-    'MGW'
-    'MSHARK'
+    'MARTY'
     'NINJA'
-    'PANGEA'
     'PIRATE'
-    'REVS'
-    'RICK'
     'SUPERNET'
     'THC'
     )
@@ -37,7 +27,6 @@ else
     'ILN'
     'JUMBLR'
     'KOIN'
-    'MESH'
     'MORTY'
     'MGW'
     'MSHARK'
@@ -48,7 +37,5 @@ else
     'RICK'
     'SUPERNET'
     'THC'
-    'VOTE2022'
-    'ZILLA'
     )
 fi
