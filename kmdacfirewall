@@ -11,7 +11,7 @@ sudo ufw allow 22    comment 'SSH'
 sudo ufw allow 7770  comment 'KMD'
 if (( thirdpartycoins < 1 )); then
     #sudo ufw allow 8333  comment 'BTC'
-    port=13347
+    port=13348
     sudo ufw allow ${port} comment 'Iguana Notary Main'
 
     for coins in "${coinlist[@]}"; do
@@ -24,7 +24,7 @@ if (( thirdpartycoins < 1 )); then
         fi
     done
 else
-    port=13344
+    port=13345
     sudo ufw allow ${port}/tcp comment 'Iguana Notary Third Party'
     sudo ufw allow 26001/tcp comment 'AYA'
     sudo ufw allow 57777/tcp comment 'CHIPS'
