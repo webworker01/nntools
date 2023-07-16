@@ -10,6 +10,13 @@
 scriptpath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 source $scriptpath/main
 
+# Check if synced
+getsynced=$($komodocli getinfo | jq .synced)
+if [[ "$getsynced" == "null" || "$getsynced" == "false" ]]; then
+    log "minerfixer" "not synced yet" "red" "echo"
+    exit 0
+fi
+
 lastgen=$($komodocli listtransactions "*" 777 | jq '[.[] | select(.generated==true)] | .[-1]')
 if [[ "$lastgen" != "null" ]]; then
     confirmations=$(jq .confirmations <<< $lastgen)
@@ -53,11 +60,6 @@ if [[ "$lastgen" != "null" ]]; then
         fi
     fi
 else
-    getsynced=$($komodocli getinfo | jq .synced)
-
-    # Check if synced
-    if [[ "$getsynced" != "null" && "$getsynced" == "true" ]]; then
-        log "minerfixer" "could not get last mined tx! setgenerate true"
-        $komodocli setgenerate true ${miner_threads}
-    fi
+    log "minerfixer" "could not get last mined tx! setgenerate true"
+    $komodocli setgenerate true ${miner_threads}
 fi
