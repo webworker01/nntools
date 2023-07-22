@@ -12,7 +12,7 @@ source $scriptpath/main
 
 # Check if synced
 getsynced=$($komodocli getinfo | jq .synced)
-if [[ "$getsynced" == "null" || "$getsynced" == "false" ]]; then
+if [[ -z $getsynced || "$getsynced" == "null" || "$getsynced" == "false" ]]; then
     log "minerfixer" "not synced yet" "red" "echo"
     exit 0
 fi
